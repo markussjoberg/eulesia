@@ -32,6 +32,7 @@
   users.users.root = {
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPy3xxwKnAgznj0mSvCBriRYky98laGZE+DNHN5zaBSz julius.koskela@digimuoto.com"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMWz74cO4Y257P8md+OgkVyReEjarD7Ec3dxdW+HNy3e markus.sjoberg@aihiolabs.com"
     ];
   };
 
