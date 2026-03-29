@@ -94,7 +94,7 @@ function AboutContent() {
       <div className="h-5 bg-gray-50 dark:bg-gray-900" />
 
       {/* Hero */}
-      <div className="relative bg-blue-900 text-white">
+      <div className="relative bg-blue-900 text-white rounded-2xl overflow-hidden mx-4">
         <img
           src="/eulesia-about-philosophers.jpg"
           alt=""
