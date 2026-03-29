@@ -6,7 +6,7 @@
   "earlyStage": "Early access — kehitys on aktiivista",
 
   "intro": {
-    "p1": "Eulesia on sosiaalisen median alusta, joka on suunniteltu kansalaisinfrastruktuuriksi. Se tarjoaa tutut toiminnot — syötteet, viestit, yhteisöt ja keskustelut — mutta toimii ilman mainontaa, algoritmista syötettä tai käyttäytymisdatan keräämistä. Alustan nimi viittaa antiikin agoraan, julkiseen kokoontumispaikkaan jossa yhteisistä asioista keskusteltiin.",
+    "p1": "Eulesia on saanut nimensä ekklesiasta — antiikin kreikkalaisten kansankokouksesta, jossa tehtiin yhteiskunnallisia päätöksiä. Eulesia on kuitenkin enemmän kuin päätöksenteon paikka. Se on digitaalinen sosiaalinen tila, joka pohjautuu eurooppalaisille arvoille. Yhdysvaltalaisille palveluille on tyypillistä kaupallisuus: sosiaaliset mediat muistuttavat ostoskeskuksia, joissa kaupallisuus ohjaa keskustelua. Eurooppalaisessa kulttuurissa on toisin. Meidän torimme, agoramme, olivat julkista tilaa — niillä saattoi käydä kauppaa, mutta myös keskustella ilman kaupallista ohjailua.",
     "p2": "Eulesia on rakennettu ajatukselle, että demokraattinen yhteiskunta tarvitsee julkisen digitaalisen tilan, jota ei ohjaa yksityisten yritysten liiketoimintalogiikka. Kansalaiset, kunnat, virastot ja muut julkiset instituutiot osallistuvat samalla alustalla yhteisten sääntöjen alla. Kuntien kokousten pöytäkirjat tuodaan automaattisesti keskusteluun, ja jokainen keskustelu linkittyy todellisiin päätöksentekoprosesseihin.",
     "p3": "Eulesia on avoimen lähdekoodin projekti, jota kehitetään akateemisen tutkimuksen rinnalla Tampereen yliopistossa. Tavoitteena on alusta joka on kaikille EU-kansalaisille avoin ja jota ylläpidetään julkisena palveluna — samaan tapaan kuin kirjastot, julkinen terveydenhuolto tai tieverkosto."
   },
@@ -47,11 +47,18 @@
     "servicesDesc": "Käytännön kansalaistoiminnot ilman huomiotalouden logiikkaa. Tulossa myöhemmin."
   },
 
+  "subsidiarity": {
+    "title": "Läheltä valtakunnalliseen ja eurooppalaiseen",
+    "p1": "EU:ssa noudatetaan lähtökohtaisesti läheisyysperiaatetta: päätökset tehdään aina pienimmällä mahdollisella tasolla. Eulesia tukee näin rakentunutta maailmaa. Siinä missä useimmissa sosiaalisissa medioissa jokainen viesti kohdennetaan koko maailmalle, on Eulesiassa viestinnälle tasot.",
+    "p2": "Paikallistason viestit on tarkoitettu kuntalaisille, kaupunginosan tai kylän asukkaille — sekä maakunnallisille kysymyksille. Valtakunnalliset kysymykset ovat oma tasonsa. Laajin taso on Eurooppa.",
+    "p3": "Eurooppa on Eulesian laajin taso siksi, että vahva tunnistautuminen on toistaiseksi saatavilla EU:n alueella. Kun vahva tunnistautuminen laajenee Euroopan ulkopuolelle, laajenee samalla tämä taso."
+  },
+
   "principles": {
     "title": "Suunnitteluperiaatteet",
     "description": "Eulesian suunnittelu perustuu kuuteen vaatimukseen, jotka on johdettu alustahallinnan tutkimuskirjallisuudesta:",
     "identity": "Todennettu identiteetti",
-    "identityDesc": "Yksi henkilö, yksi tili. Identiteetti todennetaan eurooppalaisen digitaalisen identiteettilompakon (EUDI) kautta. Tämä poistaa tarpeen anonyymeille tai vale-identiteeteille ja tekee keskustelusta vastuullisempaa.",
+    "identityDesc": "Sosiaalisia medioita vaivaavat bottitilit ja trollit — Eulesiassa jokainen käyttäjä on vahvasti tunnistautunut. Se tarkoittaa, että botteja ei lähtökohtaisesti voi olla, jokaisella ihmisellä on vain yksi tili, eikä valetilejä voi luoda. Jokainen käyttäjä on alustalla omalla nimellään, mikä vähentää nimimerkin suojasta tapahtuvaa huutelua.",
     "institutional": "Institutionaalinen ankkurointi",
     "institutionalDesc": "Julkiset instituutiot osallistuvat kansalaistoimijoina. Viralliset asiakirjat, päätökset ja yhteystiedot ovat näkyvillä ja keskustelu linkittyy todellisiin prosesseihin.",
     "socialAgency": "Sosiaalinen toimijuus",
@@ -101,26 +108,42 @@
   },
 
   "roadmap": {
-    "title": "Roadmap",
-    "now": "Nyt: Early access — Suomi",
+    "title": "Askelmerkit",
+    "now": "Nyt — Early access, Suomi",
     "nowItems": [
       "Ensimmäiset käyttäjät kutsumallilla",
       "Yhteistyö kuntien ja alueiden kanssa",
       "Ota yhteyttä: info@eulesia.eu"
     ],
-    "q2q3": "Q2–Q3 2026",
-    "q2q3Items": ["Vahva tunnistautuminen pankkitunnuksilla (vapaaehtoinen)"],
-    "late2026": "Loppu 2026 / Alku 2027",
-    "late2026Items": [
-      "EUDI Wallet -kirjautuminen käyttöön",
-      "Yksi henkilö, yksi tili -periaate voimaan"
-    ]
+    "q2": "Q2 2026",
+    "q2Items": ["Ensimmäinen beta-vaihe käynnistyy Suomessa"],
+    "q3": "Q3 2026",
+    "q3Items": ["Beta laajenee Pohjoismaihin"],
+    "q4": "Q4 2026",
+    "q4Items": ["EUDI-integraatio otetaan vaiheittain käyttöön"],
+    "q1_2027": "Q1 2027",
+    "q1_2027Items": ["EUDI-integraatio laajenee"],
+    "q2_2027": "Q2 2027",
+    "q2_2027Items": ["Eulesia täysin eurooppalaisten saavutettavissa"]
+  },
+
+  "founders": {
+    "title": "Tekijät",
+    "description": "Eulesia on syntynyt tutkijan ja kehittäjän jatkuvasta dialogista.",
+    "origin": "Idea on kasvanut yhteisestä keskustelusta — ei vain alkusysäyksestä. Visio on rakennettu yhdessä: Markus on tuonut tutkimuksen ja käytännöllisen suunnittelun, kuten automaattiset kuntapöytäkirjasysteemit — Julius ohjelmistokehityksen ja arkkitehtuurin.",
+    "markus": "Markus Sjöberg",
+    "markusRole": "Tampereen yliopisto",
+    "markusDesc": "Tutkimus, tuotekehitys ja käytännöllinen suunnittelu. Eulesia perustuu Markuksen Design Science Research -tutkimukseen eurooppalaisesta kansalaisinfrastruktuurista. Hän on suunnitellut alustan toiminnallisuudet, kuten automaattiset kuntapöytäkirjat.",
+    "julius": "Julius Koskela",
+    "juliusRole": "Digimuoto Oy",
+    "juliusDesc": "Tekninen johtaminen ja ohjelmistokehitys. Julius vastaa alustan arkkitehtuurista ja koodauksesta.",
+    "contact": "Yhteistyö, media ja kumppanuudet: info@eulesia.eu"
   },
 
   "organization": {
-    "title": "Organisaatio ja tiimi",
-    "p1": "Eulesia on tällä hetkellä Markus Sjöbergin kehittämä voittoa tavoittelematon projekti. Pitkän aikavälin tavoitteena on organisaatiorakenne, joka turvaa alustan jatkuvuuden ja riippumattomuuden.",
-    "p2": "Mahdollisuuksia selvitetään: itsenäinen säätiö, julkisrahoitteinen organisaatio tai yliopistopohjainen ylläpito ja kehitys. Oikea sosiaalisen median alusta tarvitsee tiimin — jos kiinnostaa lähteä mukaan, ota yhteyttä.",
+    "title": "Organisaatio",
+    "p1": "Eulesia on tällä hetkellä voittoa tavoittelematon projekti. Pitkän aikavälin tavoitteena on organisaatiorakenne, joka turvaa alustan jatkuvuuden ja riippumattomuuden.",
+    "p2": "Mahdollisuuksia selvitetään: itsenäinen säätiö, julkisrahoitteinen organisaatio tai yliopistopohjainen ylläpito ja kehitys.",
     "contact": "info@eulesia.eu"
   },
 

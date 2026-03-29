@@ -6,7 +6,7 @@
   "earlyStage": "Early access — development is active",
 
   "intro": {
-    "p1": "Eulesia is a social media platform designed as citizen infrastructure. It offers familiar features — feeds, messages, communities, and discussions — but operates without advertising, algorithmic feeds, or behavioral data collection. The name refers to the ancient agora, a public gathering place where common affairs were discussed.",
+    "p1": "Eulesia takes its name from the ekklesia — the ancient Greek citizens' assembly where public decisions were made. But Eulesia is more than a place for decision-making. It is a digital social space rooted in European values. American platforms are shaped by commercial logic: social media resembles a shopping mall where commerce drives conversation. European culture is different. Our squares, our agoras, were public space — you could trade there, but also discuss without commerce dictating the agenda.",
     "p2": "Eulesia is built on the idea that a democratic society needs a public digital space not driven by the business logic of private companies. Citizens, municipalities, agencies, and other public institutions participate on the same platform under shared rules. Municipal meeting minutes are automatically brought into discussion, and every conversation is linked to real decision-making processes.",
     "p3": "Eulesia is an open-source project developed alongside academic research at Tampere University. The goal is a platform that is open to all EU citizens and maintained as a public service — in the same way as libraries, public healthcare, or road networks."
   },
@@ -47,11 +47,18 @@
     "servicesDesc": "Practical civic functions without attention economy logic. Coming later."
   },
 
+  "subsidiarity": {
+    "title": "From local to national to European",
+    "p1": "The EU operates on the principle of subsidiarity: decisions are made at the lowest possible level. Eulesia is designed to support this structure. While most social media platforms broadcast every message to the whole world, Eulesia has distinct levels of communication.",
+    "p2": "Local messages are intended for residents of a municipality, neighbourhood, or village — as well as for regional matters. National questions form their own level. The broadest level is Europe.",
+    "p3": "Europe is Eulesia's broadest level because strong identity verification is currently available across the EU. As strong authentication expands beyond Europe, this level will expand with it."
+  },
+
   "principles": {
     "title": "Design principles",
     "description": "Eulesia's design is based on six requirements derived from platform governance research literature:",
     "identity": "Verified identity",
-    "identityDesc": "One person, one account. Identity is verified through the European Digital Identity Wallet (EUDI). This removes the need for anonymous or false identities and makes discussion more accountable.",
+    "identityDesc": "Bots and trolls plague social media — in Eulesia, every user is strongly authenticated. This means bots cannot exist, each person has only one account, and fake profiles cannot be created. Every user is present under their own name, which reduces the harassment that anonymity enables.",
     "institutional": "Institutional anchoring",
     "institutionalDesc": "Public institutions participate as civic actors. Official documents, decisions, and contact information are visible, and discussion is linked to real processes.",
     "socialAgency": "Social agency",
@@ -102,25 +109,41 @@
 
   "roadmap": {
     "title": "Roadmap",
-    "now": "Now: Early access — Finland",
+    "now": "Now — Early access, Finland",
     "nowItems": [
       "First users via invite model",
       "Collaboration with municipalities and regions",
       "Get in touch: info@eulesia.eu"
     ],
-    "q2q3": "Q2–Q3 2026",
-    "q2q3Items": ["Strong authentication with bank credentials (optional)"],
-    "late2026": "Late 2026 / Early 2027",
-    "late2026Items": [
-      "EUDI Wallet login enabled",
-      "One person, one account principle enforced"
-    ]
+    "q2": "Q2 2026",
+    "q2Items": ["First beta phase launches in Finland"],
+    "q3": "Q3 2026",
+    "q3Items": ["Beta expands to the Nordic countries"],
+    "q4": "Q4 2026",
+    "q4Items": ["EUDI integration introduced in phases"],
+    "q1_2027": "Q1 2027",
+    "q1_2027Items": ["EUDI integration expands"],
+    "q2_2027": "Q2 2027",
+    "q2_2027Items": ["Eulesia fully available to Europeans"]
+  },
+
+  "founders": {
+    "title": "Team",
+    "description": "Eulesia has grown from an ongoing dialogue between a researcher and a developer.",
+    "origin": "The idea has developed through sustained conversation — not just an initial spark. The vision has been built together: Markus has contributed the research and practical design, including the automated municipal minutes pipeline — Julius the software development and architecture.",
+    "markus": "Markus Sjöberg",
+    "markusRole": "Tampere University",
+    "markusDesc": "Research, product development and practical design. Eulesia is grounded in Markus's Design Science Research on European civic infrastructure. He has designed the platform's features, including the automated municipal minutes system.",
+    "julius": "Julius Koskela",
+    "juliusRole": "Digimuoto Oy",
+    "juliusDesc": "Technical leadership and software development. Julius is responsible for the platform's architecture and code.",
+    "contact": "Partnerships, media and collaboration: info@eulesia.eu"
   },
 
   "organization": {
-    "title": "Organization and team",
-    "p1": "Eulesia is currently a non-profit project developed by Markus Sjöberg. The long-term goal is an organizational structure that ensures the platform's continuity and independence.",
-    "p2": "Possibilities being explored include an independent foundation, publicly funded organization, or university-based maintenance and development. A real social media platform needs a team — if you're interested in joining, get in touch.",
+    "title": "Organization",
+    "p1": "Eulesia is currently a non-profit project. The long-term goal is an organizational structure that ensures the platform's continuity and independence.",
+    "p2": "Possibilities being explored include an independent foundation, publicly funded organization, or university-based maintenance and development.",
     "contact": "info@eulesia.eu"
   },
 
