@@ -22,6 +22,10 @@ import {
   Lock,
   ShieldCheck,
   Handshake,
+  HeartHandshake,
+  Database,
+  Unlink,
+  Timer,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -583,6 +587,73 @@ function AboutContent() {
             </a>
           </div>
         </SectionCard>
+
+        {/* Foundation / Legal entity — prominent call for founding donor */}
+        <div className="rounded-xl border-2 border-amber-300 dark:border-amber-600/50 overflow-hidden">
+          {/* Header */}
+          <div className="bg-amber-50 dark:bg-amber-900/30 px-4 py-3 border-b border-amber-200 dark:border-amber-700/40 flex items-center justify-between gap-3">
+            <h2 className="font-semibold text-amber-900 dark:text-amber-100 flex items-center gap-2">
+              <HeartHandshake className="w-4 h-4 text-amber-600" />
+              {t("foundation.title")}
+            </h2>
+            <span className="inline-flex items-center gap-1.5 bg-amber-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full flex-shrink-0">
+              <Sparkles className="w-3 h-3" />
+              {t("foundation.badge")}
+            </span>
+          </div>
+
+          {/* Body */}
+          <div className="bg-amber-50/40 dark:bg-amber-900/10 p-4 space-y-4">
+            <div className="space-y-2">
+              <p className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed">
+                {t("foundation.p1")}
+              </p>
+              <p className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed">
+                {t("foundation.p2")}
+              </p>
+              <p className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed font-medium">
+                {t("foundation.p3")}
+              </p>
+            </div>
+
+            {/* Three reasons */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {(
+                [
+                  { key: "why1", icon: <Database className="w-4 h-4" />, color: "text-amber-700 bg-amber-100 dark:bg-amber-800/30 dark:text-amber-300" },
+                  { key: "why2", icon: <Unlink className="w-4 h-4" />, color: "text-amber-700 bg-amber-100 dark:bg-amber-800/30 dark:text-amber-300" },
+                  { key: "why3", icon: <Timer className="w-4 h-4" />, color: "text-amber-700 bg-amber-100 dark:bg-amber-800/30 dark:text-amber-300" },
+                ] as { key: string; icon: React.ReactNode; color: string }[]
+              ).map(({ key, icon, color }) => (
+                <div key={key} className="bg-white dark:bg-gray-900/60 rounded-lg p-3 border border-amber-200 dark:border-amber-700/30">
+                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center mb-2 ${color}`}>
+                    {icon}
+                  </div>
+                  <p className="font-medium text-gray-900 dark:text-gray-100 text-sm">
+                    {t(`foundation.${key}Title`)}
+                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                    {t(`foundation.${key}Desc`)}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* CTA */}
+            <div className="flex items-center gap-3 bg-white dark:bg-gray-900/60 rounded-lg px-4 py-3 border border-amber-200 dark:border-amber-700/30">
+              <Mail className="w-4 h-4 text-amber-600 flex-shrink-0" />
+              <p className="text-sm text-gray-700 dark:text-gray-300">
+                {t("foundation.contact")}{" "}
+                <a
+                  href="mailto:info@eulesia.eu"
+                  className="font-semibold text-amber-700 dark:text-amber-400 hover:underline"
+                >
+                  {t("foundation.contactEmail")}
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
 
         {/* Funding */}
         <SectionCard

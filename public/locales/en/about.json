@@ -129,15 +129,31 @@
 
   "founders": {
     "title": "Team",
-    "description": "Eulesia has grown from an ongoing dialogue between a researcher and a developer.",
-    "origin": "The idea has developed through sustained conversation — not just an initial spark. The vision has been built together: Markus has contributed the research and practical design, including the automated municipal minutes pipeline — Julius the software development and architecture.",
+    "description": "Eulesia has emerged from the combination of academic research and practical implementation.",
+    "origin": "The idea grew out of a dialogue between a researcher and a developer. Markus brought the vision of a European civic infrastructure — Julius the technical capability to build it. Research and implementation have gone hand in hand from the start.",
     "markus": "Markus Sjöberg",
     "markusRole": "Tampere University",
-    "markusDesc": "Research, product development and practical design. Eulesia is grounded in Markus's Design Science Research on European civic infrastructure. He has designed the platform's features, including the automated municipal minutes system.",
+    "markusDesc": "Vision, research and product development. Eulesia is grounded in Markus's Design Science Research on European civic infrastructure.",
     "julius": "Julius Koskela",
     "juliusRole": "Digimuoto Oy",
-    "juliusDesc": "Technical leadership and software development. Julius is responsible for the platform's architecture and code.",
+    "juliusDesc": "Technical leadership and infrastructure. Julius is responsible for the platform's architecture and technical implementation.",
     "contact": "Partnerships, media and collaboration: info@eulesia.eu"
+  },
+
+  "foundation": {
+    "title": "Looking for a founding donor",
+    "badge": "Next step",
+    "p1": "Eulesia has the technical and research foundation in place — but for the platform to operate independently and ensure long-term data ownership on behalf of its users, a legal entity is needed.",
+    "p2": "We are currently exploring a foundation (säätiö) model. Establishing a foundation in Finland requires €50,000 in founding capital. This is not an investment — it is a donation toward a European civic infrastructure.",
+    "p3": "We are looking for one or more founding donors who share this vision and want to be part of building a European democratic alternative.",
+    "why1Title": "Data ownership",
+    "why1Desc": "A foundation — not a private company — owns the platform's data and servers.",
+    "why2Title": "Independence",
+    "why2Desc": "A governance structure that belongs to no private party.",
+    "why3Title": "Longevity",
+    "why3Desc": "The stability public infrastructure requires: a platform that exists ten years from now.",
+    "contact": "Interested? Get in touch:",
+    "contactEmail": "info@eulesia.eu"
   },
 
   "organization": {

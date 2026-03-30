@@ -129,15 +129,31 @@
 
   "founders": {
     "title": "Tekijät",
-    "description": "Eulesia on syntynyt tutkijan ja kehittäjän jatkuvasta dialogista.",
-    "origin": "Idea on kasvanut yhteisestä keskustelusta — ei vain alkusysäyksestä. Visio on rakennettu yhdessä: Markus on tuonut tutkimuksen ja käytännöllisen suunnittelun, kuten automaattiset kuntapöytäkirjasysteemit — Julius ohjelmistokehityksen ja arkkitehtuurin.",
+    "description": "Eulesia on syntynyt akateemisen tutkimuksen ja käytännön toteutuksen yhdistelmästä.",
+    "origin": "Idea syntyi tutkijan ja kehittäjän dialogista. Markus toi vision eurooppalaisesta kansalaisinfrastruktuurista — Julius teknisen osaamisen ja kyvyn rakentaa se. Tutkimus ja toteutus ovat alusta asti kulkeneet käsi kädessä.",
     "markus": "Markus Sjöberg",
     "markusRole": "Tampereen yliopisto",
-    "markusDesc": "Tutkimus, tuotekehitys ja käytännöllinen suunnittelu. Eulesia perustuu Markuksen Design Science Research -tutkimukseen eurooppalaisesta kansalaisinfrastruktuurista. Hän on suunnitellut alustan toiminnallisuudet, kuten automaattiset kuntapöytäkirjat.",
+    "markusDesc": "Visio, tutkimus ja tuotekehitys. Eulesia perustuu Markuksen Design Science Research -tutkimukseen eurooppalaisesta kansalaisinfrastruktuurista.",
     "julius": "Julius Koskela",
     "juliusRole": "Digimuoto Oy",
-    "juliusDesc": "Tekninen johtaminen ja ohjelmistokehitys. Julius vastaa alustan arkkitehtuurista ja koodauksesta.",
+    "juliusDesc": "Tekninen johtaminen ja infrastruktuuri. Julius vastaa alustan arkkitehtuurista ja teknisestä toteutuksesta.",
     "contact": "Yhteistyö, media ja kumppanuudet: info@eulesia.eu"
+  },
+
+  "foundation": {
+    "title": "Haemme perustajajäsenlahjoittajaa",
+    "badge": "Seuraava askel",
+    "p1": "Eulesialla on tekninen ja tutkimuksellinen pohja — mutta jotta alusta voi toimia riippumattomasti ja turvata käyttäjien datan omistuksen pitkällä aikavälillä, tarvitaan juridinen taho.",
+    "p2": "Selvitämme parhaillaan säätiömallia. Säätiön perustaminen Suomessa edellyttää 50 000 euron peruspääomaa. Kyse ei ole sijoituksesta — vaan lahjoituksesta eurooppalaisen kansalaisinfrastruktuurin perustaksi.",
+    "p3": "Etsimme yhtä tai useampaa perustajajäsenlahjoittajaa, jotka jakavat tämän vision ja haluavat olla mukana rakentamassa eurooppalaista demokraattista vaihtoehtoa.",
+    "why1Title": "Datan omistajuus",
+    "why1Desc": "Säätiö — ei yksityinen yritys — omistaa alustan datan ja palvelimet.",
+    "why2Title": "Riippumattomuus",
+    "why2Desc": "Hallintorakenne, joka ei kuulu yhdellekään yksityiselle taholle.",
+    "why3Title": "Pitkäjänteisyys",
+    "why3Desc": "Julkinen infrastruktuuri vaatii vakautta: alusta joka on olemassa kymmenen vuoden kuluttua.",
+    "contact": "Kiinnostunut? Ota yhteyttä:",
+    "contactEmail": "info@eulesia.eu"
   },
 
   "organization": {
