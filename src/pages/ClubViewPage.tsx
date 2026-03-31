@@ -106,6 +106,7 @@ export function ClubViewPage() {
   const [confirmRemoveMember, setConfirmRemoveMember] =
     useState<ClubMember | null>(null);
   const [confirmDeleteClub, setConfirmDeleteClub] = useState(false);
+  const [showMemberList, setShowMemberList] = useState(false);
   const [inviteSearch, setInviteSearch] = useState("");
   const { data: searchedUsers } = useSearchUsers(inviteSearch, 5);
   const [newThreadTitle, setNewThreadTitle] = useState("");
@@ -329,89 +330,85 @@ export function ClubViewPage() {
       </div>
 
       {/* Cover image */}
-      {club.coverImageUrl ? (
-        <div className="h-40 sm:h-48 bg-gray-100 dark:bg-gray-800">
+      {club.coverImageUrl && (
+        <div className="h-32 sm:h-40 bg-gray-100 dark:bg-gray-800">
           <img
             src={club.coverImageUrl}
             alt=""
             className="w-full h-full object-cover"
           />
         </div>
-      ) : (
-        <div className="h-24 bg-gradient-to-r from-teal-400 to-cyan-500" />
       )}
 
       {/* Club header */}
-      <div className="bg-teal-50 px-4 py-6">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            {/* Badges row */}
-            <div className="flex items-center gap-2 flex-wrap">
-              {club.category && (
-                <span className="text-xs text-teal-700 bg-teal-100 px-2 py-0.5 rounded-full">
-                  {club.category}
-                </span>
-              )}
+      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 py-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap mb-1">
               {club.isPublic ? (
-                <span className="text-xs text-green-700 bg-green-100 px-2 py-0.5 rounded-full flex items-center gap-1">
+                <span className="text-xs text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full flex items-center gap-1">
                   <Globe className="w-3 h-3" />
                   {t("openClub")}
                 </span>
               ) : (
-                <span className="text-xs text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full flex items-center gap-1">
+                <span className="text-xs text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30 px-2 py-0.5 rounded-full flex items-center gap-1">
                   <Lock className="w-3 h-3" />
                   {t("closedClub")}
                 </span>
               )}
+              {club.category && (
+                <span className="text-xs text-teal-700 dark:text-teal-400 bg-teal-100 dark:bg-teal-900/30 px-2 py-0.5 rounded-full">
+                  {club.category}
+                </span>
+              )}
             </div>
 
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-3 mb-2">
+            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-1">
               {club.name}
             </h1>
 
             {club.description && (
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                 {club.description}
               </p>
             )}
 
-            <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 flex-wrap">
+            <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400 flex-wrap">
               <div className="flex items-center gap-1">
-                <Users className="w-4 h-4" />
+                <Users className="w-3.5 h-3.5" />
                 <span>{t("members", { count: club.memberCount })}</span>
               </div>
               <div className="flex items-center gap-1">
-                <MessageSquare className="w-4 h-4" />
+                <MessageSquare className="w-3.5 h-3.5" />
                 <span>{t("threads", { count: threads.length })}</span>
               </div>
               {club.address && (
                 <div className="flex items-center gap-1">
-                  <MapPin className="w-4 h-4" />
-                  <span className="truncate max-w-[250px]">{club.address}</span>
+                  <MapPin className="w-3.5 h-3.5" />
+                  <span className="truncate max-w-[200px]">{club.address}</span>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Settings button */}
           {isAdminOrMod && (
             <button
               onClick={openSettings}
-              className="p-2 hover:bg-teal-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors flex-shrink-0"
               title={t("settings")}
             >
-              <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              <Settings className="w-4 h-4 text-gray-500 dark:text-gray-400" />
             </button>
           )}
         </div>
 
         {/* Join/Leave and Follow buttons */}
-        <div className="mt-4 flex items-center gap-3">
+        <div className="mt-3 flex items-center gap-2">
           {club.isMember ? (
             <button
               onClick={handleLeave}
               disabled={leaveClubMutation.isPending}
-              className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors disabled:opacity-50"
+              className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
             >
               {leaveClubMutation.isPending ? t("leaving") : t("leave")}
             </button>
@@ -419,7 +416,7 @@ export function ClubViewPage() {
             <button
               onClick={handleJoin}
               disabled={joinClubMutation.isPending}
-              className="bg-teal-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-teal-700 transition-colors disabled:opacity-50"
+              className="bg-teal-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-teal-700 transition-colors disabled:opacity-50"
             >
               {joinClubMutation.isPending ? t("joining") : t("join")}
             </button>
@@ -892,8 +889,19 @@ export function ClubViewPage() {
           </div>
         )}
 
+        {/* Members toggle */}
+        {(moderators.length > 0 || members.length > 0) && (
+          <button
+            onClick={() => setShowMemberList((v) => !v)}
+            className="w-full text-left px-4 py-2 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 flex items-center gap-1.5 transition-colors"
+          >
+            <Users className="w-3.5 h-3.5" />
+            {showMemberList ? t("hideMemberList") : t("memberList")} ({club.memberCount})
+          </button>
+        )}
+
         {/* Moderators */}
-        {moderators.length > 0 && (
+        {showMemberList && moderators.length > 0 && (
           <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
               <Shield className="w-4 h-4 text-teal-600" />
@@ -908,7 +916,7 @@ export function ClubViewPage() {
         )}
 
         {/* Members */}
-        {members.length > 0 && (
+        {showMemberList && members.length > 0 && (
           <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
               <Users className="w-4 h-4 text-teal-600" />
