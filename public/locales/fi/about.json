@@ -156,6 +156,22 @@
     "contactEmail": "info@eulesia.eu"
   },
 
+  "foundation": {
+    "title": "Eulesia ry perustetaan",
+    "badge": "Tänään 31.3.2026",
+    "p1": "Eulesia tarvitsee juridisen perustan — tahon joka omistaa datan, ylläpitää palvelimia ja kantaa vastuun. Tänään illalla pidämme Eulesia ry:n perustamiskokouksen.",
+    "p2": "Yhdistys on ensimmäinen askel. Säännöissä on jo kirjattu mahdollisuus siirtyä säätiömuotoon toiminnan vakiinnuttua. Säätiö vaatii 50 000 euron perustamispääoman — etsimme perustajanlahjoittajaa.",
+    "p3": "Oletko kiinnostunut tukemaan eurooppalaisen kansalaisinfrastruktuurin syntymistä?",
+    "why1Title": "Data pysyy käyttäjillä",
+    "why1Desc": "Käyttäjät omistavat oman datansa. Yhdistys toimii ainoastaan datan säilyttäjänä.",
+    "why2Title": "Ei kaupallistamista",
+    "why2Desc": "Alustaa tai sen dataa ei voida luovuttaa kaupallisille toimijoille.",
+    "why3Title": "Pitkäjänteinen rakenne",
+    "why3Desc": "Avoimet säännöt, läpinäkyvä hallinto, mahdollisuus säätiömuotoon.",
+    "contact": "Ota yhteyttä:",
+    "contactEmail": "info@eulesia.eu"
+  },
+
   "organization": {
     "title": "Organisaatio",
     "p1": "Eulesia on tällä hetkellä voittoa tavoittelematon projekti. Pitkän aikavälin tavoitteena on organisaatiorakenne, joka turvaa alustan jatkuvuuden ja riippumattomuuden.",
