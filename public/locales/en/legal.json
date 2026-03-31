@@ -13,7 +13,7 @@
       },
       "account": {
         "title": "3. User Account",
-        "content": "Creating an account requires providing a valid email address. You are responsible for the security of your account and all activity that occurs through it. Please notify us immediately if you suspect unauthorized use of your account."
+        "content": "Creating an account requires choosing a username and password. An email address is not required when registering via FTN authentication (Finnish bank credentials / Suomi.fi). You are responsible for the security of your account and all activity that occurs through it. Please notify us immediately if you suspect unauthorized use of your account."
       },
       "conduct": {
         "title": "4. Code of Conduct",
@@ -67,13 +67,14 @@
     "sections": {
       "intro": {
         "title": "1. Data Controller",
-        "content": "Eulesia\nEmail: info@eulesia.eu\n\nThis privacy policy describes how we collect, use, and protect your personal data in accordance with the EU General Data Protection Regulation (GDPR)."
+        "content": "Eulesia-yhdistys (Eulesia Association)\nEmail: info@eulesia.eu\n\nThis privacy policy describes how we collect, use, and protect your personal data in accordance with the EU General Data Protection Regulation (GDPR)."
       },
       "data_collected": {
         "title": "2. Data Collected",
         "content": "We collect the following personal data:",
         "items": [
-          "Name and email address (for account creation)",
+          "Name and email address (for account creation; email is not required when registering with FTN authentication)",
+          "Verified legal name (from FTN authentication, Finnish Trust Network / Suomi.fi)",
           "Profile picture (optional)",
           "Content you publish (discussions, comments, messages)",
           "Voting and subscription data",
@@ -98,7 +99,7 @@
       },
       "sharing": {
         "title": "5. Data Sharing",
-        "content": "We do not sell or share your personal data with third parties for commercial purposes. Data may be shared:\n- With authorities to comply with legal obligations\n- With service providers processing data on our behalf (server hosting)\n\nAll service providers comply with GDPR."
+        "content": "We do not sell or share your personal data with third parties for commercial purposes. Data may be shared:\n- With authorities to comply with legal obligations\n- With our technical service provider: Digimuoto Oy (Business ID 3474894-9), which maintains the server infrastructure and the FTN authentication service (Idura)\n\nAll service providers comply with GDPR."
       },
       "retention": {
         "title": "6. Data Retention",

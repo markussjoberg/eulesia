@@ -14,7 +14,7 @@ import {
   Clock,
   Mail,
 } from "lucide-react";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { SEOHead } from "../components/SEOHead";
 import { useAuth } from "../hooks/useAuth";
@@ -80,6 +80,8 @@ export function LoginPage() {
   const [regLastName, setRegLastName] = useState(
     initialFtnReturn.lastName ?? "",
   );
+
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   // FTN (strong authentication)
   const [ftnToken, setFtnToken] = useState<string | null>(
@@ -801,6 +803,40 @@ export function LoginPage() {
                       </div>
                     </div>
 
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={termsAccepted}
+                        onChange={(e) => setTermsAccepted(e.target.checked)}
+                        className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 flex-shrink-0"
+                        required
+                      />
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        <Trans
+                          i18nKey="termsAccept"
+                          ns="auth"
+                          components={{
+                            termsLink: (
+                              <a
+                                href="/terms"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 dark:text-blue-400 underline hover:no-underline"
+                              />
+                            ),
+                            privacyLink: (
+                              <a
+                                href="/privacy"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 dark:text-blue-400 underline hover:no-underline"
+                              />
+                            ),
+                          }}
+                        />
+                      </span>
+                    </label>
+
                     <button
                       type="submit"
                       disabled={
@@ -808,7 +844,8 @@ export function LoginPage() {
                         !regUsername ||
                         !regPassword ||
                         !regFirstName.trim() ||
-                        !regLastName.trim()
+                        !regLastName.trim() ||
+                        !termsAccepted
                       }
                       className="w-full bg-green-600 text-white py-3 px-4 rounded-xl font-medium hover:bg-green-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >

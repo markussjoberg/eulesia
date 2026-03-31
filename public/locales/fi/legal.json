@@ -13,7 +13,7 @@
       },
       "account": {
         "title": "3. Käyttäjätili",
-        "content": "Tilin luominen edellyttää voimassa olevan sähköpostiosoitteen antamista. Olet vastuussa tilisi turvallisuudesta ja kaikesta tilisi kautta tapahtuvasta toiminnasta. Ilmoita meille välittömästi, jos epäilet tilisi luvattomasta käytöstä."
+        "content": "Tilin luominen edellyttää käyttäjätunnuksen ja salasanan luomista. FTN-tunnistautumisella (pankkitunnukset / Suomi.fi) rekisteröityviltä ei vaadita sähköpostiosoitetta. Olet vastuussa tilisi turvallisuudesta ja kaikesta tilisi kautta tapahtuvasta toiminnasta. Ilmoita meille välittömästi, jos epäilet tilisi luvattomasta käytöstä."
       },
       "conduct": {
         "title": "4. Käyttäytymissäännöt",
@@ -67,13 +67,14 @@
     "sections": {
       "intro": {
         "title": "1. Rekisterinpitäjä",
-        "content": "Eulesia\nSähköposti: info@eulesia.eu\n\nTämä tietosuojaseloste kuvaa, miten keräämme, käytämme ja suojaamme henkilötietojasi EU:n yleisen tietosuoja-asetuksen (GDPR) mukaisesti."
+        "content": "Eulesia-yhdistys\nSähköposti: info@eulesia.eu\n\nTämä tietosuojaseloste kuvaa, miten keräämme, käytämme ja suojaamme henkilötietojasi EU:n yleisen tietosuoja-asetuksen (GDPR) mukaisesti."
       },
       "data_collected": {
         "title": "2. Kerättävät tiedot",
         "content": "Keräämme seuraavia henkilötietoja:",
         "items": [
-          "Nimi ja sähköpostiosoite (tilin luomiseen)",
+          "Nimi ja sähköpostiosoite (tilin luomiseen; sähköposti ei ole pakollinen FTN-tunnistautumisella rekisteröityessä)",
+          "Vahvistettu virallinen nimi (FTN-tunnistautumisesta, Finnish Trust Network / Suomi.fi)",
           "Profiilikuva (vapaaehtoinen)",
           "Julkaisemasi sisältö (keskustelut, kommentit, viestit)",
           "Äänestys- ja seurantatiedot",
@@ -98,7 +99,7 @@
       },
       "sharing": {
         "title": "5. Tietojen luovutus",
-        "content": "Emme myy tai luovuta henkilötietojasi kolmansille osapuolille kaupallisiin tarkoituksiin. Tietoja voidaan luovuttaa:\n- Viranomaisille lakisääteisten velvoitteiden noudattamiseksi\n- Palveluntarjoajille, jotka käsittelevät tietoja puolestamme (palvelinhosting)\n\nKaikki palveluntarjoajat ovat sitoutuneet noudattamaan GDPR:ää."
+        "content": "Emme myy tai luovuta henkilötietojasi kolmansille osapuolille kaupallisiin tarkoituksiin. Tietoja voidaan luovuttaa:\n- Viranomaisille lakisääteisten velvoitteiden noudattamiseksi\n- Tekniselle ylläpitäjälle: Digimuoto Oy (Y-tunnus 3474894-9), joka ylläpitää palvelimen infrastruktuuria sekä FTN-tunnistautumispalvelua (Idura)\n\nKaikki palveluntarjoajat ovat sitoutuneet noudattamaan GDPR:ää."
       },
       "retention": {
         "title": "6. Tietojen säilytys",
