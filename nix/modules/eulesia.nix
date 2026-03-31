@@ -65,6 +65,7 @@ with lib; let
     ${stringEnv "EMAIL_PROVIDER" cfg.email.provider}
     ${stringEnv "EMAIL_FROM" cfg.email.from}
     ${stringEnv "MEILI_URL" cfg.meilisearch.url}
+    ${optionalString cfg.ai.mistralEnabled (stringEnv "MISTRAL_ENABLED" "true")}
     ${stringEnv "MISTRAL_MODEL" cfg.ai.mistralModel}
     ${stringEnv "UPLOAD_DIR" cfg.uploadsDir}
     ${stringEnv "ALLOWED_ORIGINS" (concatStringsSep "," cfg.auth.nativeOrigins)}
@@ -356,6 +357,12 @@ in {
     };
 
     ai = {
+      mistralEnabled = mkOption {
+        type = types.bool;
+        default = false;
+        description = "Whether to enable scheduled Mistral-backed import jobs (minutes, ministry, EU).";
+      };
+
       mistralApiKeyFile = mkOption {
         type = types.nullOr types.path;
         default = null;

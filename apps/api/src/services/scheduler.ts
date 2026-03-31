@@ -313,43 +313,48 @@ export function initScheduler(): void {
 
   console.log("📅 Initializing background scheduler...");
 
-  // Minutes import: 03:00 (once/day — Mistral free tier is slow, round-robin needs hours)
-  cron.schedule(
-    "0 3 * * *",
-    () => {
-      runMinutesImport();
-    },
-    {
-      timezone: "Europe/Helsinki",
-    },
-  );
-  console.log("   ✓ Minutes import scheduled: 03:00 Europe/Helsinki");
+  // Mistral-backed import jobs — only schedule when explicitly enabled
+  if (process.env.MISTRAL_ENABLED === "true") {
+    // Minutes import: 03:00 (once/day — Mistral free tier is slow, round-robin needs hours)
+    cron.schedule(
+      "0 3 * * *",
+      () => {
+        runMinutesImport();
+      },
+      {
+        timezone: "Europe/Helsinki",
+      },
+    );
+    console.log("   ✓ Minutes import scheduled: 03:00 Europe/Helsinki");
 
-  // Ministry import: 08:00, 14:00, 20:00
-  cron.schedule(
-    "0 8,14,20 * * *",
-    () => {
-      runMinistryImport();
-    },
-    {
-      timezone: "Europe/Helsinki",
-    },
-  );
-  console.log(
-    "   ✓ Ministry import scheduled: 08:00, 14:00, 20:00 Europe/Helsinki",
-  );
+    // Ministry import: 08:00, 14:00, 20:00
+    cron.schedule(
+      "0 8,14,20 * * *",
+      () => {
+        runMinistryImport();
+      },
+      {
+        timezone: "Europe/Helsinki",
+      },
+    );
+    console.log(
+      "   ✓ Ministry import scheduled: 08:00, 14:00, 20:00 Europe/Helsinki",
+    );
 
-  // EU import: 10:00, 16:00
-  cron.schedule(
-    "0 10,16 * * *",
-    () => {
-      runEuImport();
-    },
-    {
-      timezone: "Europe/Helsinki",
-    },
-  );
-  console.log("   ✓ EU import scheduled: 10:00 and 16:00 Europe/Helsinki");
+    // EU import: 10:00, 16:00
+    cron.schedule(
+      "0 10,16 * * *",
+      () => {
+        runEuImport();
+      },
+      {
+        timezone: "Europe/Helsinki",
+      },
+    );
+    console.log("   ✓ EU import scheduled: 10:00 and 16:00 Europe/Helsinki");
+  } else {
+    console.log("   ℹ Mistral import jobs skipped (MISTRAL_ENABLED not set)");
+  }
 
   // GDPR data retention cleanup: 04:00 daily
   cron.schedule(

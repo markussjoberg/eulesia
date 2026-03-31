@@ -59,6 +59,7 @@
       };
     };
     meilisearch.masterKeyFile = config.sops.secrets."meili-master-key".path;
+    ai.mistralEnabled = true;
     ai.mistralApiKeyFile = config.sops.secrets."mistral-api-key".path;
     push = {
       vapidPublicKeyFile = config.sops.secrets."vapid-public-key".path;
