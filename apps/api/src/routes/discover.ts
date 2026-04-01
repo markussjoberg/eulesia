@@ -78,7 +78,7 @@ router.get(
       .from(threads)
       .leftJoin(users, eq(threads.authorId, users.id))
       .leftJoin(municipalities, eq(threads.municipalityId, municipalities.id))
-      .where(inArray(threads.id, threadIds));
+      .where(and(inArray(threads.id, threadIds), eq(threads.isHidden, false)));
 
     // Build a map of full thread data by ID
     const threadMap = new Map(threadList.map((t) => [t.thread.id, t]));

@@ -36,7 +36,7 @@ router.post(
     const [thread] = await db
       .select({ id: threads.id })
       .from(threads)
-      .where(eq(threads.id, threadId))
+      .where(and(eq(threads.id, threadId), eq(threads.isHidden, false)))
       .limit(1);
 
     if (!thread) {
@@ -143,7 +143,7 @@ router.get(
       .from(threads)
       .leftJoin(users, eq(threads.authorId, users.id))
       .leftJoin(municipalities, eq(threads.municipalityId, municipalities.id))
-      .where(inArray(threads.id, threadIds));
+      .where(and(inArray(threads.id, threadIds), eq(threads.isHidden, false)));
 
     const threadMap = new Map(threadList.map((t) => [t.thread.id, t]));
 
