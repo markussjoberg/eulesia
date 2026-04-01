@@ -141,42 +141,19 @@
   },
 
   "foundation": {
-    "title": "Haemme perustajajäsenlahjoittajaa",
-    "badge": "Seuraava askel",
-    "p1": "Eulesialla on tekninen ja tutkimuksellinen pohja — mutta jotta alusta voi toimia riippumattomasti ja turvata käyttäjien datan omistuksen pitkällä aikavälillä, tarvitaan juridinen taho.",
-    "p2": "Selvitämme parhaillaan säätiömallia. Säätiön perustaminen Suomessa edellyttää 50 000 euron peruspääomaa. Kyse ei ole sijoituksesta — vaan lahjoituksesta eurooppalaisen kansalaisinfrastruktuurin perustaksi.",
-    "p3": "Etsimme yhtä tai useampaa perustajajäsenlahjoittajaa, jotka jakavat tämän vision ja haluavat olla mukana rakentamassa eurooppalaista demokraattista vaihtoehtoa.",
-    "why1Title": "Datan omistajuus",
-    "why1Desc": "Säätiö — ei yksityinen yritys — omistaa alustan datan ja palvelimet.",
-    "why2Title": "Riippumattomuus",
-    "why2Desc": "Hallintorakenne, joka ei kuulu yhdellekään yksityiselle taholle.",
-    "why3Title": "Pitkäjänteisyys",
-    "why3Desc": "Julkinen infrastruktuuri vaatii vakautta: alusta joka on olemassa kymmenen vuoden kuluttua.",
-    "contact": "Kiinnostunut? Ota yhteyttä:",
-    "contactEmail": "info@eulesia.eu"
-  },
-
-  "foundation": {
     "title": "Eulesia ry on perustettu",
     "badge": "Y-tunnus 3613739-1",
     "p1": "Eulesia ry on rekisteröity yhdistys, joka omistaa datan, ylläpitää palvelimia ja kantaa vastuun Eulesia-palvelusta.",
-    "p2": "Yhdistys on ensimmäinen askel. Säännöissä on jo kirjattu mahdollisuus siirtyä säätiömuotoon toiminnan vakiinnuttua. Säätiö vaatii 50 000 euron perustamispääoman — etsimme perustajanlahjoittajaa.",
+    "p2": "Yhdistys on voittoa tavoittelematon ja sen säännöt turvaavat alustan riippumattomuuden. Etsimme tukijoita ja yhteistyökumppaneita toiminnan käynnistämiseen.",
     "p3": "Oletko kiinnostunut tukemaan eurooppalaisen kansalaisinfrastruktuurin syntymistä?",
     "why1Title": "Data pysyy käyttäjillä",
     "why1Desc": "Käyttäjät omistavat oman datansa. Yhdistys toimii ainoastaan datan säilyttäjänä.",
     "why2Title": "Ei kaupallistamista",
     "why2Desc": "Alustaa tai sen dataa ei voida luovuttaa kaupallisille toimijoille.",
     "why3Title": "Pitkäjänteinen rakenne",
-    "why3Desc": "Avoimet säännöt, läpinäkyvä hallinto, mahdollisuus säätiömuotoon.",
+    "why3Desc": "Avoimet säännöt, läpinäkyvä hallinto ja voittoa tavoittelematon organisaatio.",
     "contact": "Ota yhteyttä:",
     "contactEmail": "info@eulesia.eu"
-  },
-
-  "organization": {
-    "title": "Organisaatio",
-    "p1": "Eulesia on tällä hetkellä voittoa tavoittelematon projekti. Pitkän aikavälin tavoitteena on organisaatiorakenne, joka turvaa alustan jatkuvuuden ja riippumattomuuden.",
-    "p2": "Mahdollisuuksia selvitetään: itsenäinen säätiö, julkisrahoitteinen organisaatio tai yliopistopohjainen ylläpito ja kehitys.",
-    "contact": "info@eulesia.eu"
   },
 
   "funding": {
