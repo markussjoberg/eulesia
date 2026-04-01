@@ -1327,7 +1327,7 @@ router.get(
         createdAt: threads.createdAt,
       })
       .from(threads)
-      .where(eq(threads.authorId, userId))
+      .where(and(eq(threads.authorId, userId), eq(threads.isHidden, false)))
       .orderBy(desc(threads.createdAt))
       .limit(5);
 
