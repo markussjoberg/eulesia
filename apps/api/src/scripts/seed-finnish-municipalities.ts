@@ -10,8 +10,8 @@
  */
 
 import "dotenv/config";
-import { db, municipalities } from "../db/index.js";
-import { eq } from "drizzle-orm";
+import { db, locations } from "../db/index.js";
+import { eq, and } from "drizzle-orm";
 
 const FINNISH_MUNICIPALITIES: {
   name: string;
@@ -348,9 +348,9 @@ async function seedMunicipalities() {
 
   for (const m of FINNISH_MUNICIPALITIES) {
     const existing = await db
-      .select({ id: municipalities.id })
-      .from(municipalities)
-      .where(eq(municipalities.nameFi, m.nameFi))
+      .select({ id: locations.id })
+      .from(locations)
+      .where(and(eq(locations.nameFi, m.nameFi), eq(locations.country, "FI")))
       .limit(1);
 
     if (existing.length > 0) {
@@ -358,15 +358,19 @@ async function seedMunicipalities() {
       continue;
     }
 
-    await db.insert(municipalities).values({
+    await db.insert(locations).values({
       name: m.name,
+      nameLocal: m.nameFi,
       nameFi: m.nameFi,
       nameSv: m.nameSv ?? undefined,
-      region: m.region,
+      type: "municipality",
+      adminLevel: 7,
       country: "FI",
       population: m.population,
       latitude: m.latitude,
       longitude: m.longitude,
+      status: "active",
+      contentCount: 0,
     });
 
     added++;

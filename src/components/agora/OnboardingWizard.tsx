@@ -113,7 +113,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
         {/* Step content */}
         <div className="flex-1 overflow-y-auto px-6 py-4">
           {step === "municipality" && (
-            <div>
+            <div className="min-h-[320px]">
               <LocationSearch
                 value={selectedLocation}
                 onChange={setSelectedLocation}
