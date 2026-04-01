@@ -38,6 +38,7 @@ router.get(
       .select({
         id: users.id,
         name: users.name,
+        verifiedName: users.verifiedName,
         avatarUrl: users.avatarUrl,
         role: users.role,
         institutionType: users.institutionType,

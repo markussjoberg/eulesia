@@ -232,11 +232,13 @@ if (ftnEnabled) {
         .where(lt(ftnPendingRegistrations.expiresAt, new Date()))
         .catch(() => {}); // Non-critical
 
-      // Redirect to registration form with FTN token and name
+      // Redirect to registration form with FTN token and name (Title Case)
+      const toTitleCase = (s: string) =>
+        s.toLowerCase().replace(/(?:^|\s|-)\S/g, (c) => c.toUpperCase());
       const params = new URLSearchParams({
         ftn: ftnToken,
-        firstName: claims.given_name,
-        lastName: claims.family_name,
+        firstName: toTitleCase(claims.given_name),
+        lastName: toTitleCase(claims.family_name),
         ...(inviteCode ? { invite: inviteCode } : {}),
       });
       res.redirect(`${env.APP_URL}/register?${params.toString()}`);
@@ -427,15 +429,24 @@ router.post(
         throw new AppError(400, "Username already exists");
       }
 
+      // Normalize FTN names: banks like Nordea return ALL UPPER CASE
+      const toTitleCase = (s: string) =>
+        s.toLowerCase().replace(/(?:^|\s|-)\S/g, (c) => c.toUpperCase());
+
+      const ftnDisplayName = ftnClaims
+        ? `${toTitleCase(ftnClaims.givenName.split(" ")[0])} ${toTitleCase(ftnClaims.familyName)}`
+        : null;
+      const ftnVerifiedName = ftnClaims
+        ? `${toTitleCase(ftnClaims.givenName)} ${toTitleCase(ftnClaims.familyName)}`
+        : null;
+
       // Create user — with FTN strong auth data if available
       const [created] = await tx
         .insert(users)
         .values({
           username: username.toLowerCase(),
           passwordHash,
-          name: ftnClaims
-            ? `${ftnClaims.givenName} ${ftnClaims.familyName}`
-            : name,
+          name: ftnDisplayName ?? name,
           invitedBy: invitedByUserId,
           inviteCodesRemaining: 5,
           identityProvider: ftnClaims ? "ftn" : "invite",
@@ -443,7 +454,7 @@ router.post(
           identityLevel: ftnClaims ? "substantial" : "basic",
           ...(ftnClaims
             ? {
-                verifiedName: `${ftnClaims.givenName} ${ftnClaims.familyName}`,
+                verifiedName: ftnVerifiedName,
                 rpSubject: ftnClaims.sub,
                 identityIssuer: "idura_ftn",
                 identityVerifiedAt: new Date(),
@@ -706,6 +717,7 @@ router.get(
         id: user.id,
         email: user.email,
         name: user.name,
+        verifiedName: user.verifiedName,
         avatarUrl: user.avatarUrl,
         role: user.role,
         institutionType: user.institutionType,

@@ -61,6 +61,8 @@ export function ProfilePage() {
   // const [orgForm, setOrgForm] = useState({ name: '', institutionName: '', businessId: '', businessIdCountry: 'FI', websiteUrl: '', description: '' })
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [editingName, setEditingName] = useState(false);
+  const [nameInput, setNameInput] = useState(currentUser?.name || "");
   const { startGuide, hasCompletedGuide, resetAllGuides } = useGuide();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -440,9 +442,58 @@ export function ProfilePage() {
             )}
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-              {currentUser.name}
-            </h1>
+            {editingName ? (
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={nameInput}
+                  onChange={(e) => setNameInput(e.target.value)}
+                  className="text-lg font-bold px-2 py-1 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      updateProfileMutation.mutate({ name: nameInput } as any, {
+                        onSuccess: () => { refreshUser(); setEditingName(false); },
+                      });
+                    }
+                    if (e.key === "Escape") { setNameInput(currentUser.name); setEditingName(false); }
+                  }}
+                />
+                <button
+                  onClick={() => {
+                    updateProfileMutation.mutate({ name: nameInput } as any, {
+                      onSuccess: () => { refreshUser(); setEditingName(false); },
+                    });
+                  }}
+                  className="text-xs px-2 py-1 bg-blue-600 text-white rounded-lg"
+                >
+                  {t("common:actions.save", { defaultValue: "Tallenna" })}
+                </button>
+                <button
+                  onClick={() => { setNameInput(currentUser.name); setEditingName(false); }}
+                  className="text-xs px-2 py-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                >
+                  {t("common:actions.cancel", { defaultValue: "Peruuta" })}
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                  {currentUser.name}
+                </h1>
+                <button
+                  onClick={() => setEditingName(true)}
+                  className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                >
+                  {t("common:actions.edit", { defaultValue: "Muokkaa" })}
+                </button>
+              </div>
+            )}
+            {currentUser.verifiedName && currentUser.verifiedName !== currentUser.name && (
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                {t("profile:name.verifiedAs", { defaultValue: "Virallinen nimi:" })} {currentUser.verifiedName}
+              </p>
+            )}
             <div className="flex items-center gap-2 mt-1">
               {currentUser.identityVerified && (
                 <span className="inline-flex items-center gap-1 text-xs text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">
