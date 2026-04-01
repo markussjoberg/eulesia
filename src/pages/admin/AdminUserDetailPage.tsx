@@ -143,7 +143,7 @@ export function AdminUserDetailPage() {
               {t("userDetail.comments", { count: user.commentCount })}
             </div>
             {user.identityVerified ? (
-              <div className="flex items-center gap-2 text-green-700">
+              <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
                 <Shield className="w-4 h-4" />
                 {t("userDetail.verified")}
               </div>
@@ -167,7 +167,7 @@ export function AdminUserDetailPage() {
                   toggleVerificationMutation.mutate({ id, verified: false })
                 }
                 disabled={toggleVerificationMutation.isPending}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm border border-red-300 text-red-700 rounded-lg hover:bg-red-50 disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm border border-red-300 dark:border-red-700 text-red-700 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50"
               >
                 {toggleVerificationMutation.isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -185,7 +185,7 @@ export function AdminUserDetailPage() {
                   toggleVerificationMutation.mutate({ id, verified: true })
                 }
                 disabled={toggleVerificationMutation.isPending}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm border border-green-300 text-green-700 rounded-lg hover:bg-green-50 disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm border border-green-300 dark:border-green-700 text-green-700 dark:text-green-400 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 disabled:opacity-50"
               >
                 {toggleVerificationMutation.isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />

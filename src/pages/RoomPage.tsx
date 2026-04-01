@@ -223,7 +223,7 @@ export function RoomPage() {
 
       {/* Room header */}
       <div
-        className={`px-4 py-6 ${visibility === "public" ? "bg-green-50" : "bg-amber-50"}`}
+        className={`px-4 py-6 ${visibility === "public" ? "bg-green-50 dark:bg-green-900/20" : "bg-amber-50 dark:bg-amber-900/20"}`}
       >
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -324,8 +324,8 @@ export function RoomPage() {
             </form>
           </div>
         ) : (
-          <div className="bg-amber-50 rounded-xl p-4 border border-amber-200 text-center">
-            <p className="text-sm text-amber-800">
+          <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 border border-amber-200 dark:border-amber-800 text-center">
+            <p className="text-sm text-amber-800 dark:text-amber-300">
               {currentUser ? t("room.needInvitation") : t("room.signInToPost")}
             </p>
           </div>
@@ -750,7 +750,7 @@ function MessageCard({
             {canDelete && (
               <button
                 onClick={() => setShowDeleteConfirm(true)}
-                className="p-1.5 rounded hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors"
+                className="p-1.5 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-400 hover:text-red-500 transition-colors"
                 title={t("common:actions.delete")}
               >
                 <Trash2 className="w-3.5 h-3.5" />

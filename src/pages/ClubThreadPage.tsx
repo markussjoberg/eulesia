@@ -299,7 +299,7 @@ export function ClubThreadPage() {
             )}
             <button
               onClick={() => setConfirmDeleteThread(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-600 rounded-lg border border-red-200 hover:bg-red-50 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 rounded-lg border border-red-200 dark:border-red-800 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
             >
               <Trash2 className="w-3.5 h-3.5" />
               {t("clubs:moderation.deleteThread")}
@@ -489,7 +489,7 @@ export function ClubThreadPage() {
                     {(isModOrAdmin || comment.authorId === currentUser?.id) && (
                       <button
                         onClick={() => setConfirmDeleteComment(comment.id)}
-                        className="absolute top-2 right-2 p-1 rounded hover:bg-red-50 opacity-0 group-hover/comment:opacity-100 transition-opacity z-10"
+                        className="absolute top-2 right-2 p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20 opacity-0 group-hover/comment:opacity-100 transition-opacity z-10"
                         title={t("clubs:moderation.deleteComment")}
                       >
                         <Trash2 className="w-3.5 h-3.5 text-red-400 hover:text-red-600" />

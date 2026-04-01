@@ -299,7 +299,7 @@ export function TopBar() {
                   )}
                 </div>
                 {currentUser.identityVerified && (
-                  <div className="hidden sm:flex items-center gap-1 text-xs text-green-700 bg-green-50 px-2 py-1 rounded-full">
+                  <div className="hidden sm:flex items-center gap-1 text-xs text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">
                     <Shield className="w-3 h-3" />
                     <span>{t("verified")}</span>
                   </div>
