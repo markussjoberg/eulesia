@@ -1273,6 +1273,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  verifiedName?: string;
   avatarUrl?: string;
   role: "citizen" | "institution" | "admin";
   institutionType?: "municipality" | "agency" | "ministry";

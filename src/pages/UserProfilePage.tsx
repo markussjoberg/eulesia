@@ -45,6 +45,7 @@ interface InstitutionTopic {
 interface UserProfile {
   id: string;
   name: string;
+  verifiedName?: string;
   avatarUrl?: string;
   role: "citizen" | "institution" | "admin";
   institutionType?: string;
@@ -86,12 +87,12 @@ function ThreadListItem({ thread }: { thread: UserThread }) {
             <Link
               to={`/kunnat/${thread.municipalityId}`}
               onClick={(e) => e.stopPropagation()}
-              className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded hover:opacity-80 transition-opacity"
+              className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded hover:opacity-80 transition-opacity"
             >
               {thread.municipalityName}
             </Link>
           ) : (
-            <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
+            <span className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded">
               {thread.municipalityName}
             </span>
           ))}
@@ -218,7 +219,7 @@ export function UserProfilePage() {
 
       {/* Profile header */}
       <div
-        className={`bg-gradient-to-b ${isInstitution ? "from-violet-50" : "from-blue-50"} to-white px-4 py-6`}
+        className={`bg-gradient-to-b ${isInstitution ? "from-violet-50 dark:from-violet-950/30" : "from-blue-50 dark:from-blue-950/30"} to-white dark:to-gray-950 px-4 py-6`}
       >
         <div className="flex items-start gap-4">
           {/* Avatar */}
@@ -243,16 +244,21 @@ export function UserProfilePage() {
             <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 truncate">
               {user.name}
             </h1>
+            {user.verifiedName && user.verifiedName !== user.name && (
+              <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                ({user.verifiedName})
+              </p>
+            )}
 
             {isInstitution && user.institutionName && (
-              <div className="flex items-center gap-1.5 text-sm text-teal-700 mt-1">
+              <div className="flex items-center gap-1.5 text-sm text-teal-700 dark:text-teal-400 mt-1">
                 <Building2 className="w-4 h-4" />
                 <span>{user.institutionName}</span>
               </div>
             )}
 
             {user.identityVerified && (
-              <div className="flex items-center gap-1 text-xs text-green-700 bg-green-50 px-2 py-1 rounded-full w-fit mt-2">
+              <div className="flex items-center gap-1 text-xs text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full w-fit mt-2">
                 <Shield className="w-3 h-3" />
                 <span>{t("profile:userProfile.verified")}</span>
               </div>
@@ -344,18 +350,18 @@ export function UserProfilePage() {
 
         {/* Institution topic info */}
         {hasTopic && (
-          <div className="mt-4 p-3 bg-violet-50 border border-violet-200 rounded-lg">
+          <div className="mt-4 p-3 bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800 rounded-lg">
             <div className="flex items-center gap-2 mb-1">
-              <Hash className="w-4 h-4 text-violet-600" />
+              <Hash className="w-4 h-4 text-violet-600 dark:text-violet-400" />
               <Link
                 to={`/agora/tag/${encodeURIComponent(user.institutionTopic!.topicTag)}`}
-                className="text-sm font-medium text-violet-700 hover:underline"
+                className="text-sm font-medium text-violet-700 dark:text-violet-400 hover:underline"
               >
                 {user.institutionTopic!.topicTag.replace(/-/g, " ")}
               </Link>
             </div>
             {user.institutionTopic!.description && (
-              <p className="text-xs text-violet-600">
+              <p className="text-xs text-violet-600 dark:text-violet-400">
                 {user.institutionTopic!.description}
               </p>
             )}
@@ -365,7 +371,7 @@ export function UserProfilePage() {
                   <Link
                     key={tag}
                     to={`/agora/tag/${encodeURIComponent(tag)}`}
-                    className="text-xs bg-violet-100 text-violet-600 px-2 py-0.5 rounded-full hover:bg-violet-200"
+                    className="text-xs bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 px-2 py-0.5 rounded-full hover:bg-violet-200 dark:hover:bg-violet-900/40"
                   >
                     {tag.replace(/-/g, " ")}
                   </Link>
