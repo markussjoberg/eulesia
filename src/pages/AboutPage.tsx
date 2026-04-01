@@ -6,7 +6,6 @@ import {
   Building2,
   Shield,
   Sparkles,
-  BookOpen,
   Scale,
   Landmark,
   FlaskConical,
