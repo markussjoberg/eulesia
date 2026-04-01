@@ -39,7 +39,7 @@ export function ClubCard({ club }: ClubCardProps) {
                 </span>
               )}
               {!club.isPublic && (
-                <span className="text-xs text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full flex items-center gap-1">
+                <span className="text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-2 py-0.5 rounded-full flex items-center gap-1">
                   <Lock className="w-3 h-3" />
                   {t("closedClub")}
                 </span>

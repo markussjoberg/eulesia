@@ -129,9 +129,9 @@ export function UserHomePage() {
         )}
 
         {publicRooms.length === 0 && accessiblePrivateRooms.length === 0 && (
-          <div className="text-center py-8 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+          <div className="text-center py-8 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
             <MessageSquare className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-            <p className="text-gray-600">{t("userHome.noRooms")}</p>
+            <p className="text-gray-600 dark:text-gray-400">{t("userHome.noRooms")}</p>
           </div>
         )}
       </div>

@@ -32,7 +32,7 @@ export function MessageActions({
       {canDelete && (
         <button
           onClick={onDelete}
-          className="p-1 rounded hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors"
+          className="p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-400 hover:text-red-500 transition-colors"
           title={t("actions.delete")}
         >
           <Trash2 className="w-3.5 h-3.5" />

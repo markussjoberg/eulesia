@@ -135,7 +135,7 @@ export function ReportDialog({
           </div>
 
           {submitReportMutation.isSuccess && (
-            <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800">
+            <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-sm text-green-800 dark:text-green-300">
               {t("report.submitted")}
             </div>
           )}

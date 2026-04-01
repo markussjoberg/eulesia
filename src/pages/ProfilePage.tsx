@@ -356,8 +356,8 @@ export function ProfilePage() {
       <SEOHead title={t("profile:title")} path="/profile" noIndex />
       {/* Active sanctions */}
       {mySanctions && mySanctions.length > 0 && (
-        <div className="bg-red-50 border-b border-red-200 px-4 py-4">
-          <div className="flex items-center gap-2 text-red-800 font-medium mb-2">
+        <div className="bg-red-50 dark:bg-red-900/20 border-b border-red-200 dark:border-red-800 px-4 py-4">
+          <div className="flex items-center gap-2 text-red-800 dark:text-red-300 font-medium mb-2">
             <AlertTriangle className="w-4 h-4" />
             {t("profile:sanctions.active")}
           </div>
@@ -366,10 +366,10 @@ export function ProfilePage() {
             .map((s) => (
               <div
                 key={s.id}
-                className="bg-white rounded-lg p-3 border border-red-200 mb-2"
+                className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-red-200 dark:border-red-800 mb-2"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-red-800 capitalize">
+                  <span className="text-sm font-medium text-red-800 dark:text-red-300 capitalize">
                     {s.sanctionType}
                   </span>
                   {s.expiresAt && (
@@ -445,7 +445,7 @@ export function ProfilePage() {
             </h1>
             <div className="flex items-center gap-2 mt-1">
               {currentUser.identityVerified && (
-                <span className="inline-flex items-center gap-1 text-xs text-green-700 bg-green-50 px-2 py-1 rounded-full">
+                <span className="inline-flex items-center gap-1 text-xs text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">
                   <Shield className="w-3 h-3" />
                   {currentUser.identityLevel === "high"
                     ? t("identity.highAssurance")
@@ -490,7 +490,7 @@ export function ProfilePage() {
                     : t("identity.magicLink")}
                 </p>
               </div>
-              <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full">
+              <span className="text-xs text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">
                 {t("identity.active")}
               </span>
             </div>
@@ -530,7 +530,7 @@ export function ProfilePage() {
                     </div>
                     <div>
                       {mgr.status === 'approved' && (
-                        <span className="inline-flex items-center gap-1 text-xs text-green-700 bg-green-50 px-2 py-1 rounded-full">
+                        <span className="inline-flex items-center gap-1 text-xs text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">
                           <CheckCircle className="w-3 h-3" />
                           {t('institutions.approved')}
                         </span>
@@ -568,12 +568,12 @@ export function ProfilePage() {
             {showAvailableInstitutions && (
               <div className="space-y-2">
                 {claimInstitutionMutation.isSuccess && (
-                  <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800">
+                  <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-sm text-green-800 dark:text-green-300">
                     {t('institutions.claimSent')}
                   </div>
                 )}
                 {claimInstitutionMutation.isError && (
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
+                  <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-800 dark:text-red-300">
                     {t('institutions.claimError')}
                   </div>
                 )}
@@ -618,12 +618,12 @@ export function ProfilePage() {
             {showCreateOrg && (
               <div className="space-y-3 p-4 bg-purple-50 dark:bg-blue-900/30 rounded-lg border border-purple-200 dark:border-gray-800">
                 {createOrgMutation.isSuccess && (
-                  <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800">
+                  <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-sm text-green-800 dark:text-green-300">
                     {t('institutions.orgCreated')}
                   </div>
                 )}
                 {createOrgMutation.isError && (
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
+                  <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-800 dark:text-red-300">
                     {t('institutions.orgCreateError')}
                   </div>
                 )}
@@ -760,15 +760,15 @@ export function ProfilePage() {
                     key={code.id}
                     className={`flex items-center justify-between p-3 rounded-lg border ${
                       code.status === "available"
-                        ? "bg-green-50 border-green-200"
+                        ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
                         : code.status === "used"
                           ? "bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-800"
-                          : "bg-red-50 border-red-200"
+                          : "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
                     }`}
                   >
                     <div>
                       <p
-                        className={`font-mono text-sm ${code.status === "available" ? "text-green-700" : "text-gray-500 dark:text-gray-400"}`}
+                        className={`font-mono text-sm ${code.status === "available" ? "text-green-700 dark:text-green-400" : "text-gray-500 dark:text-gray-400"}`}
                       >
                         {code.code}
                       </p>
@@ -784,7 +784,7 @@ export function ProfilePage() {
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => handleCopyCode(code.code)}
-                          className="p-1.5 text-green-600 hover:bg-green-100 rounded"
+                          className="p-1.5 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 rounded"
                           title={t("common:actions.copyCode")}
                         >
                           {copiedCode === code.code ? (
@@ -795,7 +795,7 @@ export function ProfilePage() {
                         </button>
                         <button
                           onClick={() => handleRevokeInvite(code.id)}
-                          className="p-1.5 text-red-500 hover:bg-red-100 rounded"
+                          className="p-1.5 text-red-500 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded"
                           title={t("common:actions.revokeCode")}
                         >
                           <Trash2 className="w-4 h-4" />
@@ -938,11 +938,11 @@ export function ProfilePage() {
             </h2>
           </div>
           <div className="p-4 space-y-4">
-            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-              <p className="text-sm text-green-800 font-medium">
+            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
+              <p className="text-sm text-green-800 dark:text-green-300 font-medium">
                 {t("privacy.notProduct")}
               </p>
-              <p className="text-xs text-green-700 mt-1">
+              <p className="text-xs text-green-700 dark:text-green-400 mt-1">
                 {t("privacy.notProductDesc")}
               </p>
             </div>

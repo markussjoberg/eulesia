@@ -304,7 +304,7 @@ export function AdminSettingsPage() {
                   {adminInvites.map((code) => (
                     <div
                       key={code.id}
-                      className="flex items-center justify-between px-4 py-2.5 bg-gray-50/50"
+                      className="flex items-center justify-between px-4 py-2.5 bg-gray-50/50 dark:bg-gray-800/30"
                     >
                       <div className="flex items-center gap-3">
                         <code

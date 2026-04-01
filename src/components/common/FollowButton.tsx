@@ -78,11 +78,11 @@ export function FollowButton({
       ? "bg-teal-600 text-white hover:bg-red-600"
       : "bg-blue-600 text-white hover:bg-blue-700",
     outline: isSubscribed
-      ? "border border-teal-600 text-teal-700 hover:bg-red-50 hover:border-red-600 hover:text-red-700"
-      : "border border-blue-600 text-blue-700 hover:bg-blue-50",
+      ? "border border-teal-600 text-teal-700 dark:text-teal-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-600 hover:text-red-700 dark:hover:text-red-400"
+      : "border border-blue-600 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20",
     ghost: isSubscribed
-      ? "text-teal-700 hover:bg-red-50 hover:text-red-700"
-      : "text-blue-700 hover:bg-blue-50",
+      ? "text-teal-700 dark:text-teal-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-400"
+      : "text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20",
   };
 
   return (
