@@ -237,6 +237,18 @@ router.patch(
       }
     }
 
+    // If user has a verified name (FTN), enforce that the surname stays the same
+    if (updates.name && req.user!.verifiedName) {
+      const verifiedParts = req.user!.verifiedName.split(" ");
+      const verifiedSurname = verifiedParts[verifiedParts.length - 1];
+      const newParts = updates.name.trim().split(" ");
+      const newSurname = newParts[newParts.length - 1];
+
+      if (newSurname.toLowerCase() !== verifiedSurname.toLowerCase()) {
+        throw new AppError(400, "Sukunimeä ei voi muuttaa. Vain kutsumanimen voi vaihtaa.");
+      }
+    }
+
     const [updatedUser] = await db
       .update(users)
       .set({

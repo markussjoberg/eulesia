@@ -62,7 +62,12 @@ export function ProfilePage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [editingName, setEditingName] = useState(false);
-  const [nameInput, setNameInput] = useState(currentUser?.name || "");
+  const [nameError, setNameError] = useState("");
+  // Split name into first name(s) and surname for editing
+  const nameParts = (currentUser?.name || "").split(" ");
+  const currentSurname = nameParts.length > 1 ? nameParts[nameParts.length - 1] : "";
+  const currentFirstName = nameParts.length > 1 ? nameParts.slice(0, -1).join(" ") : currentUser?.name || "";
+  const [firstNameInput, setFirstNameInput] = useState(currentFirstName);
   const { startGuide, hasCompletedGuide, resetAllGuides } = useGuide();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -443,38 +448,53 @@ export function ProfilePage() {
           </div>
           <div>
             {editingName ? (
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={nameInput}
-                  onChange={(e) => setNameInput(e.target.value)}
-                  className="text-lg font-bold px-2 py-1 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  autoFocus
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      updateProfileMutation.mutate({ name: nameInput } as any, {
-                        onSuccess: () => { refreshUser(); setEditingName(false); },
+              <div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={firstNameInput}
+                    onChange={(e) => { setFirstNameInput(e.target.value); setNameError(""); }}
+                    placeholder={t("profile:name.firstNamePlaceholder", { defaultValue: "Kutsumanimi" })}
+                    className="text-lg font-bold px-2 py-1 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent w-36"
+                    autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && firstNameInput.trim()) {
+                        const newName = `${firstNameInput.trim()} ${currentSurname}`;
+                        updateProfileMutation.mutate({ name: newName } as any, {
+                          onSuccess: () => { refreshUser(); setEditingName(false); setNameError(""); },
+                          onError: (err: any) => { setNameError(err?.message || "Virhe"); },
+                        });
+                      }
+                      if (e.key === "Escape") { setFirstNameInput(currentFirstName); setEditingName(false); setNameError(""); }
+                    }}
+                  />
+                  {currentUser.verifiedName && (
+                    <span className="text-lg font-bold text-gray-900 dark:text-gray-100">{currentSurname}</span>
+                  )}
+                  <button
+                    onClick={() => {
+                      if (!firstNameInput.trim()) return;
+                      const newName = `${firstNameInput.trim()} ${currentSurname}`;
+                      updateProfileMutation.mutate({ name: newName } as any, {
+                        onSuccess: () => { refreshUser(); setEditingName(false); setNameError(""); },
+                        onError: (err: any) => { setNameError(err?.message || "Virhe"); },
                       });
-                    }
-                    if (e.key === "Escape") { setNameInput(currentUser.name); setEditingName(false); }
-                  }}
-                />
-                <button
-                  onClick={() => {
-                    updateProfileMutation.mutate({ name: nameInput } as any, {
-                      onSuccess: () => { refreshUser(); setEditingName(false); },
-                    });
-                  }}
-                  className="text-xs px-2 py-1 bg-blue-600 text-white rounded-lg"
-                >
-                  {t("common:actions.save", { defaultValue: "Tallenna" })}
-                </button>
-                <button
-                  onClick={() => { setNameInput(currentUser.name); setEditingName(false); }}
-                  className="text-xs px-2 py-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-                >
-                  {t("common:actions.cancel", { defaultValue: "Peruuta" })}
-                </button>
+                    }}
+                    className="text-xs px-2 py-1 bg-blue-600 text-white rounded-lg"
+                  >
+                    {t("common:actions.save", { defaultValue: "Tallenna" })}
+                  </button>
+                  <button
+                    onClick={() => { setFirstNameInput(currentFirstName); setEditingName(false); setNameError(""); }}
+                    className="text-xs px-2 py-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                  >
+                    {t("common:actions.cancel", { defaultValue: "Peruuta" })}
+                  </button>
+                </div>
+                {nameError && <p className="text-xs text-red-500 mt-1">{nameError}</p>}
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                  {t("profile:name.editHint", { defaultValue: "Voit vaihtaa kutsumanimen. Sukunimi on vahvistettu." })}
+                </p>
               </div>
             ) : (
               <div className="flex items-center gap-2">
