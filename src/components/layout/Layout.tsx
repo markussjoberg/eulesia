@@ -18,6 +18,7 @@ export function Layout({
   fullWidth = false,
 }: LayoutProps) {
   const { t } = useTranslation();
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <a

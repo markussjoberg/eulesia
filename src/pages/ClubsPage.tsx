@@ -30,6 +30,7 @@ import {
   useDeclineClubInvitation,
 } from "../hooks/useApi";
 import { useAuth } from "../hooks/useAuth";
+
 import { api } from "../lib/api";
 import type { Club as ApiClub, LocationResult } from "../lib/api";
 

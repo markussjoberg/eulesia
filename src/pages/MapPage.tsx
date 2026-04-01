@@ -10,6 +10,7 @@ export function MapPage() {
   const { t: _t } = useTranslation("map");
   const [selectedPoint, setSelectedPoint] = useState<MapPoint | null>(null);
   const [filters, setFilters] = useState<MapFilterState>(DEFAULT_FILTERS);
+
   const handlePointClick = (point: MapPoint) => {
     setSelectedPoint(point);
   };
