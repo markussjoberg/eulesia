@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MapPin } from "lucide-react";
 import { Layout } from "../components/layout";
 import { SEOHead } from "../components/SEOHead";
 import { ThreadCard, InlineThreadForm } from "../components/agora";
@@ -186,13 +186,23 @@ export function MunicipalityPage() {
 
         {!isLoading && !error && threads.length === 0 && (
           <div className="text-center py-12 text-gray-500">
-            <p>{t("agora:municipality.noDiscussions")}</p>
-            <Link
-              to="/agora"
-              className="mt-2 text-blue-600 hover:underline text-sm inline-block"
-            >
-              {t("agora:municipality.goToAgora")}
-            </Link>
+            <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <MapPin className="w-8 h-8 text-blue-400" />
+            </div>
+            <p className="font-medium text-gray-700 dark:text-gray-300">
+              {t("agora:municipality.noDiscussionsYet", { defaultValue: "Täällä ei ole vielä keskusteluja." })}
+            </p>
+            <p className="text-sm mt-1 text-gray-500">
+              {t("agora:municipality.beFirst", { defaultValue: "Ole ensimmäinen joka aloittaa!" })}
+            </p>
+            {!currentUser && (
+              <Link
+                to="/kirjaudu"
+                className="mt-4 inline-block px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                {t("common:actions.signIn", { defaultValue: "Kirjaudu sisään" })}
+              </Link>
+            )}
           </div>
         )}
 

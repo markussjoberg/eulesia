@@ -5,3 +5,4 @@ export { FeedFilters } from "./FeedFilters";
 export { FeedOnboarding } from "./FeedOnboarding";
 export { NewThreadModal } from "./NewThreadModal";
 export { InlineThreadForm } from "./InlineThreadForm";
+export { OnboardingWizard } from "./OnboardingWizard";
