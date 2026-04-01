@@ -34,7 +34,7 @@ i18n
     detection: {
       order: ["localStorage", "navigator"],
       lookupLocalStorage: "i18nextLng",
-      caches: [], // Don't auto-cache detected language; LanguageSwitcher handles explicit user choice
+      caches: ["localStorage"],
     },
 
     interpolation: {
