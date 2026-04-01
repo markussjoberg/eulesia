@@ -15,9 +15,10 @@ import {
   FeedFilters,
   FeedOnboarding,
   InlineThreadForm,
+  OnboardingWizard,
 } from "../components/agora";
 import { ContentEndMarker, ThreadListSkeleton } from "../components/common";
-import { MapPin, Building2, Globe, Users } from "lucide-react";
+import { MapPin, Building2, Globe, Users, HelpCircle } from "lucide-react";
 import {
   useThreads,
   useVoteThread,
@@ -102,6 +103,8 @@ export function AgoraPage() {
   const [selectedTags] = useState<string[]>([]);
   const [selectedMunicipality] = useState<string | undefined>();
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [setupDismissed, setSetupDismissed] = useState(false);
+  const [wizardDismissed, setWizardDismissed] = useState(false);
   const onboardingDone = !!currentUser?.onboardingCompletedAt;
   const completeOnboardingMutation = useCompleteOnboarding();
 
@@ -164,32 +167,22 @@ export function AgoraPage() {
     }
   }, [currentUser, subscriptionsData, hasSubscriptions, feedScopeInitialized]);
 
-  // Show onboarding banner for users without subscriptions
-  // In Tutustu (all) tab: show compact onboarding banner above CVS content
-  // In Following tab: show full onboarding (existing behavior)
-  useEffect(() => {
-    if (
-      !isLoading &&
-      !hasSubscriptions &&
-      !onboardingDone &&
-      currentUser &&
-      (feedScope === "following" || feedScope === "all")
-    ) {
-      setShowOnboarding(true);
-    } else if (feedScope !== "following" && feedScope !== "all") {
-      setShowOnboarding(false);
-    }
-  }, [feedScope, isLoading, hasSubscriptions, onboardingDone, currentUser]);
+  // Show wizard automatically for new users without subscriptions
+  const showWizard =
+    !wizardDismissed &&
+    !hasSubscriptions &&
+    !onboardingDone &&
+    !!currentUser &&
+    !isLoading;
 
-  // Auto-trigger agora guide on first visit
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!hasCompletedGuide("agora") && !isGuideActive) {
-        startGuide("agora");
-      }
-    }, 800);
-    return () => clearTimeout(timer);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // showOnboarding is only triggered manually via "?" button
+  const showInlineSetup =
+    !setupDismissed &&
+    !hasSubscriptions &&
+    !onboardingDone &&
+    !!currentUser &&
+    !isLoading &&
+    wizardDismissed;
 
   // Accumulate threads across pages
   useEffect(() => {
@@ -319,19 +312,43 @@ export function AgoraPage() {
           },
         }}
       />
+
+      {/* Onboarding wizard for new users */}
+      {showWizard && (
+        <OnboardingWizard
+          onComplete={() => {
+            completeOnboardingMutation.mutate();
+            setWizardDismissed(true);
+          }}
+        />
+      )}
+
       {/* Page header */}
       <div
         className="bg-white dark:bg-gray-900 px-4 py-4 border-b border-gray-200 dark:border-gray-800"
         data-guide="agora-header"
       >
-        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-          {t("title")}
-        </h1>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-          {t(`subtitle_${Math.floor(Date.now() / 86400000) % 5}`, {
-            defaultValue: t("subtitle"),
-          })}
-        </p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+              {t("title")}
+            </h1>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              {t(`subtitle_${Math.floor(Date.now() / 86400000) % 5}`, {
+                defaultValue: t("subtitle"),
+              })}
+            </p>
+          </div>
+          {currentUser && (
+            <button
+              onClick={() => setShowOnboarding((v) => !v)}
+              className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              title={t("agora:onboarding.welcome", { defaultValue: "Ohjeet" })}
+            >
+              <HelpCircle className="w-5 h-5" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Thread list */}
@@ -366,17 +383,40 @@ export function AgoraPage() {
           </div>
         )}
 
-        {/* Onboarding: full on following, compact banner on Tutustu */}
-        {!isLoading &&
-          !error &&
-          showOnboarding &&
-          feedScope === "following" && (
-            <div className="py-8">
-              <FeedOnboarding onComplete={handleOnboardingComplete} />
+        {/* Manual onboarding via "?" button */}
+        {showOnboarding && (
+          <div className="py-4">
+            <FeedOnboarding onComplete={() => { handleOnboardingComplete(); setShowOnboarding(false); }} />
+          </div>
+        )}
+
+        {/* Inline first-time setup for new users */}
+        {!showOnboarding && showInlineSetup && (
+          <div className="bg-gradient-to-r from-blue-50 to-teal-50 dark:from-blue-900/20 dark:to-teal-900/20 rounded-xl border border-blue-200 dark:border-blue-800 p-4">
+            <div className="flex items-start justify-between gap-2 mb-3">
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">
+                  {t("agora:onboarding.welcome", { defaultValue: "Tervetuloa Eulesiaan!" })}
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                  {t("agora:onboarding.setupHint", { defaultValue: "Valitse kotikuntasi saadaksesi paikallisen syötteen." })}
+                </p>
+              </div>
+              <button
+                onClick={() => setSetupDismissed(true)}
+                className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 shrink-0"
+              >
+                ✕
+              </button>
             </div>
-          )}
-        {!isLoading && !error && showOnboarding && feedScope === "all" && (
-          <FeedOnboarding onComplete={handleOnboardingComplete} compact />
+            <FeedOnboarding
+              onComplete={() => { handleOnboardingComplete(); setSetupDismissed(true); }}
+              compact
+            />
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 border-t border-blue-100 dark:border-blue-800 pt-3">
+              {t("agora:onboarding.followFriendsTip", { defaultValue: "Kavereita voi seurata heidän profiilisivultaan." })}
+            </p>
+          </div>
         )}
 
         {/* Scope-specific banner when no subscriptions — shown above fallback content */}
@@ -399,7 +439,7 @@ export function AgoraPage() {
             <button
               onClick={() => {
                 setFeedScope("following");
-                setShowOnboarding(true);
+                setSetupDismissed(false);
               }}
               className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors"
             >
@@ -409,10 +449,9 @@ export function AgoraPage() {
           </div>
         )}
 
-        {/* Thread list — show when not in full-page onboarding mode */}
+        {/* Thread list */}
         {!isLoading &&
           !error &&
-          !(showOnboarding && feedScope === "following") &&
           threads.length > 0 && (
             <div className="space-y-3">
               {threads.map((item, index) => (
@@ -431,16 +470,15 @@ export function AgoraPage() {
             </div>
           )}
 
-        {/* Empty state (not onboarding, not scope hint) */}
+        {/* Empty state */}
         {!isLoading &&
           !error &&
-          !(showOnboarding && feedScope === "following") &&
           threads.length === 0 && (
             <div className="text-center py-12 text-gray-500">
               <p>{t("noThreads")}</p>
               {feedScope === "following" && (
                 <button
-                  onClick={() => setShowOnboarding(true)}
+                  onClick={() => setSetupDismissed(false)}
                   className="mt-2 text-blue-600 hover:underline text-sm"
                 >
                   {t("editSubscriptions")}
@@ -450,8 +488,7 @@ export function AgoraPage() {
           )}
 
         {/* Infinite scroll trigger / End marker */}
-        {!(showOnboarding && feedScope === "following") &&
-          threads.length > 0 &&
+        {threads.length > 0 &&
           (hasMore ? (
             <>
               <div ref={loadMoreRef} className="py-4" />

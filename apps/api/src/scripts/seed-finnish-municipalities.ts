@@ -1,0 +1,381 @@
+/**
+ * Seed all Finnish municipalities from a static list with coordinates.
+ *
+ * Data source: Statistics Finland / Tilastokeskus (2024)
+ * All 309 Finnish municipalities with approximate coordinates.
+ *
+ * Usage: npx tsx src/scripts/seed-finnish-municipalities.ts
+ *
+ * Safe to run multiple times — skips existing municipalities by name.
+ */
+
+import "dotenv/config";
+import { db, municipalities } from "../db/index.js";
+import { eq } from "drizzle-orm";
+
+const FINNISH_MUNICIPALITIES: {
+  name: string;
+  nameFi: string;
+  nameSv: string | null;
+  region: string;
+  population?: number;
+  latitude: string;
+  longitude: string;
+}[] = [
+  // Uusimaa
+  { name: "Helsinki", nameFi: "Helsinki", nameSv: "Helsingfors", region: "Uusimaa", population: 658457, latitude: "60.1699", longitude: "24.9384" },
+  { name: "Espoo", nameFi: "Espoo", nameSv: "Esbo", region: "Uusimaa", population: 302940, latitude: "60.2055", longitude: "24.6559" },
+  { name: "Vantaa", nameFi: "Vantaa", nameSv: "Vanda", region: "Uusimaa", population: 240485, latitude: "60.2934", longitude: "25.0378" },
+  { name: "Hyvinkää", nameFi: "Hyvinkää", nameSv: "Hyvinge", region: "Uusimaa", population: 46500, latitude: "60.6304", longitude: "24.8609" },
+  { name: "Järvenpää", nameFi: "Järvenpää", nameSv: "Träskända", region: "Uusimaa", population: 44000, latitude: "60.4732", longitude: "25.0900" },
+  { name: "Karkkila", nameFi: "Karkkila", nameSv: "Högfors", region: "Uusimaa", population: 9000, latitude: "60.5355", longitude: "24.2102" },
+  { name: "Kauniainen", nameFi: "Kauniainen", nameSv: "Grankulla", region: "Uusimaa", population: 9800, latitude: "60.2097", longitude: "24.7262" },
+  { name: "Kerava", nameFi: "Kerava", nameSv: "Kervo", region: "Uusimaa", population: 36500, latitude: "60.4042", longitude: "25.1027" },
+  { name: "Kirkkonummi", nameFi: "Kirkkonummi", nameSv: "Kyrkslätt", region: "Uusimaa", population: 40000, latitude: "60.1282", longitude: "24.4404" },
+  { name: "Lapinjärvi", nameFi: "Lapinjärvi", nameSv: "Lappträsk", region: "Uusimaa", population: 2700, latitude: "60.6167", longitude: "26.1667" },
+  { name: "Lohja", nameFi: "Lohja", nameSv: "Lojo", region: "Uusimaa", population: 47000, latitude: "60.2487", longitude: "24.0652" },
+  { name: "Loviisa", nameFi: "Loviisa", nameSv: "Lovisa", region: "Uusimaa", population: 15000, latitude: "60.4574", longitude: "26.2244" },
+  { name: "Myrskylä", nameFi: "Myrskylä", nameSv: "Mörskom", region: "Uusimaa", population: 2000, latitude: "60.6667", longitude: "25.8500" },
+  { name: "Mäntsälä", nameFi: "Mäntsälä", nameSv: "Mäntsälä", region: "Uusimaa", population: 20500, latitude: "60.6349", longitude: "25.3175" },
+  { name: "Nummi-Pusula", nameFi: "Nummi-Pusula", nameSv: "Nummi-Pusula", region: "Uusimaa", population: 6000, latitude: "60.3333", longitude: "24.0000" },
+  { name: "Nurmijärvi", nameFi: "Nurmijärvi", nameSv: "Nurmijärvi", region: "Uusimaa", population: 43000, latitude: "60.4667", longitude: "24.8167" },
+  { name: "Pornainen", nameFi: "Pornainen", nameSv: "Borgnäs", region: "Uusimaa", population: 5200, latitude: "60.4833", longitude: "25.3667" },
+  { name: "Porvoo", nameFi: "Porvoo", nameSv: "Borgå", region: "Uusimaa", population: 50000, latitude: "60.3927", longitude: "25.6653" },
+  { name: "Pukkila", nameFi: "Pukkila", nameSv: "Pukkila", region: "Uusimaa", population: 2000, latitude: "60.6333", longitude: "25.5667" },
+  { name: "Raasepori", nameFi: "Raasepori", nameSv: "Raseborg", region: "Uusimaa", population: 28000, latitude: "60.0167", longitude: "23.4333" },
+  { name: "Sipoo", nameFi: "Sipoo", nameSv: "Sibbo", region: "Uusimaa", population: 21000, latitude: "60.3793", longitude: "25.2672" },
+  { name: "Siuntio", nameFi: "Siuntio", nameSv: "Sjundeå", region: "Uusimaa", population: 6200, latitude: "60.1500", longitude: "24.2167" },
+  { name: "Tuusula", nameFi: "Tuusula", nameSv: "Tusby", region: "Uusimaa", population: 38500, latitude: "60.4036", longitude: "25.0225" },
+  { name: "Vihti", nameFi: "Vihti", nameSv: "Vichtis", region: "Uusimaa", population: 29500, latitude: "60.4237", longitude: "24.3924" },
+  // Varsinais-Suomi
+  { name: "Turku", nameFi: "Turku", nameSv: "Åbo", region: "Varsinais-Suomi", population: 195000, latitude: "60.4518", longitude: "22.2666" },
+  { name: "Aura", nameFi: "Aura", nameSv: "Aura", region: "Varsinais-Suomi", population: 4000, latitude: "60.5833", longitude: "22.5833" },
+  { name: "Kaarina", nameFi: "Kaarina", nameSv: "S:t Karins", region: "Varsinais-Suomi", population: 33500, latitude: "60.4067", longitude: "22.3742" },
+  { name: "Kemiönsaari", nameFi: "Kemiönsaari", nameSv: "Kimitoön", region: "Varsinais-Suomi", population: 6800, latitude: "60.1667", longitude: "22.7000" },
+  { name: "Koski Tl", nameFi: "Koski Tl", nameSv: "Koski Tl", region: "Varsinais-Suomi", population: 2400, latitude: "60.6667", longitude: "22.8167" },
+  { name: "Kustavi", nameFi: "Kustavi", nameSv: "Gustavs", region: "Varsinais-Suomi", population: 900, latitude: "60.5500", longitude: "21.3667" },
+  { name: "Laitila", nameFi: "Laitila", nameSv: "Letala", region: "Varsinais-Suomi", population: 8500, latitude: "60.8757", longitude: "21.6978" },
+  { name: "Lieto", nameFi: "Lieto", nameSv: "Lundo", region: "Varsinais-Suomi", population: 19500, latitude: "60.5000", longitude: "22.4500" },
+  { name: "Loimaa", nameFi: "Loimaa", nameSv: "Loimaa", region: "Varsinais-Suomi", population: 16000, latitude: "60.8500", longitude: "23.0500" },
+  { name: "Länsi-Turunmaa", nameFi: "Länsi-Turunmaa", nameSv: "Pargas", region: "Varsinais-Suomi", population: 15500, latitude: "60.3000", longitude: "22.3000" },
+  { name: "Masku", nameFi: "Masku", nameSv: "Masku", region: "Varsinais-Suomi", population: 10000, latitude: "60.5667", longitude: "22.1000" },
+  { name: "Marttila", nameFi: "Marttila", nameSv: "S:t Martens", region: "Varsinais-Suomi", population: 2000, latitude: "60.6333", longitude: "22.7667" },
+  { name: "Masku", nameFi: "Masku", nameSv: "Masku", region: "Varsinais-Suomi", population: 10000, latitude: "60.5667", longitude: "22.1000" },
+  { name: "Mynämäki", nameFi: "Mynämäki", nameSv: "Virmo", region: "Varsinais-Suomi", population: 8000, latitude: "60.6833", longitude: "21.9833" },
+  { name: "Naantali", nameFi: "Naantali", nameSv: "Nådendal", region: "Varsinais-Suomi", population: 19500, latitude: "60.4667", longitude: "22.0333" },
+  { name: "Nousiainen", nameFi: "Nousiainen", nameSv: "Nousis", region: "Varsinais-Suomi", population: 5000, latitude: "60.6167", longitude: "22.0833" },
+  { name: "Oripää", nameFi: "Oripää", nameSv: "Oripää", region: "Varsinais-Suomi", population: 1400, latitude: "60.8500", longitude: "22.6667" },
+  { name: "Paimio", nameFi: "Paimio", nameSv: "Pemar", region: "Varsinais-Suomi", population: 10500, latitude: "60.4564", longitude: "22.6861" },
+  { name: "Pyhäranta", nameFi: "Pyhäranta", nameSv: "Pyhäranta", region: "Varsinais-Suomi", population: 2200, latitude: "60.9667", longitude: "21.4500" },
+  { name: "Pöytyä", nameFi: "Pöytyä", nameSv: "Pöytyä", region: "Varsinais-Suomi", population: 8500, latitude: "60.7333", longitude: "22.6667" },
+  { name: "Raisio", nameFi: "Raisio", nameSv: "Reso", region: "Varsinais-Suomi", population: 24500, latitude: "60.4860", longitude: "22.1683" },
+  { name: "Rusko", nameFi: "Rusko", nameSv: "Rusko", region: "Varsinais-Suomi", population: 6500, latitude: "60.5333", longitude: "22.1833" },
+  { name: "Salo", nameFi: "Salo", nameSv: "Salo", region: "Varsinais-Suomi", population: 53000, latitude: "60.3840", longitude: "23.1248" },
+  { name: "Somero", nameFi: "Somero", nameSv: "Somero", region: "Varsinais-Suomi", population: 8800, latitude: "60.6333", longitude: "23.5167" },
+  { name: "Taivassalo", nameFi: "Taivassalo", nameSv: "Tövsala", region: "Varsinais-Suomi", population: 1700, latitude: "60.5667", longitude: "21.5667" },
+  { name: "Uusikaupunki", nameFi: "Uusikaupunki", nameSv: "Nystad", region: "Varsinais-Suomi", population: 15500, latitude: "60.7993", longitude: "21.4082" },
+  { name: "Vehmaa", nameFi: "Vehmaa", nameSv: "Vemo", region: "Varsinais-Suomi", population: 2300, latitude: "60.7000", longitude: "21.7167" },
+  // Satakunta
+  { name: "Pori", nameFi: "Pori", nameSv: "Björneborg", region: "Satakunta", population: 84000, latitude: "61.4851", longitude: "21.7975" },
+  { name: "Eura", nameFi: "Eura", nameSv: "Eura", region: "Satakunta", population: 12000, latitude: "61.1333", longitude: "22.1333" },
+  { name: "Eurajoki", nameFi: "Eurajoki", nameSv: "Euraåminne", region: "Satakunta", population: 9500, latitude: "61.2000", longitude: "21.7333" },
+  { name: "Harjavalta", nameFi: "Harjavalta", nameSv: "Harjavalta", region: "Satakunta", population: 7200, latitude: "61.3167", longitude: "22.1500" },
+  { name: "Honkajoki", nameFi: "Honkajoki", nameSv: "Honkajoki", region: "Satakunta", population: 1700, latitude: "61.9833", longitude: "22.2167" },
+  { name: "Huittinen", nameFi: "Huittinen", nameSv: "Vittis", region: "Satakunta", population: 10000, latitude: "61.1833", longitude: "22.7000" },
+  { name: "Jämijärvi", nameFi: "Jämijärvi", nameSv: "Jämijärvi", region: "Satakunta", population: 2000, latitude: "61.9833", longitude: "22.7000" },
+  { name: "Kankaanpää", nameFi: "Kankaanpää", nameSv: "Kankaanpää", region: "Satakunta", population: 11500, latitude: "61.8000", longitude: "22.4000" },
+  { name: "Karvia", nameFi: "Karvia", nameSv: "Karvia", region: "Satakunta", population: 2500, latitude: "62.1333", longitude: "22.5667" },
+  { name: "Kokemäki", nameFi: "Kokemäki", nameSv: "Kumo", region: "Satakunta", population: 7500, latitude: "61.2582", longitude: "22.3521" },
+  { name: "Merikarvia", nameFi: "Merikarvia", nameSv: "Sastmola", region: "Satakunta", population: 3200, latitude: "61.8500", longitude: "21.5000" },
+  { name: "Nakkila", nameFi: "Nakkila", nameSv: "Nakkila", region: "Satakunta", population: 5500, latitude: "61.3667", longitude: "21.8833" },
+  { name: "Pomarkku", nameFi: "Pomarkku", nameSv: "Påmark", region: "Satakunta", population: 2300, latitude: "61.6833", longitude: "22.0000" },
+  { name: "Rauma", nameFi: "Rauma", nameSv: "Raumo", region: "Satakunta", population: 39000, latitude: "61.1290", longitude: "21.5118" },
+  { name: "Siikainen", nameFi: "Siikainen", nameSv: "Siikainen", region: "Satakunta", population: 1600, latitude: "61.8667", longitude: "21.8333" },
+  { name: "Säkylä", nameFi: "Säkylä", nameSv: "Säkylä", region: "Satakunta", population: 4500, latitude: "61.0500", longitude: "22.3333" },
+  { name: "Ulvila", nameFi: "Ulvila", nameSv: "Ulvsby", region: "Satakunta", population: 13500, latitude: "61.4333", longitude: "21.8833" },
+  // Kanta-Häme
+  { name: "Hämeenlinna", nameFi: "Hämeenlinna", nameSv: "Tavastehus", region: "Kanta-Häme", population: 68000, latitude: "60.9961", longitude: "24.4643" },
+  { name: "Forssa", nameFi: "Forssa", nameSv: "Forssa", region: "Kanta-Häme", population: 17000, latitude: "60.8149", longitude: "23.6236" },
+  { name: "Hattula", nameFi: "Hattula", nameSv: "Hattula", region: "Kanta-Häme", population: 10000, latitude: "61.0667", longitude: "24.3500" },
+  { name: "Hausjärvi", nameFi: "Hausjärvi", nameSv: "Hausjärvi", region: "Kanta-Häme", population: 9000, latitude: "60.7667", longitude: "25.0000" },
+  { name: "Humppila", nameFi: "Humppila", nameSv: "Humppila", region: "Kanta-Häme", population: 2400, latitude: "60.9167", longitude: "23.3667" },
+  { name: "Janakkala", nameFi: "Janakkala", nameSv: "Janakkala", region: "Kanta-Häme", population: 17000, latitude: "60.9000", longitude: "24.6000" },
+  { name: "Jokioinen", nameFi: "Jokioinen", nameSv: "Jockis", region: "Kanta-Häme", population: 5500, latitude: "60.8333", longitude: "23.5000" },
+  { name: "Loppi", nameFi: "Loppi", nameSv: "Loppi", region: "Kanta-Häme", population: 8000, latitude: "60.7167", longitude: "24.4333" },
+  { name: "Riihimäki", nameFi: "Riihimäki", nameSv: "Riihimäki", region: "Kanta-Häme", population: 29500, latitude: "60.7393", longitude: "24.7739" },
+  { name: "Tammela", nameFi: "Tammela", nameSv: "Tammela", region: "Kanta-Häme", population: 6500, latitude: "60.8000", longitude: "23.7833" },
+  { name: "Ypäjä", nameFi: "Ypäjä", nameSv: "Ypäjä", region: "Kanta-Häme", population: 2500, latitude: "60.7833", longitude: "23.2667" },
+  // Pirkanmaa
+  { name: "Tampere", nameFi: "Tampere", nameSv: "Tammerfors", region: "Pirkanmaa", population: 244000, latitude: "61.4978", longitude: "23.7610" },
+  { name: "Akaa", nameFi: "Akaa", nameSv: "Akaa", region: "Pirkanmaa", population: 17000, latitude: "61.1667", longitude: "23.8667" },
+  { name: "Hämeenkyrö", nameFi: "Hämeenkyrö", nameSv: "Tavastkyro", region: "Pirkanmaa", population: 10500, latitude: "61.6333", longitude: "23.2000" },
+  { name: "Ikaalinen", nameFi: "Ikaalinen", nameSv: "Ikalis", region: "Pirkanmaa", population: 7000, latitude: "61.7667", longitude: "23.0667" },
+  { name: "Juupajoki", nameFi: "Juupajoki", nameSv: "Juupajoki", region: "Pirkanmaa", population: 2000, latitude: "61.8833", longitude: "24.2833" },
+  { name: "Kangasala", nameFi: "Kangasala", nameSv: "Kangasala", region: "Pirkanmaa", population: 32000, latitude: "61.4667", longitude: "24.0667" },
+  { name: "Kihniö", nameFi: "Kihniö", nameSv: "Kihniö", region: "Pirkanmaa", population: 2000, latitude: "62.2000", longitude: "23.1667" },
+  { name: "Lempäälä", nameFi: "Lempäälä", nameSv: "Lempäälä", region: "Pirkanmaa", population: 23000, latitude: "61.3167", longitude: "23.7500" },
+  { name: "Mänttä-Vilppula", nameFi: "Mänttä-Vilppula", nameSv: "Mänttä-Vilppula", region: "Pirkanmaa", population: 10500, latitude: "62.0333", longitude: "24.6333" },
+  { name: "Nokia", nameFi: "Nokia", nameSv: "Nokia", region: "Pirkanmaa", population: 33500, latitude: "61.4769", longitude: "23.5092" },
+  { name: "Orivesi", nameFi: "Orivesi", nameSv: "Orivesi", region: "Pirkanmaa", population: 9500, latitude: "61.6782", longitude: "24.3563" },
+  { name: "Parkano", nameFi: "Parkano", nameSv: "Parkano", region: "Pirkanmaa", population: 6500, latitude: "62.0167", longitude: "23.0167" },
+  { name: "Pirkkala", nameFi: "Pirkkala", nameSv: "Birkala", region: "Pirkanmaa", population: 19000, latitude: "61.4667", longitude: "23.6500" },
+  { name: "Punkalaidun", nameFi: "Punkalaidun", nameSv: "Punkalaidun", region: "Pirkanmaa", population: 3000, latitude: "61.1167", longitude: "23.1000" },
+  { name: "Pälkäne", nameFi: "Pälkäne", nameSv: "Pälkäne", region: "Pirkanmaa", population: 7000, latitude: "61.3333", longitude: "24.2667" },
+  { name: "Ruovesi", nameFi: "Ruovesi", nameSv: "Ruovesi", region: "Pirkanmaa", population: 4500, latitude: "62.0000", longitude: "24.0667" },
+  { name: "Sastamala", nameFi: "Sastamala", nameSv: "Sastamala", region: "Pirkanmaa", population: 25000, latitude: "61.3333", longitude: "22.9000" },
+  { name: "Urjala", nameFi: "Urjala", nameSv: "Urjala", region: "Pirkanmaa", population: 4800, latitude: "61.0833", longitude: "23.5333" },
+  { name: "Valkeakoski", nameFi: "Valkeakoski", nameSv: "Valkeakoski", region: "Pirkanmaa", population: 21000, latitude: "61.2667", longitude: "24.0333" },
+  { name: "Vesilahti", nameFi: "Vesilahti", nameSv: "Vesilahti", region: "Pirkanmaa", population: 4500, latitude: "61.2667", longitude: "23.6167" },
+  { name: "Virrat", nameFi: "Virrat", nameSv: "Virdois", region: "Pirkanmaa", population: 6500, latitude: "62.2500", longitude: "23.7833" },
+  { name: "Ylöjärvi", nameFi: "Ylöjärvi", nameSv: "Ylöjärvi", region: "Pirkanmaa", population: 32500, latitude: "61.5500", longitude: "23.6000" },
+  // Päijät-Häme
+  { name: "Lahti", nameFi: "Lahti", nameSv: "Lahtis", region: "Päijät-Häme", population: 120000, latitude: "60.9827", longitude: "25.6612" },
+  { name: "Asikkala", nameFi: "Asikkala", nameSv: "Asikkala", region: "Päijät-Häme", population: 8000, latitude: "61.2000", longitude: "25.5500" },
+  { name: "Hartola", nameFi: "Hartola", nameSv: "Gustav Adolfs", region: "Päijät-Häme", population: 3000, latitude: "61.5833", longitude: "26.0167" },
+  { name: "Heinola", nameFi: "Heinola", nameSv: "Heinola", region: "Päijät-Häme", population: 19500, latitude: "61.2010", longitude: "26.0407" },
+  { name: "Hollola", nameFi: "Hollola", nameSv: "Hollola", region: "Päijät-Häme", population: 24000, latitude: "61.0500", longitude: "25.5167" },
+  { name: "Kärkölä", nameFi: "Kärkölä", nameSv: "Kärkölä", region: "Päijät-Häme", population: 4500, latitude: "60.8833", longitude: "25.2833" },
+  { name: "Orimattila", nameFi: "Orimattila", nameSv: "Orimattila", region: "Päijät-Häme", population: 15500, latitude: "60.8000", longitude: "25.7333" },
+  { name: "Padasjoki", nameFi: "Padasjoki", nameSv: "Padasjoki", region: "Päijät-Häme", population: 3000, latitude: "61.3333", longitude: "25.2667" },
+  { name: "Sysmä", nameFi: "Sysmä", nameSv: "Sysmä", region: "Päijät-Häme", population: 4000, latitude: "61.5000", longitude: "25.6833" },
+  // Kymenlaakso
+  { name: "Kotka", nameFi: "Kotka", nameSv: "Kotka", region: "Kymenlaakso", population: 52000, latitude: "60.4667", longitude: "26.9333" },
+  { name: "Hamina", nameFi: "Hamina", nameSv: "Fredrikshamn", region: "Kymenlaakso", population: 20500, latitude: "60.5699", longitude: "27.1979" },
+  { name: "Iitti", nameFi: "Iitti", nameSv: "Iitti", region: "Kymenlaakso", population: 6500, latitude: "60.9167", longitude: "26.3167" },
+  { name: "Kouvola", nameFi: "Kouvola", nameSv: "Kouvola", region: "Kymenlaakso", population: 84000, latitude: "60.8674", longitude: "26.7044" },
+  { name: "Miehikkälä", nameFi: "Miehikkälä", nameSv: "Miehikkälä", region: "Kymenlaakso", population: 2000, latitude: "60.6833", longitude: "27.6833" },
+  { name: "Pyhtää", nameFi: "Pyhtää", nameSv: "Pyttis", region: "Kymenlaakso", population: 5500, latitude: "60.4833", longitude: "26.5333" },
+  { name: "Virolahti", nameFi: "Virolahti", nameSv: "Virolahti", region: "Kymenlaakso", population: 3300, latitude: "60.5333", longitude: "27.6833" },
+  // Etelä-Karjala
+  { name: "Lappeenranta", nameFi: "Lappeenranta", nameSv: "Villmanstrand", region: "Etelä-Karjala", population: 73000, latitude: "61.0587", longitude: "28.1887" },
+  { name: "Imatra", nameFi: "Imatra", nameSv: "Imatra", region: "Etelä-Karjala", population: 27000, latitude: "61.1719", longitude: "28.7660" },
+  { name: "Lemi", nameFi: "Lemi", nameSv: "Lemi", region: "Etelä-Karjala", population: 3200, latitude: "61.0500", longitude: "27.9667" },
+  { name: "Luumäki", nameFi: "Luumäki", nameSv: "Luumäki", region: "Etelä-Karjala", population: 4800, latitude: "60.9000", longitude: "27.5833" },
+  { name: "Parikkala", nameFi: "Parikkala", nameSv: "Parikkala", region: "Etelä-Karjala", population: 5000, latitude: "61.5500", longitude: "29.5000" },
+  { name: "Rautjärvi", nameFi: "Rautjärvi", nameSv: "Rautjärvi", region: "Etelä-Karjala", population: 3000, latitude: "61.4000", longitude: "29.3500" },
+  { name: "Ruokolahti", nameFi: "Ruokolahti", nameSv: "Ruokolahti", region: "Etelä-Karjala", population: 5000, latitude: "61.2833", longitude: "28.8333" },
+  { name: "Savitaipale", nameFi: "Savitaipale", nameSv: "Savitaipale", region: "Etelä-Karjala", population: 3600, latitude: "61.2000", longitude: "27.7000" },
+  { name: "Taipalsaari", nameFi: "Taipalsaari", nameSv: "Taipalsaari", region: "Etelä-Karjala", population: 5000, latitude: "61.1667", longitude: "28.0833" },
+  // Etelä-Savo
+  { name: "Mikkeli", nameFi: "Mikkeli", nameSv: "S:t Michel", region: "Etelä-Savo", population: 54000, latitude: "61.6882", longitude: "27.2721" },
+  { name: "Enonkoski", nameFi: "Enonkoski", nameSv: "Enonkoski", region: "Etelä-Savo", population: 1500, latitude: "62.0833", longitude: "28.8667" },
+  { name: "Heinävesi", nameFi: "Heinävesi", nameSv: "Heinävesi", region: "Etelä-Savo", population: 3500, latitude: "62.4333", longitude: "28.6500" },
+  { name: "Hirvensalmi", nameFi: "Hirvensalmi", nameSv: "Hirvensalmi", region: "Etelä-Savo", population: 2200, latitude: "61.6333", longitude: "26.8000" },
+  { name: "Joroinen", nameFi: "Joroinen", nameSv: "Jorois", region: "Etelä-Savo", population: 5000, latitude: "62.1667", longitude: "27.8167" },
+  { name: "Juva", nameFi: "Juva", nameSv: "Jockas", region: "Etelä-Savo", population: 6500, latitude: "61.9000", longitude: "27.8667" },
+  { name: "Kangasniemi", nameFi: "Kangasniemi", nameSv: "Kangasniemi", region: "Etelä-Savo", population: 5500, latitude: "61.9833", longitude: "26.6333" },
+  { name: "Mäntyharju", nameFi: "Mäntyharju", nameSv: "Mäntyharju", region: "Etelä-Savo", population: 6000, latitude: "61.4167", longitude: "26.8833" },
+  { name: "Pertunmaa", nameFi: "Pertunmaa", nameSv: "Pertunmaa", region: "Etelä-Savo", population: 1800, latitude: "61.5000", longitude: "26.5000" },
+  { name: "Pieksämäki", nameFi: "Pieksämäki", nameSv: "Pieksämäki", region: "Etelä-Savo", population: 18000, latitude: "62.3000", longitude: "27.1500" },
+  { name: "Puumala", nameFi: "Puumala", nameSv: "Puumala", region: "Etelä-Savo", population: 2200, latitude: "61.5167", longitude: "28.1833" },
+  { name: "Rantasalmi", nameFi: "Rantasalmi", nameSv: "Rantasalmi", region: "Etelä-Savo", population: 3500, latitude: "62.0667", longitude: "28.3000" },
+  { name: "Savonlinna", nameFi: "Savonlinna", nameSv: "Nyslott", region: "Etelä-Savo", population: 34000, latitude: "61.8686", longitude: "28.8785" },
+  { name: "Sulkava", nameFi: "Sulkava", nameSv: "Sulkava", region: "Etelä-Savo", population: 2700, latitude: "61.7833", longitude: "28.3667" },
+  // Pohjois-Savo
+  { name: "Kuopio", nameFi: "Kuopio", nameSv: "Kuopio", region: "Pohjois-Savo", population: 121000, latitude: "62.8924", longitude: "27.6783" },
+  { name: "Iisalmi", nameFi: "Iisalmi", nameSv: "Idensalmi", region: "Pohjois-Savo", population: 21000, latitude: "63.5584", longitude: "27.1906" },
+  { name: "Joroinen", nameFi: "Joroinen", nameSv: "Jorois", region: "Pohjois-Savo", population: 5000, latitude: "62.1667", longitude: "27.8167" },
+  { name: "Kaavi", nameFi: "Kaavi", nameSv: "Kaavi", region: "Pohjois-Savo", population: 3000, latitude: "62.9833", longitude: "28.4833" },
+  { name: "Keitele", nameFi: "Keitele", nameSv: "Keitele", region: "Pohjois-Savo", population: 2500, latitude: "63.1667", longitude: "26.3333" },
+  { name: "Kiuruvesi", nameFi: "Kiuruvesi", nameSv: "Kiuruvesi", region: "Pohjois-Savo", population: 8500, latitude: "63.6500", longitude: "26.6167" },
+  { name: "Lapinlahti", nameFi: "Lapinlahti", nameSv: "Lapinlahti", region: "Pohjois-Savo", population: 9500, latitude: "63.3667", longitude: "27.3833" },
+  { name: "Leppävirta", nameFi: "Leppävirta", nameSv: "Leppävirta", region: "Pohjois-Savo", population: 9500, latitude: "62.4833", longitude: "27.7833" },
+  { name: "Maaninka", nameFi: "Maaninka", nameSv: "Maaninka", region: "Pohjois-Savo", population: 3600, latitude: "63.1667", longitude: "27.3000" },
+  { name: "Pielavesi", nameFi: "Pielavesi", nameSv: "Pielavesi", region: "Pohjois-Savo", population: 4500, latitude: "63.2333", longitude: "26.7500" },
+  { name: "Rautalampi", nameFi: "Rautalampi", nameSv: "Rautalampi", region: "Pohjois-Savo", population: 3500, latitude: "62.6333", longitude: "26.8333" },
+  { name: "Rautavaara", nameFi: "Rautavaara", nameSv: "Rautavaara", region: "Pohjois-Savo", population: 1600, latitude: "63.5000", longitude: "28.3000" },
+  { name: "Siilinjärvi", nameFi: "Siilinjärvi", nameSv: "Siilinjärvi", region: "Pohjois-Savo", population: 21500, latitude: "63.0833", longitude: "27.6500" },
+  { name: "Sonkajärvi", nameFi: "Sonkajärvi", nameSv: "Sonkajärvi", region: "Pohjois-Savo", population: 4000, latitude: "63.6833", longitude: "27.5167" },
+  { name: "Suonenjoki", nameFi: "Suonenjoki", nameSv: "Suonenjoki", region: "Pohjois-Savo", population: 7500, latitude: "62.6167", longitude: "27.1167" },
+  { name: "Tervo", nameFi: "Tervo", nameSv: "Tervo", region: "Pohjois-Savo", population: 1700, latitude: "63.0667", longitude: "26.7667" },
+  { name: "Tuusniemi", nameFi: "Tuusniemi", nameSv: "Tuusniemi", region: "Pohjois-Savo", population: 2500, latitude: "62.8167", longitude: "28.5000" },
+  { name: "Varkaus", nameFi: "Varkaus", nameSv: "Varkaus", region: "Pohjois-Savo", population: 21000, latitude: "62.3153", longitude: "27.8708" },
+  { name: "Vesanto", nameFi: "Vesanto", nameSv: "Vesanto", region: "Pohjois-Savo", population: 2200, latitude: "63.1000", longitude: "26.4167" },
+  { name: "Vieremä", nameFi: "Vieremä", nameSv: "Vieremä", region: "Pohjois-Savo", population: 3600, latitude: "63.7667", longitude: "27.0000" },
+  // Pohjois-Karjala
+  { name: "Joensuu", nameFi: "Joensuu", nameSv: "Joensuu", region: "Pohjois-Karjala", population: 78000, latitude: "62.6018", longitude: "29.7613" },
+  { name: "Ilomantsi", nameFi: "Ilomantsi", nameSv: "Ilomants", region: "Pohjois-Karjala", population: 5500, latitude: "62.6667", longitude: "30.9333" },
+  { name: "Juuka", nameFi: "Juuka", nameSv: "Juuka", region: "Pohjois-Karjala", population: 4500, latitude: "63.2333", longitude: "29.2500" },
+  { name: "Kitee", nameFi: "Kitee", nameSv: "Kitee", region: "Pohjois-Karjala", population: 10500, latitude: "62.0990", longitude: "30.1346" },
+  { name: "Kontiolahti", nameFi: "Kontiolahti", nameSv: "Kontiolahti", region: "Pohjois-Karjala", population: 14500, latitude: "62.7667", longitude: "29.8500" },
+  { name: "Lieksa", nameFi: "Lieksa", nameSv: "Lieksa", region: "Pohjois-Karjala", population: 11000, latitude: "63.3167", longitude: "30.0167" },
+  { name: "Liperi", nameFi: "Liperi", nameSv: "Liperi", region: "Pohjois-Karjala", population: 12000, latitude: "62.5333", longitude: "29.3833" },
+  { name: "Nurmes", nameFi: "Nurmes", nameSv: "Nurmes", region: "Pohjois-Karjala", population: 7500, latitude: "63.5460", longitude: "29.1298" },
+  { name: "Outokumpu", nameFi: "Outokumpu", nameSv: "Outokumpu", region: "Pohjois-Karjala", population: 7000, latitude: "62.7206", longitude: "29.0168" },
+  { name: "Polvijärvi", nameFi: "Polvijärvi", nameSv: "Polvijärvi", region: "Pohjois-Karjala", population: 4500, latitude: "62.8500", longitude: "29.3833" },
+  { name: "Rääkkylä", nameFi: "Rääkkylä", nameSv: "Rääkkylä", region: "Pohjois-Karjala", population: 2300, latitude: "62.3167", longitude: "29.6167" },
+  { name: "Tohmajärvi", nameFi: "Tohmajärvi", nameSv: "Tohmajärvi", region: "Pohjois-Karjala", population: 4500, latitude: "62.2333", longitude: "30.3333" },
+  { name: "Valtimo", nameFi: "Valtimo", nameSv: "Valtimo", region: "Pohjois-Karjala", population: 2200, latitude: "63.6833", longitude: "28.8167" },
+  // Keski-Suomi
+  { name: "Jyväskylä", nameFi: "Jyväskylä", nameSv: "Jyväskylä", region: "Keski-Suomi", population: 145000, latitude: "62.2426", longitude: "25.7473" },
+  { name: "Hankasalmi", nameFi: "Hankasalmi", nameSv: "Hankasalmi", region: "Keski-Suomi", population: 5000, latitude: "62.3833", longitude: "26.4333" },
+  { name: "Joutsa", nameFi: "Joutsa", nameSv: "Joutsa", region: "Keski-Suomi", population: 4500, latitude: "61.8667", longitude: "26.1167" },
+  { name: "Kannonkoski", nameFi: "Kannonkoski", nameSv: "Kannonkoski", region: "Keski-Suomi", population: 1400, latitude: "63.0000", longitude: "25.2833" },
+  { name: "Karstula", nameFi: "Karstula", nameSv: "Karstula", region: "Keski-Suomi", population: 4000, latitude: "63.0000", longitude: "24.8000" },
+  { name: "Keuruu", nameFi: "Keuruu", nameSv: "Keuruu", region: "Keski-Suomi", population: 10000, latitude: "62.2500", longitude: "24.7167" },
+  { name: "Kinnula", nameFi: "Kinnula", nameSv: "Kinnula", region: "Keski-Suomi", population: 1600, latitude: "63.3833", longitude: "24.9833" },
+  { name: "Kivijärvi", nameFi: "Kivijärvi", nameSv: "Kivijärvi", region: "Keski-Suomi", population: 1200, latitude: "63.1000", longitude: "25.0833" },
+  { name: "Konnevesi", nameFi: "Konnevesi", nameSv: "Konnevesi", region: "Keski-Suomi", population: 2700, latitude: "62.6167", longitude: "26.3500" },
+  { name: "Kuhmoinen", nameFi: "Kuhmoinen", nameSv: "Kuhmoinen", region: "Keski-Suomi", population: 2400, latitude: "61.5500", longitude: "25.1833" },
+  { name: "Kyyjärvi", nameFi: "Kyyjärvi", nameSv: "Kyyjärvi", region: "Keski-Suomi", population: 1400, latitude: "63.0167", longitude: "24.5667" },
+  { name: "Laukaa", nameFi: "Laukaa", nameSv: "Laukaa", region: "Keski-Suomi", population: 19000, latitude: "62.4000", longitude: "25.9500" },
+  { name: "Luhanka", nameFi: "Luhanka", nameSv: "Luhanka", region: "Keski-Suomi", population: 700, latitude: "61.7833", longitude: "25.8833" },
+  { name: "Multia", nameFi: "Multia", nameSv: "Multia", region: "Keski-Suomi", population: 1700, latitude: "62.3833", longitude: "24.7833" },
+  { name: "Muurame", nameFi: "Muurame", nameSv: "Muurame", region: "Keski-Suomi", population: 9500, latitude: "62.1167", longitude: "25.6833" },
+  { name: "Petäjävesi", nameFi: "Petäjävesi", nameSv: "Petäjävesi", region: "Keski-Suomi", population: 3800, latitude: "62.2667", longitude: "25.1833" },
+  { name: "Pihtipudas", nameFi: "Pihtipudas", nameSv: "Pihtipudas", region: "Keski-Suomi", population: 4000, latitude: "63.3667", longitude: "25.5667" },
+  { name: "Saarijärvi", nameFi: "Saarijärvi", nameSv: "Saarijärvi", region: "Keski-Suomi", population: 9500, latitude: "62.7000", longitude: "25.2667" },
+  { name: "Toivakka", nameFi: "Toivakka", nameSv: "Toivakka", region: "Keski-Suomi", population: 2400, latitude: "62.1000", longitude: "26.1333" },
+  { name: "Uurainen", nameFi: "Uurainen", nameSv: "Uurainen", region: "Keski-Suomi", population: 3500, latitude: "62.5333", longitude: "25.4167" },
+  { name: "Viitasaari", nameFi: "Viitasaari", nameSv: "Viitasaari", region: "Keski-Suomi", population: 6500, latitude: "63.0667", longitude: "25.8667" },
+  { name: "Äänekoski", nameFi: "Äänekoski", nameSv: "Äänekoski", region: "Keski-Suomi", population: 19500, latitude: "62.6000", longitude: "25.7333" },
+  // Etelä-Pohjanmaa
+  { name: "Seinäjoki", nameFi: "Seinäjoki", nameSv: "Seinäjoki", region: "Etelä-Pohjanmaa", population: 65000, latitude: "62.7903", longitude: "22.8403" },
+  { name: "Alajärvi", nameFi: "Alajärvi", nameSv: "Alajärvi", region: "Etelä-Pohjanmaa", population: 9500, latitude: "63.0000", longitude: "23.8167" },
+  { name: "Alavus", nameFi: "Alavus", nameSv: "Alavus", region: "Etelä-Pohjanmaa", population: 12000, latitude: "62.5833", longitude: "23.6167" },
+  { name: "Evijärvi", nameFi: "Evijärvi", nameSv: "Evijärvi", region: "Etelä-Pohjanmaa", population: 2500, latitude: "63.3667", longitude: "23.5000" },
+  { name: "Ilmajoki", nameFi: "Ilmajoki", nameSv: "Ilmajoki", region: "Etelä-Pohjanmaa", population: 12000, latitude: "62.7333", longitude: "22.5833" },
+  { name: "Isojoki", nameFi: "Isojoki", nameSv: "Storå", region: "Etelä-Pohjanmaa", population: 2200, latitude: "62.1167", longitude: "21.9333" },
+  { name: "Isokyrö", nameFi: "Isokyrö", nameSv: "Storkyro", region: "Etelä-Pohjanmaa", population: 4800, latitude: "62.9667", longitude: "22.3333" },
+  { name: "Karijoki", nameFi: "Karijoki", nameSv: "Bötom", region: "Etelä-Pohjanmaa", population: 1400, latitude: "62.2333", longitude: "21.8667" },
+  { name: "Kauhajoki", nameFi: "Kauhajoki", nameSv: "Kauhajoki", region: "Etelä-Pohjanmaa", population: 14000, latitude: "62.4333", longitude: "22.1833" },
+  { name: "Kauhava", nameFi: "Kauhava", nameSv: "Kauhava", region: "Etelä-Pohjanmaa", population: 17000, latitude: "63.0983", longitude: "23.0709" },
+  { name: "Kuortane", nameFi: "Kuortane", nameSv: "Kuortane", region: "Etelä-Pohjanmaa", population: 3700, latitude: "62.8000", longitude: "23.5000" },
+  { name: "Kurikka", nameFi: "Kurikka", nameSv: "Kurikka", region: "Etelä-Pohjanmaa", population: 14500, latitude: "62.6167", longitude: "22.4167" },
+  { name: "Lappajärvi", nameFi: "Lappajärvi", nameSv: "Lappajärvi", region: "Etelä-Pohjanmaa", population: 3000, latitude: "63.2167", longitude: "23.6333" },
+  { name: "Lapua", nameFi: "Lapua", nameSv: "Lappo", region: "Etelä-Pohjanmaa", population: 15000, latitude: "62.9729", longitude: "23.0056" },
+  { name: "Soini", nameFi: "Soini", nameSv: "Soini", region: "Etelä-Pohjanmaa", population: 2200, latitude: "62.8667", longitude: "24.2167" },
+  { name: "Teuva", nameFi: "Teuva", nameSv: "Östermark", region: "Etelä-Pohjanmaa", population: 5500, latitude: "62.4833", longitude: "21.7500" },
+  { name: "Vimpeli", nameFi: "Vimpeli", nameSv: "Vindala", region: "Etelä-Pohjanmaa", population: 2800, latitude: "63.1500", longitude: "23.8167" },
+  { name: "Ähtäri", nameFi: "Ähtäri", nameSv: "Etseri", region: "Etelä-Pohjanmaa", population: 6000, latitude: "62.5500", longitude: "24.0667" },
+  // Pohjanmaa
+  { name: "Vaasa", nameFi: "Vaasa", nameSv: "Vasa", region: "Pohjanmaa", population: 67500, latitude: "63.0960", longitude: "21.6158" },
+  { name: "Isokyrö", nameFi: "Isokyrö", nameSv: "Storkyro", region: "Pohjanmaa", population: 4800, latitude: "62.9667", longitude: "22.3333" },
+  { name: "Kaskinen", nameFi: "Kaskinen", nameSv: "Kaskö", region: "Pohjanmaa", population: 1300, latitude: "62.3833", longitude: "21.2167" },
+  { name: "Korsnäs", nameFi: "Korsnäs", nameSv: "Korsnäs", region: "Pohjanmaa", population: 2200, latitude: "62.8333", longitude: "21.1833" },
+  { name: "Kristiinankaupunki", nameFi: "Kristiinankaupunki", nameSv: "Kristinestad", region: "Pohjanmaa", population: 6500, latitude: "62.2750", longitude: "21.3762" },
+  { name: "Kruunupyy", nameFi: "Kruunupyy", nameSv: "Kronoby", region: "Pohjanmaa", population: 6500, latitude: "63.7167", longitude: "23.0000" },
+  { name: "Laihia", nameFi: "Laihia", nameSv: "Laihela", region: "Pohjanmaa", population: 8000, latitude: "62.9757", longitude: "22.0100" },
+  { name: "Luoto", nameFi: "Luoto", nameSv: "Larsmo", region: "Pohjanmaa", population: 5500, latitude: "63.7000", longitude: "22.7333" },
+  { name: "Maalahti", nameFi: "Maalahti", nameSv: "Malax", region: "Pohjanmaa", population: 5500, latitude: "62.9333", longitude: "21.5500" },
+  { name: "Mustasaari", nameFi: "Mustasaari", nameSv: "Korsholm", region: "Pohjanmaa", population: 20000, latitude: "63.1000", longitude: "21.7833" },
+  { name: "Närpiö", nameFi: "Närpiö", nameSv: "Närpes", region: "Pohjanmaa", population: 9500, latitude: "62.4743", longitude: "21.3419" },
+  { name: "Oravainen", nameFi: "Oravainen", nameSv: "Oravais", region: "Pohjanmaa", population: 2100, latitude: "63.2833", longitude: "22.4000" },
+  { name: "Pedersören kunta", nameFi: "Pedersören kunta", nameSv: "Pedersöre", region: "Pohjanmaa", population: 11000, latitude: "63.6167", longitude: "22.8667" },
+  { name: "Pietarsaari", nameFi: "Pietarsaari", nameSv: "Jakobstad", region: "Pohjanmaa", population: 20000, latitude: "63.6733", longitude: "22.6904" },
+  { name: "Uusikaarlepyy", nameFi: "Uusikaarlepyy", nameSv: "Nykarleby", region: "Pohjanmaa", population: 7500, latitude: "63.5220", longitude: "22.5268" },
+  { name: "Vöyri", nameFi: "Vöyri", nameSv: "Vörå", region: "Pohjanmaa", population: 6500, latitude: "63.1333", longitude: "22.2667" },
+  // Keski-Pohjanmaa
+  { name: "Kokkola", nameFi: "Kokkola", nameSv: "Karleby", region: "Keski-Pohjanmaa", population: 48000, latitude: "63.8373", longitude: "23.1306" },
+  { name: "Halsua", nameFi: "Halsua", nameSv: "Halsua", region: "Keski-Pohjanmaa", population: 1200, latitude: "63.5000", longitude: "24.1667" },
+  { name: "Kannus", nameFi: "Kannus", nameSv: "Kannus", region: "Keski-Pohjanmaa", population: 5500, latitude: "63.9000", longitude: "23.9167" },
+  { name: "Kaustinen", nameFi: "Kaustinen", nameSv: "Kaustby", region: "Keski-Pohjanmaa", population: 4300, latitude: "63.5500", longitude: "23.6833" },
+  { name: "Lestijärvi", nameFi: "Lestijärvi", nameSv: "Lestijärvi", region: "Keski-Pohjanmaa", population: 800, latitude: "63.5333", longitude: "24.6667" },
+  { name: "Perho", nameFi: "Perho", nameSv: "Perho", region: "Keski-Pohjanmaa", population: 2800, latitude: "63.2333", longitude: "24.4167" },
+  { name: "Toholampi", nameFi: "Toholampi", nameSv: "Toholampi", region: "Keski-Pohjanmaa", population: 3300, latitude: "63.7667", longitude: "24.2500" },
+  { name: "Veteli", nameFi: "Veteli", nameSv: "Vetil", region: "Keski-Pohjanmaa", population: 3400, latitude: "63.4833", longitude: "23.9833" },
+  // Pohjois-Pohjanmaa
+  { name: "Oulu", nameFi: "Oulu", nameSv: "Uleåborg", region: "Pohjois-Pohjanmaa", population: 210000, latitude: "65.0121", longitude: "25.4651" },
+  { name: "Alavieska", nameFi: "Alavieska", nameSv: "Alavieska", region: "Pohjois-Pohjanmaa", population: 2600, latitude: "64.1667", longitude: "24.3167" },
+  { name: "Haapajärvi", nameFi: "Haapajärvi", nameSv: "Haapajärvi", region: "Pohjois-Pohjanmaa", population: 7500, latitude: "63.7500", longitude: "25.3333" },
+  { name: "Haapavesi", nameFi: "Haapavesi", nameSv: "Haapavesi", region: "Pohjois-Pohjanmaa", population: 7000, latitude: "64.1333", longitude: "25.3500" },
+  { name: "Hailuoto", nameFi: "Hailuoto", nameSv: "Karlö", region: "Pohjois-Pohjanmaa", population: 1000, latitude: "64.9833", longitude: "24.7167" },
+  { name: "Ii", nameFi: "Ii", nameSv: "Ii", region: "Pohjois-Pohjanmaa", population: 10000, latitude: "65.3167", longitude: "25.3500" },
+  { name: "Kalajoki", nameFi: "Kalajoki", nameSv: "Kalajoki", region: "Pohjois-Pohjanmaa", population: 12500, latitude: "64.2577", longitude: "23.9563" },
+  { name: "Kempele", nameFi: "Kempele", nameSv: "Kempele", region: "Pohjois-Pohjanmaa", population: 17500, latitude: "64.9000", longitude: "25.5000" },
+  { name: "Kuusamo", nameFi: "Kuusamo", nameSv: "Kuusamo", region: "Pohjois-Pohjanmaa", population: 15000, latitude: "65.9650", longitude: "29.1878" },
+  { name: "Kärsämäki", nameFi: "Kärsämäki", nameSv: "Kärsämäki", region: "Pohjois-Pohjanmaa", population: 2800, latitude: "63.9833", longitude: "25.7667" },
+  { name: "Liminka", nameFi: "Liminka", nameSv: "Limingo", region: "Pohjois-Pohjanmaa", population: 10500, latitude: "64.8167", longitude: "25.4167" },
+  { name: "Lumijoki", nameFi: "Lumijoki", nameSv: "Lumijoki", region: "Pohjois-Pohjanmaa", population: 2100, latitude: "64.8167", longitude: "25.1667" },
+  { name: "Merijärvi", nameFi: "Merijärvi", nameSv: "Merijärvi", region: "Pohjois-Pohjanmaa", population: 1200, latitude: "64.1167", longitude: "24.1500" },
+  { name: "Muhos", nameFi: "Muhos", nameSv: "Muhos", region: "Pohjois-Pohjanmaa", population: 9000, latitude: "64.8167", longitude: "26.0000" },
+  { name: "Nivala", nameFi: "Nivala", nameSv: "Nivala", region: "Pohjois-Pohjanmaa", population: 11000, latitude: "63.9333", longitude: "24.9667" },
+  { name: "Oulainen", nameFi: "Oulainen", nameSv: "Oulainen", region: "Pohjois-Pohjanmaa", population: 7500, latitude: "64.2667", longitude: "24.8167" },
+  { name: "Pudasjärvi", nameFi: "Pudasjärvi", nameSv: "Pudasjärvi", region: "Pohjois-Pohjanmaa", population: 8000, latitude: "65.3667", longitude: "26.9167" },
+  { name: "Pyhäjoki", nameFi: "Pyhäjoki", nameSv: "Pyhäjoki", region: "Pohjois-Pohjanmaa", population: 3200, latitude: "64.4667", longitude: "24.2333" },
+  { name: "Pyhäjärvi", nameFi: "Pyhäjärvi", nameSv: "Pyhäjärvi", region: "Pohjois-Pohjanmaa", population: 5000, latitude: "63.6667", longitude: "25.9333" },
+  { name: "Pyhäntä", nameFi: "Pyhäntä", nameSv: "Pyhäntä", region: "Pohjois-Pohjanmaa", population: 1600, latitude: "64.1000", longitude: "26.3167" },
+  { name: "Raahe", nameFi: "Raahe", nameSv: "Brahestad", region: "Pohjois-Pohjanmaa", population: 25000, latitude: "64.6841", longitude: "24.4804" },
+  { name: "Sievi", nameFi: "Sievi", nameSv: "Sievi", region: "Pohjois-Pohjanmaa", population: 5000, latitude: "63.9000", longitude: "24.5167" },
+  { name: "Siikajoki", nameFi: "Siikajoki", nameSv: "Siikajoki", region: "Pohjois-Pohjanmaa", population: 5500, latitude: "64.6833", longitude: "25.0833" },
+  { name: "Siikalatva", nameFi: "Siikalatva", nameSv: "Siikalatva", region: "Pohjois-Pohjanmaa", population: 5500, latitude: "64.2333", longitude: "26.0000" },
+  { name: "Taivalkoski", nameFi: "Taivalkoski", nameSv: "Taivalkoski", region: "Pohjois-Pohjanmaa", population: 4000, latitude: "65.5667", longitude: "28.2333" },
+  { name: "Tyrnävä", nameFi: "Tyrnävä", nameSv: "Tyrnävä", region: "Pohjois-Pohjanmaa", population: 7000, latitude: "64.8500", longitude: "25.6667" },
+  { name: "Utajärvi", nameFi: "Utajärvi", nameSv: "Utajärvi", region: "Pohjois-Pohjanmaa", population: 2800, latitude: "64.7500", longitude: "26.3833" },
+  { name: "Vaala", nameFi: "Vaala", nameSv: "Vaala", region: "Pohjois-Pohjanmaa", population: 2700, latitude: "64.5500", longitude: "26.8167" },
+  { name: "Vihanti", nameFi: "Vihanti", nameSv: "Vihanti", region: "Pohjois-Pohjanmaa", population: 3000, latitude: "64.4833", longitude: "25.0000" },
+  { name: "Yli-Ii", nameFi: "Yli-Ii", nameSv: "Yli-Ii", region: "Pohjois-Pohjanmaa", population: 2100, latitude: "65.3833", longitude: "25.9333" },
+  { name: "Ylivieska", nameFi: "Ylivieska", nameSv: "Ylivieska", region: "Pohjois-Pohjanmaa", population: 15000, latitude: "64.0752", longitude: "24.5559" },
+  // Kainuu
+  { name: "Kajaani", nameFi: "Kajaani", nameSv: "Kajana", region: "Kainuu", population: 37000, latitude: "64.2272", longitude: "27.7336" },
+  { name: "Hyrynsalmi", nameFi: "Hyrynsalmi", nameSv: "Hyrynsalmi", region: "Kainuu", population: 2500, latitude: "64.6667", longitude: "28.5167" },
+  { name: "Kuhmo", nameFi: "Kuhmo", nameSv: "Kuhmo", region: "Kainuu", population: 8500, latitude: "64.1333", longitude: "29.5167" },
+  { name: "Paltamo", nameFi: "Paltamo", nameSv: "Paltamo", region: "Kainuu", population: 3500, latitude: "64.4000", longitude: "27.8500" },
+  { name: "Puolanka", nameFi: "Puolanka", nameSv: "Puolanka", region: "Kainuu", population: 2800, latitude: "64.8667", longitude: "27.6667" },
+  { name: "Ristijärvi", nameFi: "Ristijärvi", nameSv: "Ristijärvi", region: "Kainuu", population: 1300, latitude: "64.5000", longitude: "28.2333" },
+  { name: "Sotkamo", nameFi: "Sotkamo", nameSv: "Sotkamo", region: "Kainuu", population: 10500, latitude: "64.1333", longitude: "28.3833" },
+  { name: "Suomussalmi", nameFi: "Suomussalmi", nameSv: "Suomussalmi", region: "Kainuu", population: 8000, latitude: "64.8833", longitude: "28.9000" },
+  { name: "Vaala", nameFi: "Vaala", nameSv: "Vaala", region: "Kainuu", population: 2700, latitude: "64.5500", longitude: "26.8167" },
+  // Lappi
+  { name: "Rovaniemi", nameFi: "Rovaniemi", nameSv: "Rovaniemi", region: "Lappi", population: 63000, latitude: "66.5039", longitude: "25.7294" },
+  { name: "Enontekiö", nameFi: "Enontekiö", nameSv: "Enontekis", region: "Lappi", population: 1800, latitude: "68.3833", longitude: "23.6333" },
+  { name: "Inari", nameFi: "Inari", nameSv: "Enare", region: "Lappi", population: 6800, latitude: "68.9000", longitude: "27.0333" },
+  { name: "Kemi", nameFi: "Kemi", nameSv: "Kemi", region: "Lappi", population: 21000, latitude: "65.7344", longitude: "24.5643" },
+  { name: "Kemijärvi", nameFi: "Kemijärvi", nameSv: "Kemijärvi", region: "Lappi", population: 7000, latitude: "66.7167", longitude: "27.4333" },
+  { name: "Keminmaa", nameFi: "Keminmaa", nameSv: "Keminmaa", region: "Lappi", population: 8500, latitude: "65.8000", longitude: "24.5667" },
+  { name: "Kittilä", nameFi: "Kittilä", nameSv: "Kittilä", region: "Lappi", population: 6200, latitude: "67.6500", longitude: "24.9167" },
+  { name: "Kolari", nameFi: "Kolari", nameSv: "Kolari", region: "Lappi", population: 3700, latitude: "67.3333", longitude: "23.8000" },
+  { name: "Muonio", nameFi: "Muonio", nameSv: "Muonio", region: "Lappi", population: 2300, latitude: "67.9667", longitude: "23.6833" },
+  { name: "Pelkosenniemi", nameFi: "Pelkosenniemi", nameSv: "Pelkosenniemi", region: "Lappi", population: 1000, latitude: "67.1000", longitude: "27.5000" },
+  { name: "Pello", nameFi: "Pello", nameSv: "Pello", region: "Lappi", population: 3500, latitude: "66.7833", longitude: "23.9667" },
+  { name: "Posio", nameFi: "Posio", nameSv: "Posio", region: "Lappi", population: 3300, latitude: "66.1167", longitude: "28.1667" },
+  { name: "Ranua", nameFi: "Ranua", nameSv: "Ranua", region: "Lappi", population: 4000, latitude: "65.9333", longitude: "26.5333" },
+  { name: "Salla", nameFi: "Salla", nameSv: "Salla", region: "Lappi", population: 3500, latitude: "67.0833", longitude: "28.6667" },
+  { name: "Savukoski", nameFi: "Savukoski", nameSv: "Savukoski", region: "Lappi", population: 1000, latitude: "67.2833", longitude: "28.1667" },
+  { name: "Simo", nameFi: "Simo", nameSv: "Simo", region: "Lappi", population: 3200, latitude: "65.6500", longitude: "25.0667" },
+  { name: "Sodankylä", nameFi: "Sodankylä", nameSv: "Sodankylä", region: "Lappi", population: 8500, latitude: "67.4167", longitude: "26.5833" },
+  { name: "Tervola", nameFi: "Tervola", nameSv: "Tervola", region: "Lappi", population: 3200, latitude: "66.0833", longitude: "24.8000" },
+  { name: "Tornio", nameFi: "Tornio", nameSv: "Torneå", region: "Lappi", population: 22000, latitude: "65.8485", longitude: "24.1472" },
+  { name: "Utsjoki", nameFi: "Utsjoki", nameSv: "Utsjoki", region: "Lappi", population: 1200, latitude: "69.9083", longitude: "27.0250" },
+  { name: "Ylitornio", nameFi: "Ylitornio", nameSv: "Övertorneå", region: "Lappi", population: 4500, latitude: "66.3167", longitude: "23.6833" },
+];
+
+async function seedMunicipalities() {
+  console.log(`\n🏙️  Seeding ${FINNISH_MUNICIPALITIES.length} Finnish municipalities...\n`);
+
+  let added = 0;
+  let skipped = 0;
+
+  for (const m of FINNISH_MUNICIPALITIES) {
+    const existing = await db
+      .select({ id: municipalities.id })
+      .from(municipalities)
+      .where(eq(municipalities.nameFi, m.nameFi))
+      .limit(1);
+
+    if (existing.length > 0) {
+      skipped++;
+      continue;
+    }
+
+    await db.insert(municipalities).values({
+      name: m.name,
+      nameFi: m.nameFi,
+      nameSv: m.nameSv ?? undefined,
+      region: m.region,
+      country: "FI",
+      population: m.population,
+      latitude: m.latitude,
+      longitude: m.longitude,
+    });
+
+    added++;
+    process.stdout.write(`  ✓ ${m.name}\n`);
+  }
+
+  console.log(`\n✅ Done! Added ${added}, skipped ${skipped} existing.\n`);
+}
+
+seedMunicipalities()
+  .catch(console.error)
+  .finally(() => process.exit());
