@@ -104,7 +104,9 @@ export function AgoraPage() {
   const [selectedMunicipality] = useState<string | undefined>();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [setupDismissed, setSetupDismissed] = useState(false);
-  const [wizardDismissed, setWizardDismissed] = useState(false);
+  const [wizardDismissed, setWizardDismissed] = useState(
+    () => localStorage.getItem("eulesia_wizard_dismissed") === "true",
+  );
   const onboardingDone = !!currentUser?.onboardingCompletedAt;
   const completeOnboardingMutation = useCompleteOnboarding();
 
@@ -318,6 +320,7 @@ export function AgoraPage() {
         <OnboardingWizard
           onComplete={() => {
             completeOnboardingMutation.mutate();
+            localStorage.setItem("eulesia_wizard_dismissed", "true");
             setWizardDismissed(true);
           }}
         />
