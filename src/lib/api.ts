@@ -219,37 +219,89 @@ class ApiClient {
     return this.request(`/agora/comments/${id}`, { method: "DELETE" });
   }
 
-  async editRoomMessage(
+  // Room threads
+  async createRoomThread(
     roomId: string,
-    messageId: string,
-    content: string,
-  ): Promise<RoomMessage> {
-    return this.request(`/home/rooms/${roomId}/messages/${messageId}`, {
-      method: "PATCH",
-      body: JSON.stringify({ content }),
+    data: { title: string; content: string },
+  ): Promise<RoomThread> {
+    return this.request(`/home/rooms/${roomId}/threads`, {
+      method: "POST",
+      body: JSON.stringify(data),
     });
   }
 
-  async deleteRoomMessage(
+  async getRoomThread(
     roomId: string,
-    messageId: string,
+    threadId: string,
+  ): Promise<RoomThreadWithComments> {
+    return this.request(`/home/rooms/${roomId}/threads/${threadId}`);
+  }
+
+  async addRoomComment(
+    roomId: string,
+    threadId: string,
+    data: { content: string; parentId?: string },
+  ): Promise<RoomComment> {
+    return this.request(`/home/rooms/${roomId}/threads/${threadId}/comments`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  }
+
+  async voteRoomThread(
+    roomId: string,
+    threadId: string,
+    value: number,
+  ): Promise<{ threadId: string; score: number; userVote: number }> {
+    return this.request(`/home/rooms/${roomId}/threads/${threadId}/vote`, {
+      method: "POST",
+      body: JSON.stringify({ value }),
+    });
+  }
+
+  async voteRoomComment(
+    roomId: string,
+    threadId: string,
+    commentId: string,
+    value: number,
+  ): Promise<{ commentId: string; score: number; userVote: number }> {
+    return this.request(
+      `/home/rooms/${roomId}/threads/${threadId}/comments/${commentId}/vote`,
+      {
+        method: "POST",
+        body: JSON.stringify({ value }),
+      },
+    );
+  }
+
+  async deleteRoomThread(
+    roomId: string,
+    threadId: string,
   ): Promise<{ deleted: boolean }> {
-    return this.request(`/home/rooms/${roomId}/messages/${messageId}`, {
+    return this.request(`/home/rooms/${roomId}/threads/${threadId}`, {
       method: "DELETE",
     });
   }
 
-  async toggleMessageReaction(
+  async updateRoomThread(
     roomId: string,
-    messageId: string,
-    emoji: string,
-  ): Promise<{ action: "added" | "removed" }> {
+    threadId: string,
+    data: { isLocked?: boolean; isPinned?: boolean },
+  ): Promise<RoomThread> {
+    return this.request(`/home/rooms/${roomId}/threads/${threadId}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteRoomComment(
+    roomId: string,
+    threadId: string,
+    commentId: string,
+  ): Promise<{ deleted: boolean }> {
     return this.request(
-      `/home/rooms/${roomId}/messages/${messageId}/reactions`,
-      {
-        method: "POST",
-        body: JSON.stringify({ emoji }),
-      },
+      `/home/rooms/${roomId}/threads/${threadId}/comments/${commentId}`,
+      { method: "DELETE" },
     );
   }
 
@@ -484,7 +536,7 @@ class ApiClient {
     });
   }
 
-  async getRoom(roomId: string): Promise<RoomWithMessages> {
+  async getRoom(roomId: string): Promise<RoomWithThreads> {
     return this.request(`/home/rooms/${roomId}`);
   }
 
@@ -502,12 +554,7 @@ class ApiClient {
     await this.request(`/home/rooms/${roomId}`, { method: "DELETE" });
   }
 
-  async sendRoomMessage(roomId: string, content: string): Promise<RoomMessage> {
-    return this.request(`/home/rooms/${roomId}/messages`, {
-      method: "POST",
-      body: JSON.stringify({ content }),
-    });
-  }
+  // sendRoomMessage removed — rooms now use threads
 
   async inviteToRoom(roomId: string, userId: string): Promise<RoomInvitation> {
     return this.request(`/home/rooms/${roomId}/invite`, {
@@ -1523,38 +1570,58 @@ export interface Room {
   description?: string;
   visibility: "public" | "private";
   isPinned: boolean;
-  messageCount: number;
+  threadCount: number;
   createdAt: string;
   updatedAt: string;
   canAccess?: boolean;
 }
 
-export interface RoomWithMessages extends Room {
-  owner: UserSummary;
-  members: UserSummary[];
-  messages: RoomMessage[];
-  isOwner: boolean;
-  canPost: boolean;
-}
-
-export interface MessageReaction {
-  emoji: string;
-  count: number;
-  users: string[];
-}
-
-export interface RoomMessage {
+export interface RoomThread {
   id: string;
+  roomId: string;
+  title: string;
   content: string;
   contentHtml?: string;
   author: UserSummary | null;
   authorId?: string | null;
   editedAt?: string | null;
   editedBy?: string | null;
+  isPinned: boolean;
+  isLocked: boolean;
+  replyCount: number;
+  score: number;
+  userVote: number;
   isHidden?: boolean;
-  reactions?: MessageReaction[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface RoomThreadWithComments extends RoomThread {
+  isRoomOwner: boolean;
+  comments: RoomComment[];
+}
+
+export interface RoomComment {
+  id: string;
+  threadId: string;
+  parentId?: string | null;
+  authorId: string;
+  content: string;
+  contentHtml?: string;
+  author: UserSummary | null;
+  score: number;
+  userVote: number;
+  isHidden?: boolean;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface RoomWithThreads extends Room {
+  owner: UserSummary;
+  members: UserSummary[];
+  threads: RoomThread[];
+  isOwner: boolean;
+  canPost: boolean;
 }
 
 export interface RoomInvitation {

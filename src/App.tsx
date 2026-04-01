@@ -50,6 +50,11 @@ const HomePage = lazy(() =>
 const RoomPage = lazy(() =>
   import("./pages/RoomPage").then((m) => ({ default: m.RoomPage })),
 );
+const RoomThreadPage = lazy(() =>
+  import("./pages/RoomThreadPage").then((m) => ({
+    default: m.RoomThreadPage,
+  })),
+);
 const ProfilePage = lazy(() =>
   import("./pages/ProfilePage").then((m) => ({ default: m.ProfilePage })),
 );
@@ -350,6 +355,16 @@ function AppRoutes() {
             <ProtectedRoute>
               <PageErrorBoundary>
                 <RoomPage />
+              </PageErrorBoundary>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/home/room/:roomId/thread/:threadId"
+          element={
+            <ProtectedRoute>
+              <PageErrorBoundary>
+                <RoomThreadPage />
               </PageErrorBoundary>
             </ProtectedRoute>
           }

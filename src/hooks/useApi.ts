@@ -45,6 +45,8 @@ export const queryKeys = {
   // Home
   home: (userId: string) => ["home", userId] as const,
   room: (id: string) => ["room", id] as const,
+  roomThread: (roomId: string, threadId: string) =>
+    ["roomThread", roomId, threadId] as const,
   invitations: ["invitations"] as const,
 
   // Direct Messages
@@ -281,43 +283,108 @@ export function useDeleteComment(threadId: string, sort?: CommentSort) {
   });
 }
 
-// Edit/Delete hooks — Room messages
-export function useEditRoomMessage(roomId: string) {
+// Room thread hooks
+export function useRoomThread(roomId: string, threadId: string) {
+  return useQuery({
+    queryKey: queryKeys.roomThread(roomId, threadId),
+    queryFn: () => api.getRoomThread(roomId, threadId),
+    enabled: !!roomId && !!threadId,
+  });
+}
+
+export function useCreateRoomThread(roomId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { title: string; content: string }) =>
+      api.createRoomThread(roomId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.room(roomId) });
+    },
+  });
+}
+
+export function useAddRoomComment(roomId: string, threadId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { content: string; parentId?: string }) =>
+      api.addRoomComment(roomId, threadId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.roomThread(roomId, threadId),
+      });
+    },
+  });
+}
+
+export function useVoteRoomThread(roomId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ threadId, value }: { threadId: string; value: number }) =>
+      api.voteRoomThread(roomId, threadId, value),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.room(roomId) });
+    },
+  });
+}
+
+export function useVoteRoomComment(roomId: string, threadId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({
-      messageId,
-      content,
+      commentId,
+      value,
     }: {
-      messageId: string;
-      content: string;
-    }) => api.editRoomMessage(roomId, messageId, content),
+      commentId: string;
+      value: number;
+    }) => api.voteRoomComment(roomId, threadId, commentId, value),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.roomThread(roomId, threadId),
+      });
+    },
+  });
+}
+
+export function useDeleteRoomThread(roomId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (threadId: string) => api.deleteRoomThread(roomId, threadId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.room(roomId) });
     },
   });
 }
 
-export function useDeleteRoomMessage(roomId: string) {
+export function useUpdateRoomThread(roomId: string, threadId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (messageId: string) => api.deleteRoomMessage(roomId, messageId),
+    mutationFn: (data: { isLocked?: boolean; isPinned?: boolean }) =>
+      api.updateRoomThread(roomId, threadId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.room(roomId) });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.roomThread(roomId, threadId),
+      });
     },
   });
 }
 
-export function useToggleMessageReaction(roomId: string) {
+export function useDeleteRoomComment(roomId: string, threadId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ messageId, emoji }: { messageId: string; emoji: string }) =>
-      api.toggleMessageReaction(roomId, messageId, emoji),
+    mutationFn: (commentId: string) =>
+      api.deleteRoomComment(roomId, threadId, commentId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.room(roomId) });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.roomThread(roomId, threadId),
+      });
     },
   });
 }
@@ -789,17 +856,6 @@ export function useDeleteRoom() {
     mutationFn: (roomId: string) => api.deleteRoom(roomId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["home"] });
-    },
-  });
-}
-
-export function useSendRoomMessage(roomId: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (content: string) => api.sendRoomMessage(roomId, content),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.room(roomId) });
     },
   });
 }

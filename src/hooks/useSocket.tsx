@@ -15,8 +15,6 @@ import { useAuth } from "./useAuth";
 import { queryKeys } from "./useApi";
 import { API_BASE_URL } from "../lib/runtimeConfig";
 import type {
-  RoomMessage,
-  RoomWithMessages,
   DirectMessage,
   ConversationWithMessages,
 } from "../lib/api";
@@ -27,14 +25,9 @@ const TYPING_THROTTLE_MS = 2000;
 interface SocketContextType {
   socket: Socket | null;
   isConnected: boolean;
-  sendRoomMessage: (roomId: string, content: string) => void;
-  joinRoom: (roomId: string) => void;
-  leaveRoom: (roomId: string) => void;
   joinDm: (conversationId: string) => void;
   leaveDm: (conversationId: string) => void;
-  emitTypingRoom: (roomId: string) => void;
   emitTypingDm: (conversationId: string) => void;
-  typingInRoom: Record<string, string[]>;
   typingInDm: Record<string, string[]>;
 }
 
@@ -43,17 +36,11 @@ const SocketContext = createContext<SocketContextType | undefined>(undefined);
 export function SocketProvider({ children }: { children: ReactNode }) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
-  const [typingInRoom, setTypingInRoom] = useState<Record<string, string[]>>(
-    {},
-  );
   const [typingInDm, setTypingInDm] = useState<Record<string, string[]>>({});
   const { isAuthenticated, currentUser } = useAuth();
   const queryClient = useQueryClient();
 
   // Track typing timeouts so we can clear them
-  const roomTypingTimeouts = useRef<
-    Record<string, Record<string, ReturnType<typeof setTimeout>>>
-  >({});
   const dmTypingTimeouts = useRef<
     Record<string, Record<string, ReturnType<typeof setTimeout>>>
   >({});
@@ -90,36 +77,6 @@ export function SocketProvider({ children }: { children: ReactNode }) {
       console.error("Socket error:", error);
     });
 
-    // Handle new room message events
-    newSocket.on(
-      "new_room_message",
-      (data: { roomId: string; message: RoomMessage }) => {
-        // Update the room messages in the cache
-        queryClient.setQueryData(
-          queryKeys.room(data.roomId),
-          (old: RoomWithMessages | undefined) => {
-            if (!old) return old;
-            return {
-              ...old,
-              messages: [...old.messages, data.message],
-            };
-          },
-        );
-        // Clear typing for the user who sent the message
-        clearTypingUser(
-          "room",
-          data.roomId,
-          data.message.authorId ?? data.message.author?.id,
-        );
-      },
-    );
-
-    // Handle room typing indicators
-    newSocket.on("user_typing", (data: { roomId: string; userId: string }) => {
-      if (data.userId === currentUser.id) return;
-      addTypingUser("room", data.roomId, data.userId);
-    });
-
     // Handle DM typing indicators
     newSocket.on(
       "user_typing_dm",
@@ -136,57 +93,6 @@ export function SocketProvider({ children }: { children: ReactNode }) {
         queryKey: queryKeys.notificationUnreadCount,
       });
     });
-
-    // Handle room message edits
-    newSocket.on(
-      "room_message_edited",
-      (data: {
-        roomId: string;
-        messageId: string;
-        content: string;
-        contentHtml: string;
-        editedAt: string;
-      }) => {
-        queryClient.setQueryData(
-          queryKeys.room(data.roomId),
-          (old: RoomWithMessages | undefined) => {
-            if (!old) return old;
-            return {
-              ...old,
-              messages: old.messages.map((m: RoomMessage) =>
-                m.id === data.messageId
-                  ? {
-                      ...m,
-                      content: data.content,
-                      contentHtml: data.contentHtml,
-                      editedAt: data.editedAt,
-                    }
-                  : m,
-              ),
-            };
-          },
-        );
-      },
-    );
-
-    // Handle room message deletes
-    newSocket.on(
-      "room_message_deleted",
-      (data: { roomId: string; messageId: string }) => {
-        queryClient.setQueryData(
-          queryKeys.room(data.roomId),
-          (old: RoomWithMessages | undefined) => {
-            if (!old) return old;
-            return {
-              ...old,
-              messages: old.messages.filter(
-                (m: RoomMessage) => m.id !== data.messageId,
-              ),
-            };
-          },
-        );
-      },
-    );
 
     // Handle thread/comment edits & deletes via invalidation
     newSocket.on("thread_edited", () => {
@@ -308,12 +214,12 @@ export function SocketProvider({ children }: { children: ReactNode }) {
   }, [isAuthenticated, currentUser, queryClient]);
 
   function addTypingUser(
-    type: "room" | "dm",
+    type: "dm",
     channelId: string,
     userId: string,
   ) {
-    const timeouts = type === "room" ? roomTypingTimeouts : dmTypingTimeouts;
-    const setter = type === "room" ? setTypingInRoom : setTypingInDm;
+    const timeouts = dmTypingTimeouts;
+    const setter = setTypingInDm;
 
     // Clear existing timeout for this user
     if (timeouts.current[channelId]?.[userId]) {
@@ -339,13 +245,13 @@ export function SocketProvider({ children }: { children: ReactNode }) {
   }
 
   function clearTypingUser(
-    type: "room" | "dm",
+    type: "dm",
     channelId: string,
     userId?: string | null,
   ) {
     if (!userId) return;
-    const timeouts = type === "room" ? roomTypingTimeouts : dmTypingTimeouts;
-    const setter = type === "room" ? setTypingInRoom : setTypingInDm;
+    const timeouts = dmTypingTimeouts;
+    const setter = setTypingInDm;
 
     if (timeouts.current[channelId]?.[userId]) {
       clearTimeout(timeouts.current[channelId][userId]);
@@ -364,34 +270,6 @@ export function SocketProvider({ children }: { children: ReactNode }) {
     });
   }
 
-  const sendRoomMessage = useCallback(
-    (roomId: string, content: string) => {
-      if (!socket || !isConnected) return;
-
-      socket.emit("send_room_message", {
-        roomId,
-        content,
-      });
-    },
-    [socket, isConnected],
-  );
-
-  const joinRoom = useCallback(
-    (roomId: string) => {
-      if (!socket || !isConnected) return;
-      socket.emit("join:room", roomId);
-    },
-    [socket, isConnected],
-  );
-
-  const leaveRoom = useCallback(
-    (roomId: string) => {
-      if (!socket || !isConnected) return;
-      socket.emit("leave:room", roomId);
-    },
-    [socket, isConnected],
-  );
-
   const joinDm = useCallback(
     (conversationId: string) => {
       if (!socket || !isConnected) return;
@@ -404,18 +282,6 @@ export function SocketProvider({ children }: { children: ReactNode }) {
     (conversationId: string) => {
       if (!socket || !isConnected) return;
       socket.emit("leave:dm", conversationId);
-    },
-    [socket, isConnected],
-  );
-
-  const emitTypingRoom = useCallback(
-    (roomId: string) => {
-      if (!socket || !isConnected) return;
-      const key = `room:${roomId}`;
-      const now = Date.now();
-      if (now - (lastTypingEmit.current[key] || 0) < TYPING_THROTTLE_MS) return;
-      lastTypingEmit.current[key] = now;
-      socket.emit("typing:room", roomId);
     },
     [socket, isConnected],
   );
@@ -437,14 +303,9 @@ export function SocketProvider({ children }: { children: ReactNode }) {
       value={{
         socket,
         isConnected,
-        sendRoomMessage,
-        joinRoom,
-        leaveRoom,
         joinDm,
         leaveDm,
-        emitTypingRoom,
         emitTypingDm,
-        typingInRoom,
         typingInDm,
       }}
     >

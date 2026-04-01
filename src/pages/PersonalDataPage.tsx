@@ -33,7 +33,8 @@ interface DataExport {
   clubMemberships: unknown[];
   rooms: unknown[];
   roomMemberships: unknown[];
-  roomMessages: unknown[];
+  roomThreads: unknown[];
+  roomComments: unknown[];
   roomInvitations: { sent: unknown[]; received: unknown[] };
   notifications: unknown[];
   subscriptions: unknown[];
@@ -104,8 +105,10 @@ export function PersonalDataPage() {
         },
         {
           icon: <MessageSquare className="w-4 h-4" />,
-          label: t("personalData.roomMessages"),
-          count: data.roomMessages?.length ?? 0,
+          label: t("personalData.roomThreads"),
+          count:
+            (data.roomThreads?.length ?? 0) +
+            (data.roomComments?.length ?? 0),
         },
         {
           icon: <Bell className="w-4 h-4" />,

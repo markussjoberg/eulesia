@@ -6,7 +6,7 @@ import {
   threadTags,
   comments,
   rooms,
-  roomMessages,
+  roomThreads,
   places,
 } from "./index.js";
 import { renderMarkdown } from "../utils/markdown.js";
@@ -830,51 +830,48 @@ These details are covered in Section 4.3 of the Environmental Impact Assessment 
         name: "Avoin keskustelu",
         description: "Tervetuloa juttelemaan kaikesta!",
         visibility: "public",
-        messageCount: 2,
+        threadCount: 1,
       },
       {
         ownerId: matti.id,
         name: "Projektiryhmä",
         description: "Yksityinen tila projektitiimille",
         visibility: "private",
-        messageCount: 1,
+        threadCount: 1,
       },
       {
         ownerId: anna.id,
         name: "Pyöräilykeskustelu",
         description: "Vapaamuotoista keskustelua pyöräilystä",
         visibility: "public",
-        messageCount: 1,
+        threadCount: 1,
       },
     ])
     .returning();
 
-  // Create room messages
-  console.log("Creating room messages...");
-  await db.insert(roomMessages).values([
+  // Create room threads
+  console.log("Creating room threads...");
+  await db.insert(roomThreads).values([
     {
       roomId: mattiPublicRoom.id,
       authorId: matti.id,
+      title: "Tervetuloa!",
       content: "Tervetuloa kotiini! Täällä voi keskustella mistä vain.",
       contentHtml: renderMarkdown(
         "Tervetuloa kotiini! Täällä voi keskustella mistä vain.",
       ),
     },
     {
-      roomId: mattiPublicRoom.id,
-      authorId: anna.id,
-      content: "Kiitos kutsusta! Mukava paikka.",
-      contentHtml: renderMarkdown("Kiitos kutsusta! Mukava paikka."),
-    },
-    {
       roomId: mattiPrivateRoom.id,
       authorId: matti.id,
+      title: "Projektin tilanne",
       content: "Projekti etenee hyvin, palataan huomenna.",
       contentHtml: renderMarkdown("Projekti etenee hyvin, palataan huomenna."),
     },
     {
       roomId: annaRoom.id,
       authorId: anna.id,
+      title: "Pyynikin lenkki",
       content: "Suosittelen Pyynikin lenkkiä iltapyöräilyyn!",
       contentHtml: renderMarkdown(
         "Suosittelen Pyynikin lenkkiä iltapyöräilyyn!",

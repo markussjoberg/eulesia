@@ -24,6 +24,7 @@ import {
   useDeclineInvitation,
 } from "../hooks/useApi";
 import { useAuth } from "../hooks/useAuth";
+import { useGuide } from "../hooks/useGuide";
 import type { Room, RoomInvitationWithDetails } from "../lib/api";
 
 export function HomePage() {
@@ -35,12 +36,26 @@ export function HomePage() {
   const createRoomMutation = useCreateRoom();
   const acceptInvitationMutation = useAcceptInvitation();
   const declineInvitationMutation = useDeclineInvitation();
+  const { hasCompletedGuide, startGuide, isGuideActive } = useGuide();
   const [showCreateRoom, setShowCreateRoom] = useState(false);
   const [newRoomName, setNewRoomName] = useState("");
   const [newRoomDescription, setNewRoomDescription] = useState("");
   const [newRoomVisibility, setNewRoomVisibility] = useState<
     "public" | "private"
   >("public");
+
+  // Auto-trigger home guide on first visit
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const timer = setTimeout(() => {
+      if (!hasCompletedGuide("home") && !isGuideActive) {
+        startGuide("home");
+      }
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, [currentUser, hasCompletedGuide, isGuideActive, startGuide]);
 
   if (!currentUser) {
     return (
@@ -413,9 +428,9 @@ function RoomCard({ room }: { room: Room }) {
         </div>
       </div>
       <div className="flex items-center gap-2">
-        {room.messageCount > 0 && (
+        {room.threadCount > 0 && (
           <span className="text-xs text-gray-500 dark:text-gray-400">
-            {t("rooms.messages", { count: room.messageCount })}
+            {t("rooms.threads", { count: room.threadCount })}
           </span>
         )}
         <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-500" />

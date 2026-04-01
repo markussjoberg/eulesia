@@ -12,7 +12,8 @@ import {
   comments,
   clubThreads,
   clubComments,
-  roomMessages,
+  roomThreads,
+  roomComments,
   directMessages,
 } from "../db/index.js";
 import { renderMarkdown } from "../utils/markdown.js";
@@ -51,7 +52,8 @@ async function main() {
     ["comments", comments],
     ["clubThreads", clubThreads],
     ["clubComments", clubComments],
-    ["roomMessages", roomMessages],
+    ["roomThreads", roomThreads],
+    ["roomComments", roomComments],
     ["directMessages", directMessages],
   ] as const;
 

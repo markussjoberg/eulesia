@@ -173,9 +173,9 @@ function RoomCard({ room }: { room: Room }) {
         </div>
       </div>
       <div className="flex items-center gap-2">
-        {room.messageCount > 0 && (
+        {room.threadCount > 0 && (
           <span className="text-xs text-gray-500">
-            {t("userHome.messages", { count: room.messageCount })}
+            {t("userHome.threads", { count: room.threadCount })}
           </span>
         )}
         <ChevronRight className="w-5 h-5 text-gray-400" />

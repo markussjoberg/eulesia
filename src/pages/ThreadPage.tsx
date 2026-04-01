@@ -271,266 +271,177 @@ export function ThreadPage() {
         </button>
       </div>
 
-      {/* Thread header */}
-      <div
-        className={`px-4 py-2 sm:py-3 ${isInstitutional ? "bg-violet-50 dark:bg-violet-900/20" : "bg-white dark:bg-gray-900"}`}
-      >
-        {/* Institutional indicator */}
-        {isInstitutional && (
-          <div className="flex items-center gap-1.5 text-sm text-violet-700 mb-1">
-            <Building2 className="w-4 h-4" />
-            <span className="font-medium">{t("thread.officialChannel")}</span>
-          </div>
-        )}
-
-        {/* Scope and meta */}
-        <div className="flex items-center gap-3 mb-1">
-          <ScopeBadge
-            scope={thread.scope}
-            municipalityId={thread.municipality?.id}
-            municipalityName={thread.municipality?.name}
-          />
-          <span className="text-xs text-gray-500 dark:text-gray-400">
-            {t("thread.posted", { time: formatRelativeTime(thread.createdAt) })}
-          </span>
-          {thread.editedAt && (
-            <EditedIndicator
-              editedAt={thread.editedAt}
-              editorName={thread.editorName}
-            />
-          )}
-        </div>
-
-        {/* Title */}
-        <div className="flex items-start gap-2 mb-1.5 sm:mb-2">
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 flex-1 leading-tight">
-            {thread.title}
-          </h1>
-          {currentUser && (canEditThread || canDeleteThread) && (
-            <div className="flex items-center gap-1 flex-shrink-0 mt-1">
-              {canEditThread && (
-                <button
-                  onClick={handleStartEditThread}
-                  className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                  title={t("thread.editThread")}
-                >
-                  <Pencil className="w-4 h-4" />
-                </button>
-              )}
-              {canDeleteThread && (
-                <button
-                  onClick={() => setShowDeleteConfirm(true)}
-                  className="p-1.5 rounded hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors"
-                  title={t("thread.deleteThread")}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              )}
-              {isBotThread && (
-                <button
-                  onClick={() => setShowEditHistory(true)}
-                  className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                  title={t("thread.editHistory")}
-                >
-                  <History className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Tags */}
-        <div className="mb-1.5 sm:mb-2">
-          <TagList tags={thread.tags || []} size="md" />
-        </div>
-
-        {/* Author + Share + Report */}
-        <div className="pt-2 border-t border-gray-200 dark:border-gray-800 flex items-center justify-between">
-          <ActorBadge user={author} />
-          <div className="flex items-center gap-1">
-            <ShareButtons
-              url={`/agora/thread/${threadId}`}
-              title={thread.title}
-              compact
-            />
-            {threadId && (
-              <ReportButton contentType="thread" contentId={threadId} />
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Main content area */}
-      <div className="px-4 py-3 sm:py-4 space-y-4 sm:space-y-6">
-        {/* Institutional context box - if applicable */}
-        {thread.institutionalContext && (
+      {/* Institutional context box - above the card if applicable */}
+      {thread.institutionalContext && (
+        <div className="px-4 pt-3">
           <InstitutionalContextBox
             context={thread.institutionalContext}
             isAiGenerated={thread.aiGenerated}
             sourceInstitutionName={thread.sourceInstitutionName}
             sourceUrl={thread.sourceUrl}
           />
-        )}
+        </div>
+      )}
 
-        {/* Thread content */}
+      {/* Thread post — unified card with votes on left */}
+      <div className="px-4 pt-3">
         <div
           ref={threadContentRef}
-          className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 flex"
+          className={`bg-white dark:bg-gray-900 rounded-t-xl border border-gray-200 dark:border-gray-800 overflow-hidden ${isInstitutional ? "border-l-4 border-l-violet-500" : ""}`}
         >
-          {/* Vote buttons */}
-          <div className="flex-shrink-0 p-2 sm:p-4 border-r border-gray-100 dark:border-gray-800">
-            <ThreadVoteButtons
-              threadId={thread.id}
-              score={thread.score ?? 0}
-              userVote={thread.userVote ?? 0}
-              onVote={handleThreadVote}
-              isLoading={voteThreadMutation.isPending}
-              size="md"
-            />
-          </div>
-
-          {/* Content */}
-          <div className="flex-grow p-3 sm:p-6">
-            {isEditingThread ? (
-              <div className="space-y-3">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {t("threadForm.title")}
-                  </label>
-                  <input
-                    type="text"
-                    value={editTitle}
-                    onChange={(e) => setEditTitle(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {t("threadForm.content")}
-                  </label>
-                  <textarea
-                    value={editContent}
-                    onChange={(e) => setEditContent(e.target.value)}
-                    rows={10}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg resize-y focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-                <div className="flex justify-end gap-2">
-                  <button
-                    onClick={() => setIsEditingThread(false)}
-                    className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
-                  >
-                    {t("common:actions.cancel")}
-                  </button>
-                  <button
-                    onClick={handleSaveEditThread}
-                    disabled={
-                      editThreadMutation.isPending || !editContent.trim()
-                    }
-                    className="px-4 py-2 text-sm bg-blue-800 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-                  >
-                    {editThreadMutation.isPending
-                      ? t("common:actions.saving")
-                      : t("common:actions.save")}
-                  </button>
-                </div>
-              </div>
-            ) : contentHtml ? (
-              <ContentWithPreviews
-                html={contentHtml}
-                className="prose prose-gray dark:prose-invert max-w-none"
+          <div className="flex">
+            {/* Left: vote column */}
+            <div className="flex-shrink-0 py-3 pl-2 flex items-start justify-center">
+              <ThreadVoteButtons
+                threadId={thread.id}
+                score={thread.score ?? 0}
+                userVote={thread.userVote ?? 0}
+                onVote={handleThreadVote}
+                isLoading={voteThreadMutation.isPending}
+                size="sm"
               />
-            ) : (
-              <div className="prose prose-gray max-w-none">
-                {thread.content.split("\n").map((paragraph, i) => {
-                  if (paragraph.startsWith("**") && paragraph.endsWith("**")) {
-                    return (
-                      <h3
-                        key={i}
-                        className="font-semibold text-gray-900 dark:text-gray-100 mt-4 first:mt-0"
-                      >
-                        {paragraph.replace(/\*\*/g, "")}
-                      </h3>
-                    );
-                  }
-                  if (paragraph.startsWith("- ")) {
-                    return (
-                      <li
-                        key={i}
-                        className="ml-4 text-gray-700 dark:text-gray-300"
-                      >
-                        {paragraph.replace("- ", "")}
-                      </li>
-                    );
-                  }
-                  if (paragraph.trim() === "") {
-                    return <br key={i} />;
-                  }
-                  return (
-                    <p
-                      key={i}
-                      className="text-gray-700 dark:text-gray-300 leading-relaxed"
-                    >
-                      {paragraph}
-                    </p>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
+            </div>
 
-        {/* Discussion section */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              {t("thread.discussion")} (
-              {t("replies", { count: comments.length })})
-            </h2>
-
-            {/* Sort dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => setShowSortMenu(!showSortMenu)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-              >
-                {t("thread.sort")}{" "}
-                {sortOptions.find((o) => o.value === sort)?.label}
-                <ChevronDown className="w-4 h-4" />
-              </button>
-
-              {showSortMenu && (
-                <>
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => setShowSortMenu(false)}
+            {/* Right: content */}
+            <div className="flex-1 min-w-0 py-3 pr-4 pl-1">
+              {/* Header row: author + scope + time + actions */}
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-2 min-w-0 flex-wrap">
+                  <ActorBadge user={author} size="sm" />
+                  <ScopeBadge
+                    scope={thread.scope}
+                    municipalityId={thread.municipality?.id}
+                    municipalityName={thread.municipality?.name}
                   />
-                  <div className="absolute right-0 mt-1 w-36 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 py-1 z-20">
-                    {sortOptions.map((option) => (
-                      <button
-                        key={option.value}
-                        onClick={() => {
-                          setSort(option.value);
-                          setShowSortMenu(false);
-                        }}
-                        className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800/50 ${
-                          sort === option.value
-                            ? "text-blue-600 font-medium"
-                            : "text-gray-700 dark:text-gray-300"
-                        }`}
-                      >
-                        {option.label}
-                      </button>
-                    ))}
-                  </div>
-                </>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    {formatRelativeTime(thread.createdAt)}
+                  </span>
+                  {thread.editedAt && (
+                    <EditedIndicator
+                      editedAt={thread.editedAt}
+                      editorName={thread.editorName}
+                    />
+                  )}
+                </div>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  {currentUser && canEditThread && (
+                    <button
+                      onClick={handleStartEditThread}
+                      className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                      title={t("thread.editThread")}
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                  {currentUser && canDeleteThread && (
+                    <button
+                      onClick={() => setShowDeleteConfirm(true)}
+                      className="p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-400 hover:text-red-500 transition-colors"
+                      title={t("thread.deleteThread")}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                  {isBotThread && (
+                    <button
+                      onClick={() => setShowEditHistory(true)}
+                      className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                      title={t("thread.editHistory")}
+                    >
+                      <History className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                  <ShareButtons
+                    url={`/agora/thread/${threadId}`}
+                    title={thread.title}
+                    compact
+                  />
+                  {threadId && (
+                    <ReportButton contentType="thread" contentId={threadId} />
+                  )}
+                </div>
+              </div>
+
+              {/* Title */}
+              <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-1.5">
+                {thread.title}
+              </h1>
+
+              {/* Tags */}
+              {(thread.tags?.length ?? 0) > 0 && (
+                <div className="mb-2">
+                  <TagList tags={thread.tags || []} size="md" />
+                </div>
               )}
+
+              {/* Content or edit form */}
+              <div className="mb-1">
+                {isEditingThread ? (
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        {t("threadForm.title")}
+                      </label>
+                      <input
+                        type="text"
+                        value={editTitle}
+                        onChange={(e) => setEditTitle(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-gray-100"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        {t("threadForm.content")}
+                      </label>
+                      <textarea
+                        value={editContent}
+                        onChange={(e) => setEditContent(e.target.value)}
+                        rows={10}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg resize-y focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-gray-100"
+                      />
+                    </div>
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => setIsEditingThread(false)}
+                        className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+                      >
+                        {t("common:actions.cancel")}
+                      </button>
+                      <button
+                        onClick={handleSaveEditThread}
+                        disabled={
+                          editThreadMutation.isPending || !editContent.trim()
+                        }
+                        className="px-4 py-2 text-sm bg-blue-800 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                      >
+                        {editThreadMutation.isPending
+                          ? t("common:actions.saving")
+                          : t("common:actions.save")}
+                      </button>
+                    </div>
+                  </div>
+                ) : contentHtml ? (
+                  <ContentWithPreviews
+                    html={contentHtml}
+                    className="prose prose-sm prose-gray dark:prose-invert max-w-none"
+                  />
+                ) : (
+                  <div className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">
+                    {thread.content}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Comment input */}
+      {/* Discussion — connected to post card */}
+      <div className="px-4 pb-6">
+        {/* Comment input */}
+        <div className="bg-white dark:bg-gray-900 border-x border-b border-gray-200 dark:border-gray-800 px-4 py-3">
           {currentUser ? (
-            <div className="bg-white dark:bg-gray-900 rounded-xl p-4 border border-gray-200 dark:border-gray-800 mb-4">
+            <div className="flex items-start gap-3">
               <textarea
                 ref={commentInputRef}
                 value={commentContent}
@@ -544,52 +455,105 @@ export function ThreadPage() {
                   }
                 }}
                 placeholder={t("thread.shareThoughts")}
-                className="w-full p-3 border border-gray-200 dark:border-gray-800 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-gray-100"
-                rows={3}
+                className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-gray-100 transition-all"
+                rows={1}
+                style={{ minHeight: "38px", maxHeight: "120px" }}
+                onInput={(e) => {
+                  const target = e.target as HTMLTextAreaElement;
+                  target.style.height = "38px";
+                  target.style.height = Math.min(target.scrollHeight, 120) + "px";
+                }}
               />
-              <div className="flex justify-end mt-3">
+              {commentContent.trim() && (
                 <button
                   onClick={handleSubmitComment}
                   disabled={!commentContent.trim() || isSubmitting}
-                  className="bg-blue-800 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-shrink-0 bg-blue-800 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
                 >
-                  {isSubmitting ? t("thread.posting") : t("thread.postReply")}
+                  {isSubmitting ? "..." : t("thread.postReply")}
                 </button>
-              </div>
+              )}
             </div>
           ) : (
-            <div className="bg-blue-50 rounded-xl p-4 border border-blue-200 mb-4 text-center">
-              <p className="text-sm text-blue-800">
+            <div className="text-center py-1">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 <a
                   href="/"
-                  className="font-medium underline hover:text-blue-900"
+                  className="font-medium text-blue-600 hover:text-blue-700 underline"
                 >
                   {t("common:actions.loginToVote")}
                 </a>
               </p>
             </div>
           )}
+        </div>
 
-          {/* Comments */}
+        {/* Comments header + sort */}
+        <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 border-x border-b border-gray-200 dark:border-gray-800 px-4 py-2">
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {t("replies", { count: comments.length })}
+          </span>
+          <div className="relative">
+            <button
+              onClick={() => setShowSortMenu(!showSortMenu)}
+              className="flex items-center gap-1 px-2 py-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+            >
+              {sortOptions.find((o) => o.value === sort)?.label}
+              <ChevronDown className="w-3 h-3" />
+            </button>
+            {showSortMenu && (
+              <>
+                <div
+                  className="fixed inset-0 z-10"
+                  onClick={() => setShowSortMenu(false)}
+                />
+                <div className="absolute right-0 mt-1 w-36 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 py-1 z-20">
+                  {sortOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => {
+                        setSort(option.value);
+                        setShowSortMenu(false);
+                      }}
+                      className={`w-full text-left px-3 py-1.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 ${
+                        sort === option.value
+                          ? "text-blue-600 font-medium"
+                          : "text-gray-700 dark:text-gray-300"
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Comments list */}
+        <div className="bg-white dark:bg-gray-900 border-x border-b border-gray-200 dark:border-gray-800 rounded-b-xl">
           {comments.length > 0 ? (
-            <CommentThread
-              comments={comments}
-              onVote={handleVote}
-              onReply={handleReply}
-              onEdit={handleEditComment}
-              onDelete={handleDeleteComment}
-              currentUserId={currentUser?.id}
-              currentUserRole={currentUser?.role}
-            />
+            <div className="space-y-[5px] bg-gray-100 dark:bg-gray-800/50 rounded-b-xl overflow-hidden">
+              <div className="px-4 py-3 bg-white dark:bg-gray-900">
+                <CommentThread
+                  comments={comments}
+                  onVote={handleVote}
+                  onReply={handleReply}
+                  onEdit={handleEditComment}
+                  onDelete={handleDeleteComment}
+                  currentUserId={currentUser?.id}
+                  currentUserRole={currentUser?.role}
+                />
+              </div>
+            </div>
           ) : (
-            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            <div className="text-center py-6 text-gray-500 dark:text-gray-400 text-sm">
               <p>{t("thread.noReplies")}</p>
             </div>
           )}
-
-          {/* End marker */}
-          <ContentEndMarker message={t("thread.endOfDiscussion")} />
         </div>
+
+        <ContentEndMarker message={t("thread.endOfDiscussion")} />
       </div>
 
       {/* Delete confirmation dialog */}

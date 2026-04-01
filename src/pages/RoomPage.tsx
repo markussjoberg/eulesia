@@ -1,5 +1,4 @@
 import { useState, useRef, useCallback } from "react";
-import { ContentWithPreviews } from "../components/common/ContentWithPreviews";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -13,37 +12,48 @@ import {
   Trash2,
   Save,
   Search,
-  Pencil,
-  Check,
+  MessageSquare,
+  Pin,
   UserMinus,
-  SmilePlus,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Layout } from "../components/layout";
 import { SEOHead } from "../components/SEOHead";
-import {
-  ActorBadge,
-  EditedIndicator,
-  ConfirmDeleteDialog,
-} from "../components/common";
+import { ActorBadge, ConfirmDeleteDialog } from "../components/common";
 import {
   useRoom,
-  useSendRoomMessage,
+  useCreateRoomThread,
   useUpdateRoom,
   useDeleteRoom,
   useAddRoomMember,
   useRemoveRoomMember,
-  useEditRoomMessage,
-  useDeleteRoomMessage,
-  useToggleMessageReaction,
 } from "../hooks/useApi";
 import { useAuth } from "../hooks/useAuth";
-import { useSocket } from "../hooks/useSocket";
 import { formatRelativeTime } from "../lib/formatTime";
 import { api } from "../lib/api";
-import type { RoomMessage, SearchUserResult } from "../lib/api";
-import { transformAuthor } from "../utils/transforms";
-import { useEffect } from "react";
+import type { RoomThread, SearchUserResult, UserSummary } from "../lib/api";
+
+function transformUser(user: UserSummary) {
+  return {
+    id: user.id,
+    name: user.name,
+    role: user.role,
+    verified: user.identityVerified ?? false,
+    avatarUrl: user.avatarUrl,
+    avatarInitials: user.name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase(),
+    institutionType: user.institutionType as
+      | "municipality"
+      | "agency"
+      | "ministry"
+      | undefined,
+    institutionName: user.institutionName,
+  };
+}
 
 export function RoomPage() {
   const { t } = useTranslation("home");
@@ -51,28 +61,15 @@ export function RoomPage() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const { data: roomData, isLoading, error } = useRoom(roomId || "");
-  const sendMessageMutation = useSendRoomMessage(roomId || "");
+  const createThreadMutation = useCreateRoomThread(roomId || "");
   const updateRoomMutation = useUpdateRoom(roomId || "");
   const deleteRoomMutation = useDeleteRoom();
   const addRoomMemberMutation = useAddRoomMember(roomId || "");
-  const editMessageMutation = useEditRoomMessage(roomId || "");
-  const deleteMessageMutation = useDeleteRoomMessage(roomId || "");
   const removeRoomMemberMutation = useRemoveRoomMember(roomId || "");
-  const toggleReactionMutation = useToggleMessageReaction(roomId || "");
 
-  const { joinRoom, leaveRoom, emitTypingRoom, typingInRoom } = useSocket();
-
-  // Join/leave socket room for real-time updates
-  useEffect(() => {
-    if (roomId) {
-      joinRoom(roomId);
-      return () => {
-        leaveRoom(roomId);
-      };
-    }
-  }, [roomId, joinRoom, leaveRoom]);
-
-  const [newMessage, setNewMessage] = useState("");
+  const [showNewThreadForm, setShowNewThreadForm] = useState(false);
+  const [newThreadTitle, setNewThreadTitle] = useState("");
+  const [newThreadContent, setNewThreadContent] = useState("");
   const [showSettings, setShowSettings] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
   const [editName, setEditName] = useState("");
@@ -85,15 +82,18 @@ export function RoomPage() {
   const [isSearching, setIsSearching] = useState(false);
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newMessage.trim() || !roomId) return;
-
+  const handleCreateThread = async () => {
+    if (!newThreadTitle.trim() || !newThreadContent.trim()) return;
     try {
-      await sendMessageMutation.mutateAsync(newMessage.trim());
-      setNewMessage("");
+      await createThreadMutation.mutateAsync({
+        title: newThreadTitle.trim(),
+        content: newThreadContent.trim(),
+      });
+      setNewThreadTitle("");
+      setNewThreadContent("");
+      setShowNewThreadForm(false);
     } catch (err) {
-      console.error("Failed to send message:", err);
+      console.error("Failed to create thread:", err);
     }
   };
 
@@ -196,16 +196,11 @@ export function RoomPage() {
     );
   }
 
-  const {
-    owner,
-    members,
-    messages,
-    isOwner,
-    canPost,
-    visibility,
-    name,
-    description,
-  } = roomData;
+  const { owner, members, threads, isOwner, canPost, visibility, name, description } =
+    roomData;
+
+  const pinnedThread = threads.find((t: RoomThread) => t.isPinned);
+  const regularThreads = threads.filter((t: RoomThread) => !t.isPinned);
 
   return (
     <Layout>
@@ -251,6 +246,18 @@ export function RoomPage() {
                 {description}
               </p>
             )}
+            <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400 mt-2">
+              <div className="flex items-center gap-1">
+                <MessageSquare className="w-3.5 h-3.5" />
+                <span>{t("room.threadCount", { count: threads.length })}</span>
+              </div>
+              {visibility === "private" && (
+                <div className="flex items-center gap-1">
+                  <Users className="w-3.5 h-3.5" />
+                  <span>{t("rooms.members", { count: members.length + 1 })}</span>
+                </div>
+              )}
+            </div>
           </div>
           {isOwner && (
             <div className="flex items-center gap-1 flex-shrink-0 ml-3">
@@ -273,115 +280,154 @@ export function RoomPage() {
             </div>
           )}
         </div>
-
-        {/* Members */}
-        {visibility === "private" && (
-          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-200/60 dark:border-gray-700/60">
-            <Users className="w-4 h-4 text-gray-400 dark:text-gray-500" />
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              {t("rooms.members", { count: members.length + 1 })}
-            </span>
-          </div>
-        )}
       </div>
 
       {/* Main content area */}
       <div className="px-4 py-6 space-y-6">
-        {/* Message input at the top like Agora comment box */}
-        {canPost ? (
-          <div className="bg-white dark:bg-gray-900 rounded-xl p-4 border border-gray-200 dark:border-gray-800">
-            <form onSubmit={handleSendMessage}>
-              <textarea
-                value={newMessage}
-                onChange={(e) => {
-                  setNewMessage(e.target.value);
-                  if (roomId && e.target.value.trim()) emitTypingRoom(roomId);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    if (newMessage.trim() && !sendMessageMutation.isPending) {
-                      handleSendMessage(e);
-                    }
-                  }
-                }}
-                placeholder={t("room.writeMessage")}
-                className="w-full p-3 border border-gray-200 dark:border-gray-800 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent dark:bg-gray-800 dark:text-gray-100"
-                rows={3}
-              />
-              <div className="flex justify-end mt-3">
+        {/* Pinned thread */}
+        {pinnedThread && (
+          <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800 overflow-hidden">
+            <div className="px-4 py-2 bg-amber-100 dark:bg-amber-900/30 border-b border-amber-200 dark:border-amber-800 flex items-center gap-2 text-amber-800 dark:text-amber-300">
+              <Pin className="w-4 h-4" />
+              <span className="text-sm font-medium">{t("room.pinnedThread")}</span>
+            </div>
+            <Link
+              to={`/home/room/${roomId}/thread/${pinnedThread.id}`}
+              className="block p-4 hover:bg-amber-100/50 dark:hover:bg-amber-900/40 transition-colors"
+            >
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                {pinnedThread.title}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                {pinnedThread.content.substring(0, 150)}
+                {pinnedThread.content.length > 150 && "..."}
+              </p>
+              <div className="mt-2 flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+                <span>{t("room.replies", { count: pinnedThread.replyCount })}</span>
+                <span>&middot;</span>
+                <span>{formatRelativeTime(pinnedThread.updatedAt)}</span>
+              </div>
+            </Link>
+          </div>
+        )}
+
+        {/* Threads */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              {t("room.discussions")}
+            </h2>
+            {canPost && (
+              <button
+                onClick={() => setShowNewThreadForm(true)}
+                className="text-sm text-teal-600 hover:text-teal-700 flex items-center gap-1"
+              >
+                <Send className="w-4 h-4" />
+                {t("room.newThread")}
+              </button>
+            )}
+          </div>
+
+          {/* New thread form */}
+          {showNewThreadForm && (
+            <div className="mb-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                  {t("room.newThread")}
+                </h3>
                 <button
-                  type="submit"
-                  disabled={!newMessage.trim() || sendMessageMutation.isPending}
+                  onClick={() => setShowNewThreadForm(false)}
+                  className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+                >
+                  <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                </button>
+              </div>
+              <input
+                type="text"
+                placeholder={t("room.threadTitlePlaceholder")}
+                value={newThreadTitle}
+                onChange={(e) => setNewThreadTitle(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-200 dark:border-gray-800 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-teal-500 dark:bg-gray-800 dark:text-gray-100"
+              />
+              <textarea
+                placeholder={t("room.threadContentPlaceholder")}
+                value={newThreadContent}
+                onChange={(e) => setNewThreadContent(e.target.value)}
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-200 dark:border-gray-800 rounded-lg mb-3 resize-none focus:outline-none focus:ring-2 focus:ring-teal-500 dark:bg-gray-800 dark:text-gray-100"
+              />
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={() => setShowNewThreadForm(false)}
+                  className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+                >
+                  {t("common:actions.cancel")}
+                </button>
+                <button
+                  onClick={handleCreateThread}
+                  disabled={
+                    !newThreadTitle.trim() ||
+                    !newThreadContent.trim() ||
+                    createThreadMutation.isPending
+                  }
                   className="inline-flex items-center gap-2 bg-teal-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send className="w-4 h-4" />
-                  {sendMessageMutation.isPending
-                    ? t("room.sending")
-                    : t("room.sendMessage")}
+                  {createThreadMutation.isPending
+                    ? t("room.creating")
+                    : t("room.createThread")}
                 </button>
               </div>
-            </form>
-          </div>
-        ) : (
-          <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 border border-amber-200 dark:border-amber-800 text-center">
-            <p className="text-sm text-amber-800 dark:text-amber-300">
-              {currentUser ? t("room.needInvitation") : t("room.signInToPost")}
-            </p>
-          </div>
-        )}
+            </div>
+          )}
 
-        {/* Typing indicator */}
-        {roomId && (typingInRoom[roomId]?.length ?? 0) > 0 && (
-          <div className="flex items-center gap-2 px-1 text-sm text-gray-500 dark:text-gray-400">
-            <span className="flex gap-0.5">
-              <span
-                className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
-                style={{ animationDelay: "0ms" }}
-              />
-              <span
-                className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
-                style={{ animationDelay: "150ms" }}
-              />
-              <span
-                className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
-                style={{ animationDelay: "300ms" }}
-              />
-            </span>
-            <span>{t("room.typing")}</span>
-          </div>
-        )}
-
-        {/* Messages as thread-style cards */}
-        {messages.length > 0 ? (
-          <div className="space-y-3">
-            {messages.map((msg: RoomMessage) => (
-              <MessageCard
-                key={msg.id}
-                message={msg}
-                isOwnMessage={
-                  (msg.authorId ?? msg.author?.id) === currentUser?.id
-                }
-                isOwnerOrAdmin={isOwner || currentUser?.role === "admin"}
-                currentUserId={currentUser?.id}
-                onEdit={(messageId, content) =>
-                  editMessageMutation.mutate({ messageId, content })
-                }
-                onDelete={(messageId) =>
-                  deleteMessageMutation.mutate(messageId)
-                }
-                onReact={(messageId, emoji) =>
-                  toggleReactionMutation.mutate({ messageId, emoji })
-                }
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-            <p>{t("room.noMessages")}</p>
-            <p className="text-sm mt-1">{t("room.noMessagesHint")}</p>
-          </div>
-        )}
+          {regularThreads.length > 0 ? (
+            <div className="space-y-3">
+              {regularThreads.map((thread: RoomThread) => (
+                <Link
+                  key={thread.id}
+                  to={`/home/room/${roomId}/thread/${thread.id}`}
+                  className="block bg-white dark:bg-gray-900 rounded-xl p-4 border border-gray-200 dark:border-gray-800 hover:shadow-md transition-shadow"
+                >
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                    {thread.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
+                    {thread.content.substring(0, 150)}
+                    {thread.content.length > 150 && "..."}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    {thread.author && (
+                      <ActorBadge user={transformUser(thread.author)} size="sm" />
+                    )}
+                    <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+                      {(thread.score ?? 0) !== 0 && (
+                        <span
+                          className={`font-medium ${(thread.score ?? 0) > 0 ? "text-orange-600" : "text-blue-600"}`}
+                        >
+                          {(thread.score ?? 0) > 0 ? "+" : ""}
+                          {thread.score}
+                        </span>
+                      )}
+                      <span className="flex items-center gap-1">
+                        <MessageSquare className="w-3.5 h-3.5" />
+                        {thread.replyCount}
+                      </span>
+                      <span>{formatRelativeTime(thread.updatedAt)}</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            !showNewThreadForm && (
+              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                <p>{t("room.noThreads")}</p>
+                <p className="text-sm mt-1">{t("room.noThreadsHint")}</p>
+              </div>
+            )
+          )}
+        </div>
       </div>
 
       {/* Settings Modal */}
@@ -428,7 +474,7 @@ export function RoomPage() {
                   value={editDescription}
                   onChange={(e) => setEditDescription(e.target.value)}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-teal-500 resize-none dark:bg-gray-800 dark:text-gray-100"
                 />
               </div>
 
@@ -587,7 +633,7 @@ export function RoomPage() {
                         onClick={() => setSelectedUser(user)}
                         className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
                           selectedUser?.id === user.id
-                            ? "bg-teal-50 border-l-2 border-teal-600"
+                            ? "bg-teal-50 dark:bg-teal-900/20 border-l-2 border-teal-600"
                             : ""
                         }`}
                       >
@@ -672,196 +718,5 @@ export function RoomPage() {
         </div>
       )}
     </Layout>
-  );
-}
-
-interface MessageCardProps {
-  message: RoomMessage;
-  isOwnMessage: boolean;
-  isOwnerOrAdmin: boolean;
-  currentUserId?: string;
-  onEdit: (messageId: string, content: string) => void;
-  onDelete: (messageId: string) => void;
-  onReact: (messageId: string, emoji: string) => void;
-}
-
-const REACTION_EMOJIS = ["👍", "❤️", "😂", "😮", "😢", "👎"];
-
-function MessageCard({
-  message,
-  isOwnMessage,
-  isOwnerOrAdmin,
-  currentUserId,
-  onEdit,
-  onDelete,
-  onReact,
-}: MessageCardProps) {
-  const { t } = useTranslation(["home", "common"]);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editContent, setEditContent] = useState("");
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-
-  // Deleted message placeholder
-  if (message.isHidden) {
-    return (
-      <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl px-4 py-3 border border-gray-200 dark:border-gray-800">
-        <span className="text-sm text-gray-400 dark:text-gray-500 italic">
-          {t("common:messageDeleted")}
-        </span>
-      </div>
-    );
-  }
-
-  const canEdit = isOwnMessage;
-  const canDelete = isOwnMessage || isOwnerOrAdmin;
-
-  const handleStartEdit = () => {
-    setEditContent(message.content);
-    setIsEditing(true);
-  };
-
-  const handleSaveEdit = () => {
-    if (editContent.trim()) {
-      onEdit(message.id, editContent.trim());
-      setIsEditing(false);
-    }
-  };
-
-  const author = message.author ? transformAuthor(message.author) : null;
-
-  return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
-      {/* Header: author + time + actions */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
-          {author && <ActorBadge user={author} size="sm" />}
-          <span className="text-xs text-gray-500 dark:text-gray-400">
-            {formatRelativeTime(message.createdAt)}
-          </span>
-          {message.editedAt && <EditedIndicator editedAt={message.editedAt} />}
-        </div>
-        {(canEdit || canDelete) && !isEditing && (
-          <div className="flex items-center gap-1">
-            {canEdit && (
-              <button
-                onClick={handleStartEdit}
-                className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                title={t("common:actions.edit")}
-              >
-                <Pencil className="w-3.5 h-3.5" />
-              </button>
-            )}
-            {canDelete && (
-              <button
-                onClick={() => setShowDeleteConfirm(true)}
-                className="p-1.5 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-400 hover:text-red-500 transition-colors"
-                title={t("common:actions.delete")}
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Content */}
-      {isEditing ? (
-        <div>
-          <textarea
-            value={editContent}
-            onChange={(e) => setEditContent(e.target.value)}
-            className="w-full p-3 text-sm border border-gray-200 dark:border-gray-800 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent dark:bg-gray-800 dark:text-gray-100"
-            rows={4}
-            autoFocus
-          />
-          <div className="flex gap-2 mt-2 justify-end">
-            <button
-              onClick={() => setIsEditing(false)}
-              className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
-            >
-              {t("common:actions.cancel")}
-            </button>
-            <button
-              onClick={handleSaveEdit}
-              disabled={!editContent.trim()}
-              className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 disabled:opacity-50"
-            >
-              <Check className="w-3.5 h-3.5" />
-              {t("common:actions.save")}
-            </button>
-          </div>
-        </div>
-      ) : message.contentHtml ? (
-        <ContentWithPreviews
-          html={message.contentHtml}
-          className="prose prose-sm prose-gray max-w-none"
-        />
-      ) : (
-        <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">
-          {message.content}
-        </p>
-      )}
-
-      {/* Reactions */}
-      {!isEditing && (
-        <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-          {message.reactions?.map((reaction) => {
-            const hasReacted = currentUserId
-              ? reaction.users.includes(currentUserId)
-              : false;
-            return (
-              <button
-                key={reaction.emoji}
-                onClick={() => onReact(message.id, reaction.emoji)}
-                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border transition-colors ${
-                  hasReacted
-                    ? "bg-teal-50 border-teal-300 text-teal-700"
-                    : "bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
-                }`}
-              >
-                <span>{reaction.emoji}</span>
-                <span>{reaction.count}</span>
-              </button>
-            );
-          })}
-          <div className="relative">
-            <button
-              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-              className="p-1 rounded-full text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-              title={t("room.addReaction")}
-            >
-              <SmilePlus className="w-4 h-4" />
-            </button>
-            {showEmojiPicker && (
-              <div className="absolute bottom-full left-0 mb-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg p-1.5 flex gap-0.5 z-10">
-                {REACTION_EMOJIS.map((emoji) => (
-                  <button
-                    key={emoji}
-                    onClick={() => {
-                      onReact(message.id, emoji);
-                      setShowEmojiPicker(false);
-                    }}
-                    className="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-lg transition-colors"
-                  >
-                    {emoji}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      <ConfirmDeleteDialog
-        open={showDeleteConfirm}
-        type="message"
-        onConfirm={() => {
-          onDelete(message.id);
-          setShowDeleteConfirm(false);
-        }}
-        onClose={() => setShowDeleteConfirm(false)}
-      />
-    </div>
   );
 }

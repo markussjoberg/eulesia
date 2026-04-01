@@ -752,7 +752,7 @@ export const rooms = pgTable(
     visibility: roomVisibilityEnum("visibility").default("public"),
     isPinned: boolean("is_pinned").default(false),
     sortOrder: integer("sort_order").default(0),
-    messageCount: integer("message_count").default(0),
+    threadCount: integer("thread_count").default(0),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
   },
@@ -780,9 +780,9 @@ export const roomMembers = pgTable(
   }),
 );
 
-// Room Messages
-export const roomMessages = pgTable(
-  "room_messages",
+// Room Threads
+export const roomThreads = pgTable(
+  "room_threads",
   {
     id: uuid("id").primaryKey().defaultRandom(),
     roomId: uuid("room_id")
@@ -791,41 +791,75 @@ export const roomMessages = pgTable(
     authorId: uuid("author_id")
       .notNull()
       .references(() => users.id),
+    title: varchar("title", { length: 500 }).notNull(),
     content: text("content").notNull(),
     contentHtml: text("content_html"),
+    isPinned: boolean("is_pinned").default(false),
+    isLocked: boolean("is_locked").default(false),
+    replyCount: integer("reply_count").default(0),
+    score: integer("score").default(0),
     isHidden: boolean("is_hidden").default(false),
-    editedBy: uuid("edited_by").references(() => users.id),
-    editedAt: timestamp("edited_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
   },
   (table) => ({
-    roomIdx: index("room_messages_room_idx").on(table.roomId),
-    createdIdx: index("room_messages_created_idx").on(table.createdAt),
+    roomIdx: index("room_threads_room_idx").on(table.roomId),
   }),
 );
 
-// Message Reactions
-export const messageReactions = pgTable(
-  "message_reactions",
+// Room Comments
+export const roomComments = pgTable("room_comments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  threadId: uuid("thread_id")
+    .notNull()
+    .references(() => roomThreads.id, { onDelete: "cascade" }),
+  parentId: uuid("parent_id"),
+  authorId: uuid("author_id")
+    .notNull()
+    .references(() => users.id),
+  content: text("content").notNull(),
+  contentHtml: text("content_html"),
+  score: integer("score").default(0),
+  isHidden: boolean("is_hidden").default(false),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+});
+
+// Room Thread Votes
+export const roomThreadVotes = pgTable(
+  "room_thread_votes",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
-    messageId: uuid("message_id")
+    threadId: uuid("thread_id")
       .notNull()
-      .references(() => roomMessages.id, { onDelete: "cascade" }),
+      .references(() => roomThreads.id, { onDelete: "cascade" }),
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    emoji: varchar("emoji", { length: 20 }).notNull(),
+    value: integer("value").notNull(),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   },
   (table) => ({
-    messageIdx: index("message_reactions_message_idx").on(table.messageId),
-    uniqueReaction: index("message_reactions_unique_idx").on(
-      table.messageId,
-      table.userId,
-      table.emoji,
-    ),
+    pk: primaryKey({ columns: [table.threadId, table.userId] }),
+    threadIdx: index("room_thread_votes_thread_idx").on(table.threadId),
+  }),
+);
+
+// Room Comment Votes
+export const roomCommentVotes = pgTable(
+  "room_comment_votes",
+  {
+    commentId: uuid("comment_id")
+      .notNull()
+      .references(() => roomComments.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    value: integer("value").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.commentId, table.userId] }),
+    commentIdx: index("room_comment_votes_comment_idx").on(table.commentId),
   }),
 );
 
@@ -1362,7 +1396,7 @@ export const roomsRelations = relations(rooms, ({ one, many }) => ({
     references: [users.id],
   }),
   members: many(roomMembers),
-  messages: many(roomMessages),
+  threads: many(roomThreads),
   invitations: many(roomInvitations),
 }));
 
@@ -1377,16 +1411,60 @@ export const roomMembersRelations = relations(roomMembers, ({ one }) => ({
   }),
 }));
 
-export const roomMessagesRelations = relations(roomMessages, ({ one }) => ({
-  room: one(rooms, {
-    fields: [roomMessages.roomId],
-    references: [rooms.id],
+export const roomThreadsRelations = relations(
+  roomThreads,
+  ({ one, many }) => ({
+    room: one(rooms, {
+      fields: [roomThreads.roomId],
+      references: [rooms.id],
+    }),
+    author: one(users, {
+      fields: [roomThreads.authorId],
+      references: [users.id],
+    }),
+    comments: many(roomComments),
+    votes: many(roomThreadVotes),
+  }),
+);
+
+export const roomCommentsRelations = relations(roomComments, ({ one }) => ({
+  thread: one(roomThreads, {
+    fields: [roomComments.threadId],
+    references: [roomThreads.id],
   }),
   author: one(users, {
-    fields: [roomMessages.authorId],
+    fields: [roomComments.authorId],
     references: [users.id],
   }),
 }));
+
+export const roomThreadVotesRelations = relations(
+  roomThreadVotes,
+  ({ one }) => ({
+    thread: one(roomThreads, {
+      fields: [roomThreadVotes.threadId],
+      references: [roomThreads.id],
+    }),
+    user: one(users, {
+      fields: [roomThreadVotes.userId],
+      references: [users.id],
+    }),
+  }),
+);
+
+export const roomCommentVotesRelations = relations(
+  roomCommentVotes,
+  ({ one }) => ({
+    comment: one(roomComments, {
+      fields: [roomCommentVotes.commentId],
+      references: [roomComments.id],
+    }),
+    user: one(users, {
+      fields: [roomCommentVotes.userId],
+      references: [users.id],
+    }),
+  }),
+);
 
 // Invite Codes Relations
 export const inviteCodesRelations = relations(inviteCodes, ({ one }) => ({
@@ -1524,8 +1602,10 @@ export type NewClub = typeof clubs.$inferInsert;
 export type Club = typeof clubs.$inferSelect;
 export type NewRoom = typeof rooms.$inferInsert;
 export type Room = typeof rooms.$inferSelect;
-export type NewRoomMessage = typeof roomMessages.$inferInsert;
-export type RoomMessage = typeof roomMessages.$inferSelect;
+export type NewRoomThread = typeof roomThreads.$inferInsert;
+export type RoomThread = typeof roomThreads.$inferSelect;
+export type NewRoomComment = typeof roomComments.$inferInsert;
+export type RoomComment = typeof roomComments.$inferSelect;
 export type NewPlace = typeof places.$inferInsert;
 export type Place = typeof places.$inferSelect;
 export type Municipality = typeof municipalities.$inferSelect;

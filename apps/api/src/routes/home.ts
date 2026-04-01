@@ -5,20 +5,20 @@ import {
   db,
   rooms,
   roomMembers,
-  roomMessages,
+  roomThreads,
+  roomComments,
+  roomThreadVotes,
+  roomCommentVotes,
   roomInvitations,
-  messageReactions,
   users,
   threads,
   clubMembers,
   clubs,
-  editHistory,
 } from "../db/index.js";
 import { authMiddleware, optionalAuthMiddleware } from "../middleware/auth.js";
 import { AppError } from "../middleware/errorHandler.js";
 import { renderMarkdown } from "../utils/markdown.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { io } from "../index.js";
 import { notify } from "../services/notify.js";
 import type { AuthenticatedRequest } from "../types/index.js";
 import {
@@ -43,8 +43,23 @@ const updateRoomSchema = z.object({
   isPinned: z.boolean().optional(),
 });
 
-const sendMessageSchema = z.object({
+const createThreadSchema = z.object({
+  title: z.string().min(1).max(500),
+  content: z.string().min(1).max(10000),
+});
+
+const createCommentSchema = z.object({
   content: z.string().min(1).max(5000),
+  parentId: z.string().uuid().optional(),
+});
+
+const voteSchema = z.object({
+  value: z.number().int().min(-1).max(1),
+});
+
+const updateThreadModerationSchema = z.object({
+  isLocked: z.boolean().optional(),
+  isPinned: z.boolean().optional(),
 });
 
 const inviteSchema = z.object({
@@ -206,15 +221,13 @@ router.post(
   }),
 );
 
-// GET /home/rooms/:roomId - Get room with messages
+// GET /home/rooms/:roomId - Get room with threads
 router.get(
   "/rooms/:roomId",
   optionalAuthMiddleware,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const { roomId } = req.params;
-    const { limit = "50" } = req.query;
     const currentUserId = req.user?.id;
-    const limitNum = Math.min(100, Math.max(1, parseInt(limit as string)));
 
     // Get room with owner
     const [roomData] = await db
@@ -257,17 +270,45 @@ router.get(
       }
     }
 
-    // Get messages (include hidden as stubs for placeholder display)
-    const messagesData = await db
+    // Get threads
+    const threadList = await db
       .select({
-        message: roomMessages,
-        author: users,
+        thread: roomThreads,
+        author: {
+          id: users.id,
+          name: users.name,
+          avatarUrl: users.avatarUrl,
+          identityVerified: users.identityVerified,
+        },
       })
-      .from(roomMessages)
-      .innerJoin(users, eq(roomMessages.authorId, users.id))
-      .where(eq(roomMessages.roomId, roomId))
-      .orderBy(desc(roomMessages.createdAt))
-      .limit(limitNum);
+      .from(roomThreads)
+      .leftJoin(users, eq(roomThreads.authorId, users.id))
+      .where(
+        and(eq(roomThreads.roomId, roomId), eq(roomThreads.isHidden, false)),
+      )
+      .orderBy(desc(roomThreads.isPinned), desc(roomThreads.updatedAt))
+      .limit(50);
+
+    // Get user's votes on threads
+    let threadVoteMap = new Map<string, number>();
+    if (currentUserId && threadList.length > 0) {
+      const threadIds = threadList.map((t) => t.thread.id);
+      const votes = await db
+        .select({
+          threadId: roomThreadVotes.threadId,
+          value: roomThreadVotes.value,
+        })
+        .from(roomThreadVotes)
+        .where(
+          and(
+            inArray(roomThreadVotes.threadId, threadIds),
+            eq(roomThreadVotes.userId, currentUserId),
+          ),
+        );
+      for (const v of votes) {
+        threadVoteMap.set(v.threadId, v.value);
+      }
+    }
 
     // Get members (for private rooms)
     let members: (typeof users.$inferSelect)[] = [];
@@ -279,36 +320,6 @@ router.get(
         .where(eq(roomMembers.roomId, roomId));
 
       members = membersData.map((m) => m.user);
-    }
-
-    // Get reactions for all messages in the room
-    const messageIds = messagesData.map((m) => m.message.id);
-    let reactionsMap: Record<
-      string,
-      { emoji: string; count: number; users: string[] }[]
-    > = {};
-    if (messageIds.length > 0) {
-      const allReactions = await db
-        .select()
-        .from(messageReactions)
-        .where(inArray(messageReactions.messageId, messageIds));
-
-      // Group by messageId then emoji
-      const grouped: Record<string, Record<string, string[]>> = {};
-      for (const r of allReactions) {
-        if (!grouped[r.messageId]) grouped[r.messageId] = {};
-        if (!grouped[r.messageId][r.emoji]) grouped[r.messageId][r.emoji] = [];
-        grouped[r.messageId][r.emoji].push(r.userId);
-      }
-      for (const [msgId, emojis] of Object.entries(grouped)) {
-        reactionsMap[msgId] = Object.entries(emojis).map(
-          ([emoji, userIds]) => ({
-            emoji,
-            count: userIds.length,
-            users: userIds,
-          }),
-        );
-      }
     }
 
     res.json({
@@ -325,40 +336,14 @@ router.get(
             preserveIdForUserId: currentUserId,
           }),
         ),
-        messages: messagesData
-          .map(({ message, author }) => {
-            if (message.isHidden) {
-              return {
-                id: message.id,
-                roomId: message.roomId,
-                authorId: shouldSanitizeUserSummaries
-                  ? getPublicUserId(author, {
-                      preserveIdForUserId: currentUserId,
-                    })
-                  : message.authorId,
-                content: "",
-                contentHtml: null,
-                createdAt: message.createdAt,
-                isHidden: true,
-                author: null,
-                reactions: [],
-              };
-            }
-            return {
-              ...message,
-              authorId: shouldSanitizeUserSummaries
-                ? getPublicUserId(author, {
-                    preserveIdForUserId: currentUserId,
-                  })
-                : message.authorId,
-              author: formatUserSummary(author, {
-                publicView: shouldSanitizeUserSummaries,
-                preserveIdForUserId: currentUserId,
-              }),
-              reactions: reactionsMap[message.id] || [],
-            };
-          })
-          .reverse(), // Oldest first
+        threads: threadList.map(({ thread, author }) => ({
+          ...thread,
+          userVote: threadVoteMap.get(thread.id) || 0,
+          author: formatUserSummary(author, {
+            publicView: shouldSanitizeUserSummaries,
+            preserveIdForUserId: currentUserId,
+          }),
+        })),
         isOwner,
         canPost:
           room.visibility === "public" ||
@@ -441,138 +426,530 @@ router.delete(
   }),
 );
 
-// POST /home/rooms/:roomId/messages - Post message to room
+// Helper to check room access and return room
+async function verifyRoomAccess(
+  roomId: string,
+  userId: string | undefined,
+  requirePost = false,
+) {
+  const [roomData] = await db
+    .select()
+    .from(rooms)
+    .where(eq(rooms.id, roomId))
+    .limit(1);
+
+  if (!roomData) {
+    throw new AppError(404, "Room not found");
+  }
+
+  const isOwner = userId === roomData.ownerId;
+
+  if (roomData.visibility === "private" && !isOwner) {
+    if (!userId) throw new AppError(401, "Authentication required");
+
+    const [membership] = await db
+      .select()
+      .from(roomMembers)
+      .where(
+        and(eq(roomMembers.roomId, roomId), eq(roomMembers.userId, userId)),
+      )
+      .limit(1);
+
+    if (!membership) {
+      throw new AppError(403, "Not a member of this room");
+    }
+  }
+
+  if (requirePost && !userId) {
+    throw new AppError(401, "Authentication required");
+  }
+
+  return { room: roomData, isOwner };
+}
+
+// POST /home/rooms/:roomId/threads - Create thread in room
 router.post(
-  "/rooms/:roomId/messages",
+  "/rooms/:roomId/threads",
   authMiddleware,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const userId = req.user!.id;
     const { roomId } = req.params;
-    const data = sendMessageSchema.parse(req.body);
+    const data = createThreadSchema.parse(req.body);
 
-    // Get room
-    const [room] = await db
-      .select()
-      .from(rooms)
-      .where(eq(rooms.id, roomId))
-      .limit(1);
+    await verifyRoomAccess(roomId, userId, true);
 
-    if (!room) {
-      throw new AppError(404, "Room not found");
-    }
-
-    // Check access
-    const isOwner = room.ownerId === userId;
-
-    if (room.visibility === "private" && !isOwner) {
-      const [membership] = await db
-        .select()
-        .from(roomMembers)
-        .where(
-          and(eq(roomMembers.roomId, roomId), eq(roomMembers.userId, userId)),
-        )
-        .limit(1);
-
-      if (!membership) {
-        throw new AppError(403, "Not a member of this room");
-      }
-    }
-
-    // Parse markdown
     const contentHtml = renderMarkdown(data.content);
 
-    // Create message
-    const [message] = await db
-      .insert(roomMessages)
+    const [newThread] = await db
+      .insert(roomThreads)
       .values({
         roomId,
         authorId: userId,
+        title: data.title,
         content: data.content,
         contentHtml,
       })
       .returning();
 
-    // Update room timestamp and message count
+    // Update thread count
     await db
       .update(rooms)
       .set({
         updatedAt: new Date(),
-        messageCount: sql`${rooms.messageCount} + 1`,
+        threadCount: sql`${rooms.threadCount} + 1`,
       })
       .where(eq(rooms.id, roomId));
 
-    // Get author info
-    const [author] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, userId))
-      .limit(1);
-
-    const publicView = room.visibility === "public";
-
-    const broadcastMessageData = {
-      ...message,
-      authorId: publicView ? getPublicUserId(author) : message.authorId,
-      author: formatUserSummary(author, {
-        publicView,
-      }),
-    };
-
-    const responseMessageData = {
-      ...message,
-      authorId: publicView
-        ? getPublicUserId(author, {
-            preserveIdForUserId: userId,
-          })
-        : message.authorId,
-      author: formatUserSummary(author, {
-        publicView,
-        preserveIdForUserId: userId,
-      }),
-    };
-
-    // Broadcast to room via Socket.IO
-    io.to(`room:${roomId}`).except(`user:${userId}`).emit("new_room_message", {
-      roomId,
-      message: broadcastMessageData,
-    });
-    io.to(`user:${userId}`).emit("new_room_message", {
-      roomId,
-      message: responseMessageData,
-    });
-
     res.status(201).json({
       success: true,
-      data: responseMessageData,
+      data: newThread,
     });
   }),
 );
 
-// PATCH /home/rooms/:roomId/messages/:messageId - Edit room message
-router.patch(
-  "/rooms/:roomId/messages/:messageId",
-  authMiddleware,
+// GET /home/rooms/:roomId/threads/:threadId - Get thread with comments
+router.get(
+  "/rooms/:roomId/threads/:threadId",
+  optionalAuthMiddleware,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-    const userId = req.user!.id;
-    const { roomId, messageId } = req.params;
-    const { content } = z
-      .object({ content: z.string().min(1).max(5000) })
-      .parse(req.body);
+    const { roomId, threadId } = req.params;
+    const currentUserId = req.user?.id;
 
-    const [message] = await db
-      .select()
-      .from(roomMessages)
+    await verifyRoomAccess(roomId, currentUserId);
+
+    const [threadData] = await db
+      .select({
+        thread: roomThreads,
+        author: {
+          id: users.id,
+          name: users.name,
+          avatarUrl: users.avatarUrl,
+          role: users.role,
+          identityVerified: users.identityVerified,
+        },
+      })
+      .from(roomThreads)
+      .leftJoin(users, eq(roomThreads.authorId, users.id))
       .where(
-        and(eq(roomMessages.id, messageId), eq(roomMessages.roomId, roomId)),
+        and(eq(roomThreads.id, threadId), eq(roomThreads.roomId, roomId)),
       )
       .limit(1);
 
-    if (!message) {
-      throw new AppError(404, "Message not found");
+    if (!threadData) {
+      throw new AppError(404, "Thread not found");
     }
 
+    // Get user's vote on thread
+    let threadUserVote = 0;
+    if (currentUserId) {
+      const [tv] = await db
+        .select({ value: roomThreadVotes.value })
+        .from(roomThreadVotes)
+        .where(
+          and(
+            eq(roomThreadVotes.threadId, threadId),
+            eq(roomThreadVotes.userId, currentUserId),
+          ),
+        )
+        .limit(1);
+      threadUserVote = tv?.value || 0;
+    }
+
+    // Get comments
+    const commentList = await db
+      .select({
+        comment: roomComments,
+        author: {
+          id: users.id,
+          name: users.name,
+          avatarUrl: users.avatarUrl,
+          role: users.role,
+          identityVerified: users.identityVerified,
+        },
+      })
+      .from(roomComments)
+      .leftJoin(users, eq(roomComments.authorId, users.id))
+      .where(eq(roomComments.threadId, threadId))
+      .orderBy(roomComments.createdAt);
+
+    // Get user's votes on comments
+    let commentVoteMap = new Map<string, number>();
+    if (currentUserId && commentList.length > 0) {
+      const commentIds = commentList.map((c) => c.comment.id);
+      const votes = await db
+        .select({
+          commentId: roomCommentVotes.commentId,
+          value: roomCommentVotes.value,
+        })
+        .from(roomCommentVotes)
+        .where(
+          and(
+            inArray(roomCommentVotes.commentId, commentIds),
+            eq(roomCommentVotes.userId, currentUserId),
+          ),
+        );
+      for (const v of votes) {
+        commentVoteMap.set(v.commentId, v.value);
+      }
+    }
+
+    // Check if user is room owner
     const [room] = await db
-      .select({ visibility: rooms.visibility })
+      .select({ ownerId: rooms.ownerId })
+      .from(rooms)
+      .where(eq(rooms.id, roomId))
+      .limit(1);
+
+    res.json({
+      success: true,
+      data: {
+        ...threadData.thread,
+        userVote: threadUserVote,
+        author: threadData.author,
+        isRoomOwner: currentUserId === room?.ownerId,
+        comments: commentList.map(({ comment, author }) => {
+          if (comment.isHidden) {
+            return {
+              id: comment.id,
+              threadId: comment.threadId,
+              parentId: comment.parentId,
+              authorId: comment.authorId,
+              content: "",
+              contentHtml: null,
+              score: 0,
+              userVote: 0,
+              createdAt: comment.createdAt,
+              isHidden: true,
+              author: null,
+            };
+          }
+          return {
+            ...comment,
+            userVote: commentVoteMap.get(comment.id) || 0,
+            author,
+          };
+        }),
+      },
+    });
+  }),
+);
+
+// POST /home/rooms/:roomId/threads/:threadId/comments - Add comment
+router.post(
+  "/rooms/:roomId/threads/:threadId/comments",
+  authMiddleware,
+  asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const userId = req.user!.id;
+    const { roomId, threadId } = req.params;
+    const data = createCommentSchema.parse(req.body);
+
+    await verifyRoomAccess(roomId, userId, true);
+
+    // Verify thread exists and is not locked
+    const [thread] = await db
+      .select()
+      .from(roomThreads)
+      .where(
+        and(eq(roomThreads.id, threadId), eq(roomThreads.roomId, roomId)),
+      )
+      .limit(1);
+
+    if (!thread) {
+      throw new AppError(404, "Thread not found");
+    }
+
+    if (thread.isLocked) {
+      throw new AppError(403, "Thread is locked");
+    }
+
+    const contentHtml = renderMarkdown(data.content);
+
+    const [newComment] = await db
+      .insert(roomComments)
+      .values({
+        threadId,
+        authorId: userId,
+        parentId: data.parentId,
+        content: data.content,
+        contentHtml,
+      })
+      .returning();
+
+    // Update reply count
+    await db
+      .update(roomThreads)
+      .set({
+        replyCount: sql`${roomThreads.replyCount} + 1`,
+        updatedAt: new Date(),
+      })
+      .where(eq(roomThreads.id, threadId));
+
+    // Notifications
+    const commenterName = req.user!.name || "Someone";
+    const truncatedContent =
+      data.content.length > 100
+        ? data.content.slice(0, 100) + "..."
+        : data.content;
+    const notifiedUserIds = new Set<string>();
+
+    // Notify parent comment author
+    if (data.parentId) {
+      const [parentComment] = await db
+        .select({ authorId: roomComments.authorId })
+        .from(roomComments)
+        .where(eq(roomComments.id, data.parentId))
+        .limit(1);
+
+      if (parentComment && parentComment.authorId !== userId) {
+        notifiedUserIds.add(parentComment.authorId);
+        await notify({
+          userId: parentComment.authorId,
+          type: "reply",
+          title: commenterName,
+          body: truncatedContent,
+          link: `/home/room/${roomId}/thread/${threadId}`,
+        });
+      }
+    }
+
+    // Notify thread author
+    if (thread.authorId !== userId && !notifiedUserIds.has(thread.authorId)) {
+      await notify({
+        userId: thread.authorId,
+        type: "thread_reply",
+        title: commenterName,
+        body: truncatedContent,
+        link: `/home/room/${roomId}/thread/${threadId}`,
+      });
+    }
+
+    res.status(201).json({
+      success: true,
+      data: newComment,
+    });
+  }),
+);
+
+// POST /home/rooms/:roomId/threads/:threadId/vote - Vote on thread
+router.post(
+  "/rooms/:roomId/threads/:threadId/vote",
+  authMiddleware,
+  asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const userId = req.user!.id;
+    const { roomId, threadId } = req.params;
+    const { value } = voteSchema.parse(req.body);
+
+    await verifyRoomAccess(roomId, userId);
+
+    const [thread] = await db
+      .select()
+      .from(roomThreads)
+      .where(
+        and(eq(roomThreads.id, threadId), eq(roomThreads.roomId, roomId)),
+      )
+      .limit(1);
+
+    if (!thread) {
+      throw new AppError(404, "Thread not found");
+    }
+
+    const [existingVote] = await db
+      .select()
+      .from(roomThreadVotes)
+      .where(
+        and(
+          eq(roomThreadVotes.threadId, threadId),
+          eq(roomThreadVotes.userId, userId),
+        ),
+      )
+      .limit(1);
+
+    const oldValue = existingVote?.value || 0;
+    const scoreDelta = value - oldValue;
+
+    if (value === 0) {
+      if (existingVote) {
+        await db
+          .delete(roomThreadVotes)
+          .where(
+            and(
+              eq(roomThreadVotes.threadId, threadId),
+              eq(roomThreadVotes.userId, userId),
+            ),
+          );
+      }
+    } else if (existingVote) {
+      await db
+        .update(roomThreadVotes)
+        .set({ value })
+        .where(
+          and(
+            eq(roomThreadVotes.threadId, threadId),
+            eq(roomThreadVotes.userId, userId),
+          ),
+        );
+    } else {
+      await db.insert(roomThreadVotes).values({ threadId, userId, value });
+    }
+
+    if (scoreDelta !== 0) {
+      await db
+        .update(roomThreads)
+        .set({ score: sql`${roomThreads.score} + ${scoreDelta}` })
+        .where(eq(roomThreads.id, threadId));
+    }
+
+    const [updated] = await db
+      .select({ score: roomThreads.score })
+      .from(roomThreads)
+      .where(eq(roomThreads.id, threadId))
+      .limit(1);
+
+    res.json({
+      success: true,
+      data: { threadId, score: updated.score, userVote: value },
+    });
+  }),
+);
+
+// POST /home/rooms/:roomId/threads/:threadId/comments/:commentId/vote - Vote on comment
+router.post(
+  "/rooms/:roomId/threads/:threadId/comments/:commentId/vote",
+  authMiddleware,
+  asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const userId = req.user!.id;
+    const { roomId, commentId } = req.params;
+    const { value } = voteSchema.parse(req.body);
+
+    await verifyRoomAccess(roomId, userId);
+
+    const [comment] = await db
+      .select()
+      .from(roomComments)
+      .where(eq(roomComments.id, commentId))
+      .limit(1);
+
+    if (!comment) {
+      throw new AppError(404, "Comment not found");
+    }
+
+    const [existingVote] = await db
+      .select()
+      .from(roomCommentVotes)
+      .where(
+        and(
+          eq(roomCommentVotes.commentId, commentId),
+          eq(roomCommentVotes.userId, userId),
+        ),
+      )
+      .limit(1);
+
+    const oldValue = existingVote?.value || 0;
+    const scoreDelta = value - oldValue;
+
+    if (value === 0) {
+      if (existingVote) {
+        await db
+          .delete(roomCommentVotes)
+          .where(
+            and(
+              eq(roomCommentVotes.commentId, commentId),
+              eq(roomCommentVotes.userId, userId),
+            ),
+          );
+      }
+    } else if (existingVote) {
+      await db
+        .update(roomCommentVotes)
+        .set({ value })
+        .where(
+          and(
+            eq(roomCommentVotes.commentId, commentId),
+            eq(roomCommentVotes.userId, userId),
+          ),
+        );
+    } else {
+      await db.insert(roomCommentVotes).values({ commentId, userId, value });
+    }
+
+    if (scoreDelta !== 0) {
+      await db
+        .update(roomComments)
+        .set({ score: sql`${roomComments.score} + ${scoreDelta}` })
+        .where(eq(roomComments.id, commentId));
+    }
+
+    const [updated] = await db
+      .select({ score: roomComments.score })
+      .from(roomComments)
+      .where(eq(roomComments.id, commentId))
+      .limit(1);
+
+    res.json({
+      success: true,
+      data: { commentId, score: updated.score, userVote: value },
+    });
+  }),
+);
+
+// DELETE /home/rooms/:roomId/threads/:threadId - Delete thread
+router.delete(
+  "/rooms/:roomId/threads/:threadId",
+  authMiddleware,
+  asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const userId = req.user!.id;
+    const { roomId, threadId } = req.params;
+
+    const [thread] = await db
+      .select()
+      .from(roomThreads)
+      .where(
+        and(eq(roomThreads.id, threadId), eq(roomThreads.roomId, roomId)),
+      )
+      .limit(1);
+
+    if (!thread) {
+      throw new AppError(404, "Thread not found");
+    }
+
+    // Check permissions: author, room owner, or admin
+    const isAuthor = thread.authorId === userId;
+    if (!isAuthor) {
+      const [room] = await db
+        .select({ ownerId: rooms.ownerId })
+        .from(rooms)
+        .where(eq(rooms.id, roomId))
+        .limit(1);
+
+      if (room?.ownerId !== userId && req.user!.role !== "admin") {
+        throw new AppError(403, "Not authorized to delete this thread");
+      }
+    }
+
+    await db.delete(roomThreads).where(eq(roomThreads.id, threadId));
+
+    // Update thread count
+    await db
+      .update(rooms)
+      .set({ threadCount: sql`GREATEST(${rooms.threadCount} - 1, 0)` })
+      .where(eq(rooms.id, roomId));
+
+    res.json({ success: true, data: { deleted: true } });
+  }),
+);
+
+// PATCH /home/rooms/:roomId/threads/:threadId - Lock/pin thread
+router.patch(
+  "/rooms/:roomId/threads/:threadId",
+  authMiddleware,
+  asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const userId = req.user!.id;
+    const { roomId, threadId } = req.params;
+    const data = updateThreadModerationSchema.parse(req.body);
+
+    // Only room owner can lock/pin
+    const [room] = await db
+      .select({ ownerId: rooms.ownerId })
       .from(rooms)
       .where(eq(rooms.id, roomId))
       .limit(1);
@@ -581,172 +958,97 @@ router.patch(
       throw new AppError(404, "Room not found");
     }
 
-    if (message.authorId !== userId && req.user!.role !== "admin") {
-      throw new AppError(403, "Not authorized to edit this message");
+    if (room.ownerId !== userId && req.user!.role !== "admin") {
+      throw new AppError(403, "Only the room owner can lock/pin threads");
     }
 
-    // Save previous content
-    await db.insert(editHistory).values({
-      contentType: "room_message",
-      contentId: messageId,
-      editedBy: userId,
-      previousContent: message.content,
-      previousContentHtml: message.contentHtml,
-    });
+    const [thread] = await db
+      .select()
+      .from(roomThreads)
+      .where(
+        and(eq(roomThreads.id, threadId), eq(roomThreads.roomId, roomId)),
+      )
+      .limit(1);
 
-    const contentHtml = renderMarkdown(content);
+    if (!thread) {
+      throw new AppError(404, "Thread not found");
+    }
 
-    const [updated] = await db
-      .update(roomMessages)
-      .set({
-        content,
-        contentHtml,
-        editedBy: userId,
-        editedAt: new Date(),
-        updatedAt: new Date(),
-      })
-      .where(eq(roomMessages.id, messageId))
+    const updateData: Record<string, unknown> = { updatedAt: new Date() };
+    if (data.isLocked !== undefined) updateData.isLocked = data.isLocked;
+    if (data.isPinned !== undefined) updateData.isPinned = data.isPinned;
+
+    const [updatedThread] = await db
+      .update(roomThreads)
+      .set(updateData)
+      .where(eq(roomThreads.id, threadId))
       .returning();
 
-    const [author] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, userId))
-      .limit(1);
-
-    const publicView = room.visibility === "public";
-    const editEventBase = {
-      roomId,
-      messageId,
-      content: updated.content,
-      contentHtml: updated.contentHtml,
-      editedBy: userId,
-      editedAt: updated.editedAt,
-    };
-
-    io.to(`room:${roomId}`)
-      .except(`user:${userId}`)
-      .emit("room_message_edited", {
-        ...editEventBase,
-        author: formatUserSummary(author, { publicView }),
-      });
-    io.to(`user:${userId}`).emit("room_message_edited", {
-      ...editEventBase,
-      author: formatUserSummary(author, {
-        publicView,
-        preserveIdForUserId: userId,
-      }),
-    });
-
-    res.json({ success: true, data: updated });
+    res.json({ success: true, data: updatedThread });
   }),
 );
 
-// DELETE /home/rooms/:roomId/messages/:messageId - Soft-delete room message
+// DELETE /home/rooms/:roomId/threads/:threadId/comments/:commentId - Delete comment
 router.delete(
-  "/rooms/:roomId/messages/:messageId",
+  "/rooms/:roomId/threads/:threadId/comments/:commentId",
   authMiddleware,
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const userId = req.user!.id;
-    const { roomId, messageId } = req.params;
+    const { roomId, threadId, commentId } = req.params;
 
-    const [message] = await db
+    const [thread] = await db
       .select()
-      .from(roomMessages)
+      .from(roomThreads)
       .where(
-        and(eq(roomMessages.id, messageId), eq(roomMessages.roomId, roomId)),
+        and(eq(roomThreads.id, threadId), eq(roomThreads.roomId, roomId)),
       )
       .limit(1);
 
-    if (!message) {
-      throw new AppError(404, "Message not found");
+    if (!thread) {
+      throw new AppError(404, "Thread not found");
     }
 
-    // Check ownership: author, room owner, or admin
-    const [room] = await db
+    const [comment] = await db
       .select()
-      .from(rooms)
-      .where(eq(rooms.id, roomId))
-      .limit(1);
-    const isRoomOwner = room && room.ownerId === userId;
-    const isAuthor = message.authorId === userId;
-    const isAdmin = req.user!.role === "admin";
-
-    if (!isAuthor && !isRoomOwner && !isAdmin) {
-      throw new AppError(403, "Not authorized to delete this message");
-    }
-
-    await db
-      .update(roomMessages)
-      .set({ isHidden: true, updatedAt: new Date() })
-      .where(eq(roomMessages.id, messageId));
-
-    io.to(`room:${roomId}`).emit("room_message_deleted", { roomId, messageId });
-
-    res.json({ success: true, data: { deleted: true } });
-  }),
-);
-
-// POST /home/rooms/:roomId/messages/:messageId/reactions - Toggle reaction
-router.post(
-  "/rooms/:roomId/messages/:messageId/reactions",
-  authMiddleware,
-  asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-    const userId = req.user!.id;
-    const { roomId, messageId } = req.params;
-    const { emoji } = z
-      .object({ emoji: z.string().min(1).max(20) })
-      .parse(req.body);
-
-    // Verify message exists in room
-    const [message] = await db
-      .select()
-      .from(roomMessages)
-      .where(
-        and(eq(roomMessages.id, messageId), eq(roomMessages.roomId, roomId)),
-      )
-      .limit(1);
-
-    if (!message) {
-      throw new AppError(404, "Message not found");
-    }
-
-    // Check if reaction already exists (toggle)
-    const [existing] = await db
-      .select()
-      .from(messageReactions)
+      .from(roomComments)
       .where(
         and(
-          eq(messageReactions.messageId, messageId),
-          eq(messageReactions.userId, userId),
-          eq(messageReactions.emoji, emoji),
+          eq(roomComments.id, commentId),
+          eq(roomComments.threadId, threadId),
         ),
       )
       .limit(1);
 
-    if (existing) {
-      // Remove reaction
-      await db
-        .delete(messageReactions)
-        .where(eq(messageReactions.id, existing.id));
-      io.to(`room:${roomId}`).emit("room_reaction_updated", {
-        roomId,
-        messageId,
-      });
-      res.json({ success: true, data: { action: "removed" } });
-    } else {
-      // Add reaction
-      await db.insert(messageReactions).values({
-        messageId,
-        userId,
-        emoji,
-      });
-      io.to(`room:${roomId}`).emit("room_reaction_updated", {
-        roomId,
-        messageId,
-      });
-      res.json({ success: true, data: { action: "added" } });
+    if (!comment) {
+      throw new AppError(404, "Comment not found");
     }
+
+    // Check permissions: author, room owner, or admin
+    const isAuthor = comment.authorId === userId;
+    if (!isAuthor) {
+      const [room] = await db
+        .select({ ownerId: rooms.ownerId })
+        .from(rooms)
+        .where(eq(rooms.id, roomId))
+        .limit(1);
+
+      if (room?.ownerId !== userId && req.user!.role !== "admin") {
+        throw new AppError(403, "Not authorized to delete this comment");
+      }
+    }
+
+    await db.delete(roomComments).where(eq(roomComments.id, commentId));
+
+    // Update reply count
+    await db
+      .update(roomThreads)
+      .set({
+        replyCount: sql`GREATEST(${roomThreads.replyCount} - 1, 0)`,
+        updatedAt: new Date(),
+      })
+      .where(eq(roomThreads.id, threadId));
+
+    res.json({ success: true, data: { deleted: true } });
   }),
 );
 
@@ -1000,7 +1302,7 @@ router.get(
     let roomsQuery = db
       .select({
         room: rooms,
-        messageCount: sql<number>`(SELECT count(*)::int FROM room_messages WHERE room_id = ${rooms.id})`,
+        threadCount: sql<number>`(SELECT count(*)::int FROM room_threads WHERE room_id = ${rooms.id})`,
       })
       .from(rooms)
       .where(eq(rooms.ownerId, userId))
@@ -1010,15 +1312,15 @@ router.get(
 
     // Filter rooms based on visibility and membership
     const accessibleRooms = await Promise.all(
-      userRooms.map(async ({ room, messageCount }) => {
+      userRooms.map(async ({ room, threadCount }) => {
         // Public rooms are always visible
         if (room.visibility === "public") {
-          return { ...room, messageCount, canAccess: true };
+          return { ...room, threadCount, canAccess: true };
         }
 
         // Private rooms: check if current user is owner or member
         if (isOwnHome) {
-          return { ...room, messageCount, canAccess: true };
+          return { ...room, threadCount, canAccess: true };
         }
 
         if (currentUserId) {
@@ -1034,7 +1336,7 @@ router.get(
             .limit(1);
 
           if (membership) {
-            return { ...room, messageCount, canAccess: true };
+            return { ...room, threadCount, canAccess: true };
           }
         }
 

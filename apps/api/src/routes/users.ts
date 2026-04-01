@@ -370,7 +370,8 @@ router.get(
       comments,
       clubMembers,
       rooms,
-      roomMessages,
+      roomThreads,
+      roomComments,
       roomMembers,
       notifications,
       userSubscriptions,
@@ -404,10 +405,14 @@ router.get(
       .select()
       .from(comments)
       .where(eq(comments.authorId, userId));
-    const userRoomMessages = await db
+    const userRoomThreads = await db
       .select()
-      .from(roomMessages)
-      .where(eq(roomMessages.authorId, userId));
+      .from(roomThreads)
+      .where(eq(roomThreads.authorId, userId));
+    const userRoomComments = await db
+      .select()
+      .from(roomComments)
+      .where(eq(roomComments.authorId, userId));
 
     // Votes
     const userThreadVotes = await db
@@ -512,7 +517,8 @@ router.get(
         clubMemberships: userClubMemberships,
         rooms: userOwnedRooms,
         roomMemberships: userRoomMemberships,
-        roomMessages: userRoomMessages,
+        roomThreads: userRoomThreads,
+        roomComments: userRoomComments,
         roomInvitations: {
           sent: sentRoomInvitations,
           received: receivedRoomInvitations,
@@ -552,7 +558,10 @@ router.delete(
       conversationParticipants,
       threadVotes,
       commentVotes,
-      roomMessages,
+      roomThreads,
+      roomComments,
+      roomThreadVotes,
+      roomCommentVotes,
       clubMembers,
       editHistory,
     } = await import("../db/index.js");
@@ -575,8 +584,11 @@ router.delete(
       .delete(conversationParticipants)
       .where(eq(conversationParticipants.userId, userId));
 
-    // 5. Delete room messages
-    await db.delete(roomMessages).where(eq(roomMessages.authorId, userId));
+    // 5. Delete room content
+    await db.delete(roomCommentVotes).where(eq(roomCommentVotes.userId, userId));
+    await db.delete(roomThreadVotes).where(eq(roomThreadVotes.userId, userId));
+    await db.delete(roomComments).where(eq(roomComments.authorId, userId));
+    await db.delete(roomThreads).where(eq(roomThreads.authorId, userId));
 
     // 6. Delete club memberships
     await db.delete(clubMembers).where(eq(clubMembers.userId, userId));

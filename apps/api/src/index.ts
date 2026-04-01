@@ -265,30 +265,6 @@ io.on("connection", (socket) => {
   const userId = (socket as any).userId as string;
   console.log("Socket connected:", socket.id, "user:", userId);
 
-  // Home rooms — verify membership
-  socket.on("join:room", async (roomId: string) => {
-    try {
-      const { eq, and } = await import("drizzle-orm");
-      const { db, roomMembers } = await import("./db/index.js");
-      const [membership] = await db
-        .select()
-        .from(roomMembers)
-        .where(
-          and(eq(roomMembers.roomId, roomId), eq(roomMembers.userId, userId)),
-        )
-        .limit(1);
-      if (membership || (socket as any).userRole === "admin") {
-        socket.join(`room:${roomId}`);
-      }
-    } catch (err) {
-      console.error("Error joining room:", err);
-    }
-  });
-
-  socket.on("leave:room", (roomId: string) => {
-    socket.leave(`room:${roomId}`);
-  });
-
   // Agora threads — public, allow all authenticated users
   socket.on("join:thread", (threadId: string) => {
     socket.join(`thread:${threadId}`);
@@ -338,11 +314,7 @@ io.on("connection", (socket) => {
     socket.leave(`dm:${conversationId}`);
   });
 
-  // Typing indicators — broadcast to others in the same room/dm
-  socket.on("typing:room", (roomId: string) => {
-    socket.to(`room:${roomId}`).emit("user_typing", { roomId, userId });
-  });
-
+  // Typing indicators — broadcast to others in the same dm
   socket.on("typing:dm", (conversationId: string) => {
     socket
       .to(`dm:${conversationId}`)
@@ -545,6 +517,68 @@ async function runMigrations() {
     // 0018: enforce FTN subject uniqueness
     await db.execute(
       sql`CREATE UNIQUE INDEX IF NOT EXISTS "users_rp_subject_idx" ON "users" ("rp_subject")`,
+    );
+
+    // 0017: Convert rooms from flat chat to threaded (club-like)
+    await db.execute(
+      sql`DROP TABLE IF EXISTS "message_reactions"`,
+    );
+    await db.execute(
+      sql`DROP TABLE IF EXISTS "room_messages"`,
+    );
+    await db.execute(sql`CREATE TABLE IF NOT EXISTS "room_threads" (
+      "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      "room_id" UUID NOT NULL REFERENCES "rooms"("id") ON DELETE CASCADE,
+      "author_id" UUID NOT NULL REFERENCES "users"("id"),
+      "title" VARCHAR(500) NOT NULL,
+      "content" TEXT NOT NULL,
+      "content_html" TEXT,
+      "is_pinned" BOOLEAN DEFAULT false,
+      "is_locked" BOOLEAN DEFAULT false,
+      "reply_count" INTEGER DEFAULT 0,
+      "score" INTEGER DEFAULT 0,
+      "is_hidden" BOOLEAN DEFAULT false,
+      "created_at" TIMESTAMPTZ DEFAULT NOW(),
+      "updated_at" TIMESTAMPTZ DEFAULT NOW()
+    )`);
+    await db.execute(
+      sql`CREATE INDEX IF NOT EXISTS "room_threads_room_idx" ON "room_threads" ("room_id")`,
+    );
+    await db.execute(sql`CREATE TABLE IF NOT EXISTS "room_comments" (
+      "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      "thread_id" UUID NOT NULL REFERENCES "room_threads"("id") ON DELETE CASCADE,
+      "parent_id" UUID,
+      "author_id" UUID NOT NULL REFERENCES "users"("id"),
+      "content" TEXT NOT NULL,
+      "content_html" TEXT,
+      "score" INTEGER DEFAULT 0,
+      "is_hidden" BOOLEAN DEFAULT false,
+      "created_at" TIMESTAMPTZ DEFAULT NOW(),
+      "updated_at" TIMESTAMPTZ DEFAULT NOW()
+    )`);
+    await db.execute(sql`CREATE TABLE IF NOT EXISTS "room_thread_votes" (
+      "thread_id" UUID NOT NULL REFERENCES "room_threads"("id") ON DELETE CASCADE,
+      "user_id" UUID NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
+      "value" INTEGER NOT NULL,
+      "created_at" TIMESTAMPTZ DEFAULT NOW(),
+      PRIMARY KEY ("thread_id", "user_id")
+    )`);
+    await db.execute(
+      sql`CREATE INDEX IF NOT EXISTS "room_thread_votes_thread_idx" ON "room_thread_votes" ("thread_id")`,
+    );
+    await db.execute(sql`CREATE TABLE IF NOT EXISTS "room_comment_votes" (
+      "comment_id" UUID NOT NULL REFERENCES "room_comments"("id") ON DELETE CASCADE,
+      "user_id" UUID NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
+      "value" INTEGER NOT NULL,
+      "created_at" TIMESTAMPTZ DEFAULT NOW(),
+      PRIMARY KEY ("comment_id", "user_id")
+    )`);
+    await db.execute(
+      sql`CREATE INDEX IF NOT EXISTS "room_comment_votes_comment_idx" ON "room_comment_votes" ("comment_id")`,
+    );
+    // Rename message_count -> thread_count
+    await db.execute(
+      sql`ALTER TABLE "rooms" RENAME COLUMN "message_count" TO "thread_count"`,
     );
 
     console.log("Migrations OK");

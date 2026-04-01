@@ -43,13 +43,13 @@ export function ActorBadge({
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5">
             <span
-              className={`font-medium text-gray-900 ${canLinkToProfile ? "hover:underline" : ""} ${size === "sm" ? "text-sm" : ""}`}
+              className={`font-medium text-gray-900 dark:text-gray-100 ${canLinkToProfile ? "hover:underline" : ""} ${size === "sm" ? "text-sm" : ""}`}
             >
               {user.name}
             </span>
 
             {isInstitution ? (
-              <span className="inline-flex items-center gap-1 text-xs text-violet-700 bg-violet-50 px-1.5 py-0.5 rounded">
+              <span className="inline-flex items-center gap-1 text-xs text-violet-700 dark:text-violet-300 bg-violet-50 dark:bg-violet-900/30 px-1.5 py-0.5 rounded">
                 <Building2 className="w-3 h-3" />
                 <span>Official</span>
               </span>

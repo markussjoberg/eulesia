@@ -1,30 +1,29 @@
 import { useState, useRef, useCallback } from "react";
 import { ContentWithPreviews } from "../components/common/ContentWithPreviews";
-import { useTranslation } from "react-i18next";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
-  Users,
-  ChevronDown,
   Lock,
   Unlock,
   Pin,
   PinOff,
   Trash2,
+  ChevronDown,
   MoreHorizontal,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Layout } from "../components/layout";
 import { SEOHead } from "../components/SEOHead";
-import { ActorBadge, ContentEndMarker } from "../components/common";
+import { ActorBadge } from "../components/common";
 import { CommentThread } from "../components/agora/CommentThread";
 import {
-  useClubThread,
-  useAddClubComment,
-  useUpdateClubThread,
-  useDeleteClubThread,
-  useDeleteClubComment,
-  useVoteClubThread,
-  useVoteClubComment,
+  useRoomThread,
+  useAddRoomComment,
+  useUpdateRoomThread,
+  useDeleteRoomThread,
+  useDeleteRoomComment,
+  useVoteRoomThread,
+  useVoteRoomComment,
   useCurrentUser,
 } from "../hooks/useApi";
 import { ThreadVoteButtons } from "../components/agora/ThreadVoteButtons";
@@ -33,11 +32,11 @@ import { transformAuthor, transformComment } from "../utils/transforms";
 
 type CommentSort = "best" | "new" | "old" | "controversial";
 
-export function ClubThreadPage() {
-  const { t } = useTranslation(["clubs", "agora", "common"]);
+export function RoomThreadPage() {
+  const { t } = useTranslation(["home", "agora", "common", "clubs"]);
   const navigate = useNavigate();
-  const { clubId, threadId } = useParams<{
-    clubId: string;
+  const { roomId, threadId } = useParams<{
+    roomId: string;
     threadId: string;
   }>();
   const [sort, setSort] = useState<CommentSort>("best");
@@ -54,20 +53,20 @@ export function ClubThreadPage() {
     data: thread,
     isLoading,
     error,
-  } = useClubThread(clubId || "", threadId || "");
+  } = useRoomThread(roomId || "", threadId || "");
   const { data: currentUser } = useCurrentUser();
-  const addCommentMutation = useAddClubComment(clubId || "", threadId || "");
-  const updateThreadMutation = useUpdateClubThread(
-    clubId || "",
+  const addCommentMutation = useAddRoomComment(roomId || "", threadId || "");
+  const updateThreadMutation = useUpdateRoomThread(
+    roomId || "",
     threadId || "",
   );
-  const deleteThreadMutation = useDeleteClubThread(clubId || "");
-  const deleteCommentMutation = useDeleteClubComment(
-    clubId || "",
+  const deleteThreadMutation = useDeleteRoomThread(roomId || "");
+  const deleteCommentMutation = useDeleteRoomComment(
+    roomId || "",
     threadId || "",
   );
-  const voteThreadMutation = useVoteClubThread(clubId || "");
-  const voteCommentMutation = useVoteClubComment(clubId || "", threadId || "");
+  const voteThreadMutation = useVoteRoomThread(roomId || "");
+  const voteCommentMutation = useVoteRoomComment(roomId || "", threadId || "");
 
   const [commentContent, setCommentContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -78,7 +77,6 @@ export function ClubThreadPage() {
   >(null);
   const [showModMenu, setShowModMenu] = useState(false);
 
-  // Scroll textarea into view when focused (for mobile keyboard)
   const handleCommentFocus = useCallback(() => {
     setTimeout(() => {
       commentInputRef.current?.scrollIntoView({
@@ -89,7 +87,7 @@ export function ClubThreadPage() {
   }, []);
 
   const handleSubmitComment = async () => {
-    if (!commentContent.trim() || !threadId || !clubId) return;
+    if (!commentContent.trim() || !threadId || !roomId) return;
 
     setIsSubmitting(true);
     try {
@@ -103,7 +101,7 @@ export function ClubThreadPage() {
   };
 
   const handleVote = async (commentId: string, value: number) => {
-    if (!clubId || !threadId) return;
+    if (!roomId || !threadId) return;
     voteCommentMutation.mutate({ commentId, value });
   };
 
@@ -137,7 +135,7 @@ export function ClubThreadPage() {
     if (!threadId) return;
     try {
       await deleteThreadMutation.mutateAsync(threadId);
-      navigate(`/clubs/${clubId}`);
+      navigate(`/home/room/${roomId}`);
     } catch (err) {
       console.error("Failed to delete thread:", err);
     }
@@ -167,13 +165,13 @@ export function ClubThreadPage() {
       <Layout>
         <div className="p-8 text-center">
           <p className="text-gray-500 dark:text-gray-400">
-            {t("clubs:threadNotFound")}
+            {t("home:room.threadNotFound")}
           </p>
           <Link
-            to={`/clubs/${clubId}`}
-            className="text-blue-600 hover:underline mt-2 inline-block"
+            to={`/home/room/${roomId}`}
+            className="text-teal-600 hover:underline mt-2 inline-block"
           >
-            {t("clubs:backToClub")}
+            {t("home:room.backToRoom")}
           </Link>
         </div>
       </Layout>
@@ -182,25 +180,20 @@ export function ClubThreadPage() {
 
   const author = transformAuthor(thread.author);
   const comments = thread.comments?.map(transformComment) || [];
-  const memberRole = thread.memberRole;
-  const isModOrAdmin = memberRole === "admin" || memberRole === "moderator";
-  const isThreadAuthor =
-    currentUser?.id === (thread.authorId ?? thread.author.id);
+  const isRoomOwner = thread.isRoomOwner;
+  const isThreadAuthor = currentUser?.id === thread.author?.id;
 
   return (
     <Layout>
-      {thread && (
-        <SEOHead
-          title={thread.title}
-          description={thread.content
-            .substring(0, 160)
-            .replace(/[#*_~`>\n]+/g, " ")
-            .trim()}
-          path={`/clubs/${clubId}/thread/${threadId}`}
-          type="article"
-          noIndex
-        />
-      )}
+      <SEOHead
+        title={thread.title}
+        description={thread.content
+          .substring(0, 160)
+          .replace(/[#*_~`>\n]+/g, " ")
+          .trim()}
+        path={`/home/room/${roomId}/thread/${threadId}`}
+        noIndex
+      />
       {/* Back navigation */}
       <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 py-2">
         <button
@@ -208,12 +201,12 @@ export function ClubThreadPage() {
           className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          {t("clubs:backToClub")}
+          {t("home:room.backToRoom")}
         </button>
       </div>
 
       {/* Thread post — unified card with votes on left */}
-      <div className="px-4 pt-3">
+      <div className="px-4 pt-4">
         <div className="bg-white dark:bg-gray-900 rounded-t-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
           <div className="flex">
             {/* Left: vote column */}
@@ -232,11 +225,11 @@ export function ClubThreadPage() {
 
             {/* Right: content */}
             <div className="flex-1 min-w-0 py-3 pr-4 pl-1">
-              {/* Header row */}
+              {/* Header row: author + time + badges + menu */}
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-2 min-w-0">
                   <ActorBadge user={author} size="sm" />
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                  <span className="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">
                     {formatRelativeTime(thread.createdAt)}
                   </span>
                   {thread.isPinned && (
@@ -250,7 +243,7 @@ export function ClubThreadPage() {
                 </div>
 
                 {/* Moderation menu */}
-                {(isModOrAdmin || isThreadAuthor) && (
+                {(isRoomOwner || isThreadAuthor) && (
                   <div className="relative flex-shrink-0">
                     <button
                       onClick={() => setShowModMenu(!showModMenu)}
@@ -265,28 +258,49 @@ export function ClubThreadPage() {
                           onClick={() => setShowModMenu(false)}
                         />
                         <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 py-1 z-20">
-                          {isModOrAdmin && (
+                          {isRoomOwner && (
                             <>
                               <button
-                                onClick={() => { handleToggleLock(); setShowModMenu(false); }}
+                                onClick={() => {
+                                  handleToggleLock();
+                                  setShowModMenu(false);
+                                }}
                                 disabled={updateThreadMutation.isPending}
                                 className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
                               >
-                                {thread.isLocked ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
-                                {thread.isLocked ? t("clubs:moderation.unlockThread") : t("clubs:moderation.lockThread")}
+                                {thread.isLocked ? (
+                                  <Unlock className="w-4 h-4" />
+                                ) : (
+                                  <Lock className="w-4 h-4" />
+                                )}
+                                {thread.isLocked
+                                  ? t("clubs:moderation.unlockThread")
+                                  : t("clubs:moderation.lockThread")}
                               </button>
                               <button
-                                onClick={() => { handleTogglePin(); setShowModMenu(false); }}
+                                onClick={() => {
+                                  handleTogglePin();
+                                  setShowModMenu(false);
+                                }}
                                 disabled={updateThreadMutation.isPending}
                                 className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
                               >
-                                {thread.isPinned ? <PinOff className="w-4 h-4" /> : <Pin className="w-4 h-4" />}
-                                {thread.isPinned ? t("clubs:moderation.unpinThread") : t("clubs:moderation.pinThread")}
+                                {thread.isPinned ? (
+                                  <PinOff className="w-4 h-4" />
+                                ) : (
+                                  <Pin className="w-4 h-4" />
+                                )}
+                                {thread.isPinned
+                                  ? t("clubs:moderation.unpinThread")
+                                  : t("clubs:moderation.pinThread")}
                               </button>
                             </>
                           )}
                           <button
-                            onClick={() => { setConfirmDeleteThread(true); setShowModMenu(false); }}
+                            onClick={() => {
+                              setConfirmDeleteThread(true);
+                              setShowModMenu(false);
+                            }}
                             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -381,11 +395,11 @@ export function ClubThreadPage() {
         </div>
       )}
 
-      {/* Discussion — connected to post card */}
+      {/* Discussion — connected to post card above */}
       <div className="px-4 pb-6">
-        {/* Comment input */}
+        {/* Comment input — connected visually (no rounded top, shared border) */}
         <div className="bg-white dark:bg-gray-900 border-x border-b border-gray-200 dark:border-gray-800 px-4 py-3">
-          {thread.isLocked && !isModOrAdmin ? (
+          {thread.isLocked && !isRoomOwner ? (
             <div className="flex items-center justify-center gap-2 text-gray-500 dark:text-gray-400 py-1">
               <Lock className="w-4 h-4" />
               <span className="text-sm">
@@ -406,8 +420,8 @@ export function ClubThreadPage() {
                       handleSubmitComment();
                   }
                 }}
-                placeholder={t("clubs:thread.writeComment")}
-                className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-800 dark:text-gray-100 transition-all"
+                placeholder={t("home:room.writeComment")}
+                className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent dark:bg-gray-800 dark:text-gray-100 transition-all"
                 rows={1}
                 style={{ minHeight: "38px", maxHeight: "120px" }}
                 onInput={(e) => {
@@ -420,9 +434,11 @@ export function ClubThreadPage() {
                 <button
                   onClick={handleSubmitComment}
                   disabled={!commentContent.trim() || isSubmitting}
-                  className="flex-shrink-0 bg-purple-700 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-purple-600 transition-colors disabled:opacity-50"
+                  className="flex-shrink-0 bg-teal-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-teal-700 transition-colors disabled:opacity-50"
                 >
-                  {isSubmitting ? "..." : t("clubs:submitReply")}
+                  {isSubmitting
+                    ? "..."
+                    : t("home:room.submitComment")}
                 </button>
               )}
             </div>
@@ -432,7 +448,7 @@ export function ClubThreadPage() {
         {/* Comments header + sort */}
         <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 border-x border-b border-gray-200 dark:border-gray-800 px-4 py-2">
           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            {t("clubs:discussion", { count: comments.length })}
+            {t("home:room.replies", { count: comments.length })}
           </span>
           <div className="relative">
             <button
@@ -458,7 +474,7 @@ export function ClubThreadPage() {
                       }}
                       className={`w-full text-left px-3 py-1.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 ${
                         sort === option.value
-                          ? "text-purple-600 font-medium"
+                          ? "text-teal-600 font-medium"
                           : "text-gray-700 dark:text-gray-300"
                       }`}
                     >
@@ -474,12 +490,12 @@ export function ClubThreadPage() {
         {/* Comments list */}
         <div className="bg-white dark:bg-gray-900 border-x border-b border-gray-200 dark:border-gray-800 rounded-b-xl">
           {comments.length > 0 ? (
-            <div className="space-y-[5px] bg-gray-100 dark:bg-gray-800/50 rounded-b-xl overflow-hidden">
+            <div className="space-y-[5px] bg-gray-100 dark:bg-gray-800/50">
               {comments
                 .filter((c) => !c.parentId)
                 .map((comment) => (
                   <div key={comment.id} className="relative group/comment px-4 py-3 bg-white dark:bg-gray-900">
-                    {(isModOrAdmin || comment.authorId === currentUser?.id) && (
+                    {(isRoomOwner || comment.authorId === currentUser?.id) && (
                       <button
                         onClick={() => setConfirmDeleteComment(comment.id)}
                         className="absolute top-2 right-2 p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20 opacity-0 group-hover/comment:opacity-100 transition-opacity z-10"
@@ -493,20 +509,26 @@ export function ClubThreadPage() {
                         comment,
                         ...comments.filter((c) => c.parentId === comment.id),
                       ]}
+                      currentUserId={currentUser?.id}
                       onVote={handleVote}
-                      onReply={handleReply}
+                      onReply={
+                        thread.isLocked && !isRoomOwner
+                          ? undefined
+                          : handleReply
+                      }
+                      onDelete={(commentId) =>
+                        setConfirmDeleteComment(commentId)
+                      }
                     />
                   </div>
                 ))}
             </div>
           ) : (
             <div className="text-center py-6 text-gray-500 dark:text-gray-400 text-sm">
-              <p>{t("clubs:noReplies")}</p>
+              <p>{t("home:room.noComments")}</p>
             </div>
           )}
         </div>
-
-        <ContentEndMarker message={t("clubs:endOfDiscussion")} />
       </div>
     </Layout>
   );
