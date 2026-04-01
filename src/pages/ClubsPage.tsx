@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Search,
@@ -30,7 +30,6 @@ import {
   useDeclineClubInvitation,
 } from "../hooks/useApi";
 import { useAuth } from "../hooks/useAuth";
-import { useGuide } from "../hooks/useGuide";
 import { api } from "../lib/api";
 import type { Club as ApiClub, LocationResult } from "../lib/api";
 
@@ -63,18 +62,6 @@ export function ClubsPage() {
   const [newRuleInput, setNewRuleInput] = useState("");
   const [customCategory, setCustomCategory] = useState("");
   const imageInputRef = useRef<HTMLInputElement>(null);
-
-  const { hasCompletedGuide, startGuide, isGuideActive } = useGuide();
-
-  // Auto-trigger clubs guide on first visit
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!hasCompletedGuide("clubs") && !isGuideActive) {
-        startGuide("clubs");
-      }
-    }, 800);
-    return () => clearTimeout(timer);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const { data: categoriesData } = useClubCategories();
   const createClubMutation = useCreateClub();

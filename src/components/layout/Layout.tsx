@@ -1,11 +1,10 @@
-import { type ReactNode, useEffect, useRef } from "react";
+import { type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { TopBar } from "./TopBar";
 import { BottomNav } from "./BottomNav";
 import { Footer } from "./Footer";
 import { AnnouncementBanner } from "./AnnouncementBanner";
 import { GuideTour } from "../guide";
-import { useGuide } from "../../hooks/useGuide";
 
 interface LayoutProps {
   children: ReactNode;
@@ -19,22 +18,6 @@ export function Layout({
   fullWidth = false,
 }: LayoutProps) {
   const { t } = useTranslation();
-  const { hasCompletedGuide, startGuide, isGuideActive } = useGuide();
-  const globalGuideTriggered = useRef(false);
-
-  // Auto-trigger global guide on first ever page load
-  useEffect(() => {
-    if (globalGuideTriggered.current) return;
-    globalGuideTriggered.current = true;
-
-    const timer = setTimeout(() => {
-      if (!hasCompletedGuide("global") && !isGuideActive) {
-        startGuide("global");
-      }
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <a

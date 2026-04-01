@@ -1,11 +1,9 @@
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { MessageSquare, Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Layout } from "../components/layout";
 import { SEOHead } from "../components/SEOHead";
 import { useConversations } from "../hooks/useApi";
-import { useGuide } from "../hooks/useGuide";
 import { formatMessageDate } from "../lib/formatTime";
 import type { Conversation } from "../lib/api";
 
@@ -78,18 +76,6 @@ function ConversationItem({ conversation }: { conversation: Conversation }) {
 export function MessagesPage() {
   const { t } = useTranslation("messages");
   const { data: conversations, isLoading } = useConversations();
-  const { hasCompletedGuide, startGuide, isGuideActive } = useGuide();
-
-  // Auto-trigger messages guide on first visit
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!hasCompletedGuide("messages") && !isGuideActive) {
-        startGuide("messages");
-      }
-    }, 800);
-    return () => clearTimeout(timer);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
   return (
     <Layout>
       <SEOHead title={t("title")} path="/messages" noIndex />
