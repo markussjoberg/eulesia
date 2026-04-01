@@ -55,22 +55,23 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const handleFinish = useCallback(async () => {
     setIsSubmitting(true);
     try {
+      // Subscribe to selections — errors are non-fatal
       if (selectedLocation?.id) {
-        await subscribeMutation.mutateAsync({ entityType: "municipality", entityId: selectedLocation.id });
+        await subscribeMutation.mutateAsync({ entityType: "municipality", entityId: selectedLocation.id }).catch(() => {});
       }
       for (const tag of selectedTags) {
-        await subscribeMutation.mutateAsync({ entityType: "tag", entityId: tag });
+        await subscribeMutation.mutateAsync({ entityType: "tag", entityId: tag }).catch(() => {});
       }
       for (const userId of followedUsers) {
-        await subscribeMutation.mutateAsync({ entityType: "user", entityId: userId });
+        await subscribeMutation.mutateAsync({ entityType: "user", entityId: userId }).catch(() => {});
       }
-      completeOnboardingMutation.mutate();
-      onComplete();
     } catch (err) {
-      console.error("Onboarding failed", err);
-    } finally {
-      setIsSubmitting(false);
+      console.error("Onboarding subscriptions failed", err);
     }
+    // Always complete onboarding and close wizard
+    completeOnboardingMutation.mutate();
+    onComplete();
+    setIsSubmitting(false);
   }, [selectedLocation, selectedTags, followedUsers, subscribeMutation, completeOnboardingMutation, onComplete]);
 
   const stepTitles: Record<Step, string> = {
