@@ -144,14 +144,14 @@
     "title": "Eulesia ry has been founded",
     "badge": "Business ID 3613739-1",
     "p1": "Eulesia ry is a registered association that owns the data, maintains the servers, and bears responsibility for the Eulesia service.",
-    "p2": "The association is the first step. The statutes already include the option to transition to a foundation once operations are established. A foundation requires €50,000 in founding capital — we are looking for a founding donor.",
+    "p2": "The association is non-profit and its statutes safeguard the platform's independence. We are looking for supporters and partners to help launch operations.",
     "p3": "Are you interested in supporting the birth of a European civic infrastructure?",
     "why1Title": "Data stays with users",
     "why1Desc": "Users own their data. The association acts only as custodian.",
     "why2Title": "No commercialisation",
     "why2Desc": "The platform and its data cannot be transferred to commercial actors.",
     "why3Title": "Built to last",
-    "why3Desc": "Open statutes, transparent governance, and a path to foundation structure.",
+    "why3Desc": "Open statutes, transparent governance, and a non-profit organization.",
     "contact": "Get in touch:",
     "contactEmail": "info@eulesia.eu"
   },
@@ -159,7 +159,7 @@
   "organization": {
     "title": "Organization",
     "p1": "Eulesia is currently a non-profit project. The long-term goal is an organizational structure that ensures the platform's continuity and independence.",
-    "p2": "Possibilities being explored include an independent foundation, publicly funded organization, or university-based maintenance and development.",
+    "p2": "Eulesia ry is a registered non-profit association. The long-term goal is to secure the platform's continuity and independence through public funding, partnerships, and community support.",
     "contact": "info@eulesia.eu"
   },
 
