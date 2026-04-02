@@ -264,13 +264,15 @@ if (ftnEnabled) {
         .where(lt(ftnPendingRegistrations.expiresAt, new Date()))
         .catch(() => {}); // Non-critical
 
-      // Redirect to registration form with FTN token and name (Title Case)
-      const toTitleCase = (s: string) =>
-        s.toLowerCase().replace(/(?:^|\s|-)\S/g, (c) => c.toUpperCase());
+      // Normalize FTN names only if ALL UPPER CASE (e.g. Nordea)
+      const normalizeName = (s: string) =>
+        s === s.toUpperCase()
+          ? s.toLowerCase().replace(/(?:^|\s|-)\S/g, (c) => c.toUpperCase())
+          : s;
       const params = new URLSearchParams({
         ftn: ftnToken,
-        firstName: toTitleCase(claims.given_name),
-        lastName: toTitleCase(claims.family_name),
+        firstName: normalizeName(claims.given_name),
+        lastName: normalizeName(claims.family_name),
         ...(inviteCode ? { invite: inviteCode } : {}),
       });
       res.redirect(`${env.APP_URL}/register?${params.toString()}`);
@@ -437,15 +439,17 @@ router.post(
           throw new AppError(400, "Username already exists");
         }
 
-        // Normalize FTN names: banks like Nordea return ALL UPPER CASE
-        const toTitleCase = (s: string) =>
-          s.toLowerCase().replace(/(?:^|\s|-)\S/g, (c) => c.toUpperCase());
+        // Normalize FTN names only if ALL UPPER CASE (e.g. Nordea)
+        const normalizeName = (s: string) =>
+          s === s.toUpperCase()
+            ? s.toLowerCase().replace(/(?:^|\s|-)\S/g, (c) => c.toUpperCase())
+            : s;
 
         const ftnDisplayName = ftnClaims
-          ? `${toTitleCase(ftnClaims.givenName.split(" ")[0])} ${toTitleCase(ftnClaims.familyName)}`
+          ? `${normalizeName(ftnClaims.givenName.split(" ")[0])} ${normalizeName(ftnClaims.familyName)}`
           : null;
         const ftnVerifiedName = ftnClaims
-          ? `${toTitleCase(ftnClaims.givenName)} ${toTitleCase(ftnClaims.familyName)}`
+          ? `${normalizeName(ftnClaims.givenName)} ${normalizeName(ftnClaims.familyName)}`
           : null;
 
         // Create user — with FTN strong auth data if available
