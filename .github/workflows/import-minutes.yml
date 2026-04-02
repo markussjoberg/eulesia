@@ -1,0 +1,88 @@
+name: Import Minutes
+
+on:
+  workflow_dispatch:
+    inputs:
+      municipality:
+        description: "Municipality name (e.g. Rautalampi)"
+        required: true
+        default: "Rautalampi"
+      limit:
+        description: "Max meetings to import"
+        required: true
+        default: "1"
+
+concurrency:
+  group: import-minutes
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on:
+      - self-hosted
+      - nix
+      - mercury
+      - eulesia
+    timeout-minutes: 30
+    env:
+      EULESIA_TEST_TARGET_HOST: ${{ vars.EULESIA_TEST_TARGET_HOST }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          install -d -m 700 "$HOME/.ssh"
+          printf '%s\n' "${{ secrets.EULESIA_TEST_SSH_KEY }}" > "$HOME/.ssh/id_ed25519"
+          printf '%s\n' "${{ secrets.EULESIA_TEST_KNOWN_HOSTS }}" > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/id_ed25519" "$HOME/.ssh/known_hosts"
+
+      - name: Build and deploy (includes import-minutes binary)
+        run: |
+          export NIX_SSHOPTS="-i $HOME/.ssh/id_ed25519 -o UserKnownHostsFile=$HOME/.ssh/known_hosts -o StrictHostKeyChecking=yes"
+          nix build .#nixosConfigurations.eulesia-test.config.system.build.toplevel
+          nix run .#rebuild-test
+
+      - name: Wait for API health
+        run: |
+          SSH="ssh -i $HOME/.ssh/id_ed25519 -o UserKnownHostsFile=$HOME/.ssh/known_hosts -o StrictHostKeyChecking=yes root@$EULESIA_TEST_TARGET_HOST"
+          for _ in $(seq 1 30); do
+            if $SSH "curl -fsS -H 'Host: test.eulesia.org' http://127.0.0.1:8080/api/v1/health" >/dev/null 2>&1; then
+              echo "API is healthy"
+              break
+            fi
+            sleep 5
+          done
+
+      - name: Run minutes import
+        run: |
+          SSH="ssh -i $HOME/.ssh/id_ed25519 -o UserKnownHostsFile=$HOME/.ssh/known_hosts -o StrictHostKeyChecking=yes root@$EULESIA_TEST_TARGET_HOST"
+          MUNICIPALITY="${{ inputs.municipality }}"
+          LIMIT="${{ inputs.limit }}"
+          echo "Importing minutes for: $MUNICIPALITY (limit: $LIMIT)"
+
+          # Run the import binary with the same env as the API service
+          $SSH "bash -c '
+            # Source environment from API service
+            eval \"\$(systemctl show eulesia-api -p Environment --value | tr \" \" \"\\n\")\"
+
+            # Also load secret env vars from the API process
+            API_PID=\$(systemctl show eulesia-api -p MainPID --value)
+            if [ \"\$API_PID\" -gt 0 ] 2>/dev/null; then
+              eval \"\$(tr \"\\0\" \"\\n\" < /proc/\$API_PID/environ | grep -E \"^(DATABASE_URL|PGHOST|PGUSER|MISTRAL|SESSION_SECRET|NODE_ENV)=\")\"
+            fi
+
+            # Find the package bin
+            API_BIN=\$(readlink -f /proc/\$API_PID/exe | sed \"s|/bin/node\$||\")
+            IMPORT_BIN=\"\${API_BIN}/bin/eulesia-api-import-minutes\"
+
+            if [ -x \"\$IMPORT_BIN\" ]; then
+              echo \"Using: \$IMPORT_BIN\"
+              exec \"\$IMPORT_BIN\" --municipality=$MUNICIPALITY --limit=$LIMIT
+            else
+              echo \"ERROR: import-minutes binary not found at \$IMPORT_BIN\"
+              echo \"Available bins:\"
+              ls -la \${API_BIN}/bin/ || true
+              exit 1
+            fi
+          '"

@@ -45,6 +45,14 @@ pkgs.buildNpmPackage {
     EOF
     chmod +x $out/bin/eulesia-api
 
+    cat > $out/bin/eulesia-api-import-minutes <<EOF
+    #!${pkgs.runtimeShell}
+    set -euo pipefail
+    cd $out/share/eulesia-api
+    exec ${pkgs.nodejs_22}/bin/node $out/share/eulesia-api/dist/services/import/run-minutes-import.js "\$@"
+    EOF
+    chmod +x $out/bin/eulesia-api-import-minutes
+
     cat > $out/bin/eulesia-api-migrate <<EOF
     #!${pkgs.runtimeShell}
     set -euo pipefail

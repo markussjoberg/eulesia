@@ -589,6 +589,27 @@ in {
         '';
       };
 
+      # One-shot service for importing municipal minutes
+      # Usage: systemctl start eulesia-import-minutes
+      # Or with args: systemctl start eulesia-import-minutes@"--municipality=Rautalampi --limit=1"
+      services.eulesia-import-minutes = {
+        description = "Eulesia Municipal Minutes Import";
+        after = ["eulesia-api.service"];
+        serviceConfig = {
+          Type = "oneshot";
+          User = cfg.user;
+          Group = cfg.group;
+          WorkingDirectory = cfg.stateDir;
+          UMask = "0077";
+          ReadWritePaths = [cfg.stateDir];
+        };
+        script = ''
+          set -euo pipefail
+          ${apiEnvironment}
+          ${cfg.package}/bin/eulesia-api-import-minutes "$@"
+        '';
+      };
+
       services.meilisearch = mkIf cfg.meilisearch.createLocally {
         wants = optional (cfg.meilisearch.masterKeyFile != null) "sops-install-secrets.service";
         after = optional (cfg.meilisearch.masterKeyFile != null) "sops-install-secrets.service";
