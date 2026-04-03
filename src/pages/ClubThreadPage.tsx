@@ -32,6 +32,18 @@ import { transformAuthor, transformComment } from "../utils/transforms";
 
 type CommentSort = "best" | "new" | "old" | "controversial";
 
+function getCommentWithDescendants(
+  root: { id: string; parentId?: string | null },
+  allComments: { id: string; parentId?: string | null }[],
+) {
+  const result = [root];
+  const children = allComments.filter((c) => c.parentId === root.id);
+  for (const child of children) {
+    result.push(...getCommentWithDescendants(child, allComments));
+  }
+  return result;
+}
+
 export function ClubThreadPage() {
   const { t } = useTranslation(["clubs", "agora", "common"]);
   const navigate = useNavigate();
@@ -513,10 +525,7 @@ export function ClubThreadPage() {
                       </button>
                     )}
                     <CommentThread
-                      comments={[
-                        comment,
-                        ...comments.filter((c) => c.parentId === comment.id),
-                      ]}
+                      comments={getCommentWithDescendants(comment, comments)}
                       onVote={handleVote}
                       onReply={handleReply}
                     />
