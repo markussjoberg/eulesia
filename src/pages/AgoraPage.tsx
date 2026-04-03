@@ -18,7 +18,14 @@ import {
   OnboardingWizard,
 } from "../components/agora";
 import { ContentEndMarker, ThreadListSkeleton } from "../components/common";
-import { MapPin, Building2, Globe, Users, HelpCircle } from "lucide-react";
+import {
+  MapPin,
+  Building2,
+  Globe,
+  Users,
+  HelpCircle,
+  MessageSquarePlus,
+} from "lucide-react";
 import {
   useThreads,
   useVoteThread,
@@ -467,18 +474,51 @@ export function AgoraPage() {
           </div>
         )}
 
-        {/* Empty state */}
+        {/* Empty state with philosopher quotes */}
         {!isLoading && !error && threads.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
-            <p>{t("noThreads")}</p>
-            {feedScope === "following" && (
-              <button
-                onClick={() => setSetupDismissed(false)}
-                className="mt-2 text-blue-600 hover:underline text-sm"
-              >
-                {t("editSubscriptions")}
-              </button>
-            )}
+          <div className="text-center py-16 px-6">
+            <div className="max-w-md mx-auto">
+              <p className="text-lg italic text-gray-600 dark:text-gray-300 mb-1">
+                {t(`emptyQuote_${Math.floor(Date.now() / 86400000) % 7}`, {
+                  defaultValue: t("noThreads"),
+                })}
+              </p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mb-6">
+                —{" "}
+                {t(
+                  `emptyQuoteAttribution_${Math.floor(Date.now() / 86400000) % 7}`,
+                  {
+                    defaultValue: "",
+                  },
+                )}
+              </p>
+              {currentUser ? (
+                <button
+                  onClick={() => {
+                    const form = document.querySelector(
+                      '[data-guide="agora-newthread"]',
+                    );
+                    if (form) {
+                      form.scrollIntoView({ behavior: "smooth" });
+                      const input = form.querySelector("input, textarea");
+                      if (input) (input as HTMLElement).focus();
+                    }
+                  }}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <MessageSquarePlus className="w-4 h-4" />
+                  {t("emptyQuoteCta")}
+                </button>
+              ) : null}
+              {feedScope === "following" && (
+                <button
+                  onClick={() => setSetupDismissed(false)}
+                  className="mt-3 block mx-auto text-blue-600 hover:underline text-sm"
+                >
+                  {t("editSubscriptions")}
+                </button>
+              )}
+            </div>
           </div>
         )}
 
