@@ -205,6 +205,35 @@ async function findSimilarExisting(
 const MAX_ITEMS_PER_MEETING = 5;
 
 /**
+ * Extract the full text of a § section from meeting minutes.
+ * Returns everything from the § heading to the next § or end of text.
+ * Falls back to null if the section can't be found.
+ */
+function extractFullSection(
+  fullText: string,
+  itemNumber: string,
+): string | null {
+  // Normalize: "§ 119" → "119", "§119" → "119"
+  const sectionNum = itemNumber.replace(/§\s*/, "").trim();
+  if (!sectionNum) return null;
+
+  // Match "§ 119" or "§119" with word boundary after the number
+  const pattern = new RegExp(`§\\s*${sectionNum}\\b`);
+  const match = pattern.exec(fullText);
+  if (!match) return null;
+
+  // Find end: next § marker or end of text
+  const start = match.index;
+  const nextSectionPattern = /§\s*\d+/g;
+  nextSectionPattern.lastIndex = start + match[0].length;
+  const next = nextSectionPattern.exec(fullText);
+  const end = next ? next.index : fullText.length;
+
+  const section = fullText.slice(start, end).trim();
+  return section.length > 0 ? section.slice(0, 15000) : null;
+}
+
+/**
  * Process a single meeting through the 3-stage AI pipeline.
  */
 async function processMeeting(
@@ -291,10 +320,20 @@ async function processMeeting(
     }
 
     try {
-      // STAGE 2: Write article from excerpt only
+      // Extract full section from original text for better context
+      const fullSection = extractFullSection(originalText, item.itemNumber);
+      const articleExcerpt = fullSection || item.excerpt;
+
+      if (fullSection) {
+        console.log(
+          `   📄 Full section: ${fullSection.length} chars (vs ${item.excerpt.length} char excerpt)`,
+        );
+      }
+
+      // STAGE 2: Write article from full section text
       console.log(`   ✍️  Stage 2: Writing ${item.itemNumber}...`);
       const article = await writeArticle(
-        item.excerpt,
+        articleExcerpt,
         source.municipality,
         item.itemNumber,
         meeting.organ,
@@ -311,11 +350,11 @@ async function processMeeting(
         continue;
       }
 
-      // STAGE 3: Verify against original excerpt
+      // STAGE 3: Verify against full section text
       console.log(`   ✓  Stage 3: Verifying ${item.itemNumber}...`);
       const verification = await verifyArticle(
         article,
-        item.excerpt,
+        articleExcerpt,
         source.municipality,
         language,
       );
@@ -373,7 +412,7 @@ ${footerText}
           sourceId: itemSourceId,
           aiGenerated: true,
           aiModel: process.env.MISTRAL_MODEL || "mistral-small-latest",
-          originalContent: item.excerpt.slice(0, 50000),
+          originalContent: articleExcerpt.slice(0, 50000),
           institutionalContext: {
             type: "minutes",
             meetingId: meeting.id,
