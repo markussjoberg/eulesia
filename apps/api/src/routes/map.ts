@@ -136,7 +136,12 @@ router.get(
             count: sql<number>`count(*)::int`,
           })
           .from(threads)
-          .where(inArray(threads.municipalityId, municipalityIds))
+          .where(
+            and(
+              inArray(threads.municipalityId, municipalityIds),
+              eq(threads.isHidden, false),
+            ),
+          )
           .groupBy(threads.municipalityId);
 
         threadCounts = counts.reduce(
@@ -222,6 +227,7 @@ router.get(
     // Get threads with coordinates
     if (requestedTypes.includes("agora")) {
       const threadConditions = [
+        eq(threads.isHidden, false),
         gte(threads.latitude, bounds.south.toString()),
         lte(threads.latitude, bounds.north.toString()),
         gte(threads.longitude, bounds.west.toString()),
@@ -365,7 +371,7 @@ router.get(
         })
         .from(threads)
         .leftJoin(users, eq(threads.authorId, users.id))
-        .where(eq(threads.municipalityId, id))
+        .where(and(eq(threads.municipalityId, id), eq(threads.isHidden, false)))
         .orderBy(desc(threads.createdAt))
         .limit(10);
 
@@ -416,7 +422,7 @@ router.get(
         })
         .from(threads)
         .leftJoin(users, eq(threads.authorId, users.id))
-        .where(eq(threads.placeId, id))
+        .where(and(eq(threads.placeId, id), eq(threads.isHidden, false)))
         .orderBy(desc(threads.createdAt))
         .limit(10);
 

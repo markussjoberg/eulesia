@@ -46,8 +46,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setCurrentUser(user);
       setIsAuthenticated(true);
       setSanction(null);
-      // Sync user's locale preference to i18next
-      if (user.settings?.locale && user.settings.locale !== i18n.language) {
+      // Sync locale: localStorage (explicit user choice) wins over server default
+      const storedLocale = localStorage.getItem("i18nextLng");
+      if (storedLocale && storedLocale !== user.settings?.locale) {
+        // User chose a language locally — push it to server
+        api
+          .updateProfile({
+            settings: { ...user.settings, locale: storedLocale },
+          } as any)
+          .catch(() => {});
+      } else if (
+        user.settings?.locale &&
+        user.settings.locale !== i18n.language &&
+        !storedLocale
+      ) {
+        // No local choice — use server preference
         i18n.changeLanguage(user.settings.locale);
       }
     } catch (err: any) {

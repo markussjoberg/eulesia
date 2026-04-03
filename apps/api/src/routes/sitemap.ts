@@ -41,6 +41,7 @@ router.get("/sitemap.xml", async (_req: Request, res: Response) => {
         updatedAt: threads.updatedAt,
       })
       .from(threads)
+      .where(eq(threads.isHidden, false))
       .orderBy(desc(threads.updatedAt))
       .limit(5000);
 

@@ -7,7 +7,7 @@ import {
   municipalities,
   users,
 } from "../db/index.js";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 const router = Router();
 
@@ -99,7 +99,9 @@ router.get("/agora/thread/:threadId", async (req: Request, res: Response) => {
         scope: threads.scope,
       })
       .from(threads)
-      .where(eq(threads.id, req.params.threadId))
+      .where(
+        and(eq(threads.id, req.params.threadId), eq(threads.isHidden, false)),
+      )
       .limit(1);
 
     if (!thread) return defaultOg(req, res);
@@ -162,7 +164,12 @@ router.get(
           content: clubThreads.content,
         })
         .from(clubThreads)
-        .where(eq(clubThreads.id, req.params.threadId))
+        .where(
+          and(
+            eq(clubThreads.id, req.params.threadId),
+            eq(clubThreads.isHidden, false),
+          ),
+        )
         .limit(1);
 
       if (!thread) return defaultOg(req, res);

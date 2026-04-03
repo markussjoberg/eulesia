@@ -1018,7 +1018,13 @@ router.get(
       })
       .from(clubThreads)
       .leftJoin(users, eq(clubThreads.authorId, users.id))
-      .where(and(eq(clubThreads.id, threadId), eq(clubThreads.clubId, clubId)))
+      .where(
+        and(
+          eq(clubThreads.id, threadId),
+          eq(clubThreads.clubId, clubId),
+          eq(clubThreads.isHidden, false),
+        ),
+      )
       .limit(1);
 
     if (!threadData) {
@@ -1055,7 +1061,12 @@ router.get(
       })
       .from(clubComments)
       .leftJoin(users, eq(clubComments.authorId, users.id))
-      .where(eq(clubComments.threadId, threadId))
+      .where(
+        and(
+          eq(clubComments.threadId, threadId),
+          eq(clubComments.isHidden, false),
+        ),
+      )
       .orderBy(clubComments.createdAt);
 
     // Get user's votes on comments

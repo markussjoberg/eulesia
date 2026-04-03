@@ -434,7 +434,7 @@ router.get(
       .from(threads)
       .leftJoin(users, eq(threads.authorId, users.id))
       .leftJoin(municipalities, eq(threads.municipalityId, municipalities.id))
-      .where(eq(threads.id, id))
+      .where(and(eq(threads.id, id), eq(threads.isHidden, false)))
       .limit(1);
 
     if (!threadData) {
@@ -482,7 +482,7 @@ router.get(
       })
       .from(comments)
       .leftJoin(users, eq(comments.authorId, users.id))
-      .where(eq(comments.threadId, id))
+      .where(and(eq(comments.threadId, id), eq(comments.isHidden, false)))
       .orderBy(orderBy);
 
     // Get user's votes if logged in

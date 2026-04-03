@@ -24,7 +24,7 @@ import {
   useDeclineInvitation,
 } from "../hooks/useApi";
 import { useAuth } from "../hooks/useAuth";
-import { useGuide } from "../hooks/useGuide";
+
 import type { Room, RoomInvitationWithDetails } from "../lib/api";
 
 export function HomePage() {
@@ -36,26 +36,12 @@ export function HomePage() {
   const createRoomMutation = useCreateRoom();
   const acceptInvitationMutation = useAcceptInvitation();
   const declineInvitationMutation = useDeclineInvitation();
-  const { hasCompletedGuide, startGuide, isGuideActive } = useGuide();
   const [showCreateRoom, setShowCreateRoom] = useState(false);
   const [newRoomName, setNewRoomName] = useState("");
   const [newRoomDescription, setNewRoomDescription] = useState("");
   const [newRoomVisibility, setNewRoomVisibility] = useState<
     "public" | "private"
   >("public");
-
-  // Auto-trigger home guide on first visit
-  useEffect(() => {
-    if (!currentUser) return;
-
-    const timer = setTimeout(() => {
-      if (!hasCompletedGuide("home") && !isGuideActive) {
-        startGuide("home");
-      }
-    }, 800);
-
-    return () => clearTimeout(timer);
-  }, [currentUser, hasCompletedGuide, isGuideActive, startGuide]);
 
   if (!currentUser) {
     return (

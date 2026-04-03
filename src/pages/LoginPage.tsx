@@ -280,6 +280,14 @@ export function LoginPage() {
                     {t("registerWithBankAuth")}
                   </button>
 
+                  <a
+                    href="/agora"
+                    className="w-full mt-3 text-gray-500 dark:text-gray-400 text-sm hover:text-gray-700 dark:hover:text-gray-300 flex items-center justify-center gap-1"
+                  >
+                    {t("browseWithoutAccount")}
+                    <ArrowRight className="w-4 h-4" />
+                  </a>
+
                   <p className="mt-3 text-sm text-blue-700 dark:text-blue-300">
                     {t("ftn.availabilityNotice")}
                   </p>

@@ -28,6 +28,11 @@
   --color-border-secondary: #374151;
 }
 
+/* Prevent layout shift from scrollbar appearing/disappearing */
+html {
+  scrollbar-gutter: stable;
+}
+
 /* Base typography - calm, legible, civic */
 body {
   font-family:
