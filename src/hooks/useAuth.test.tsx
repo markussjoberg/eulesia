@@ -12,6 +12,7 @@ vi.mock("../lib/api", () => ({
     getCurrentUser: vi.fn(),
     requestMagicLink: vi.fn(),
     logout: vi.fn(),
+    updateProfile: vi.fn().mockResolvedValue({}),
   },
 }));
 
