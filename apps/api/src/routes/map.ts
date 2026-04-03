@@ -136,7 +136,12 @@ router.get(
             count: sql<number>`count(*)::int`,
           })
           .from(threads)
-          .where(and(inArray(threads.municipalityId, municipalityIds), eq(threads.isHidden, false)))
+          .where(
+            and(
+              inArray(threads.municipalityId, municipalityIds),
+              eq(threads.isHidden, false),
+            ),
+          )
           .groupBy(threads.municipalityId);
 
         threadCounts = counts.reduce(
