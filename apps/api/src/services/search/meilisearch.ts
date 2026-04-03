@@ -34,6 +34,7 @@ export interface UserDocument {
   institutionType?: string;
   institutionName?: string;
   municipalityName?: string;
+  isAutomated?: boolean;
   createdAt: string;
 }
 

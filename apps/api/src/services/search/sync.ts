@@ -127,6 +127,7 @@ async function syncUsers(): Promise<number> {
       avatarUrl: u.avatarUrl || undefined,
       institutionType: u.institutionType || undefined,
       institutionName: u.institutionName || undefined,
+      isAutomated: u.identityProvider === "eulesia-bot",
       createdAt: u.createdAt?.toISOString() || new Date().toISOString(),
     }));
 

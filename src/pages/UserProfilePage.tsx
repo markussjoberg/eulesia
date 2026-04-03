@@ -257,12 +257,17 @@ export function UserProfilePage() {
               </div>
             )}
 
-            {user.identityVerified && (
+            {user.identityVerified ? (
               <div className="flex items-center gap-1 text-xs text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full w-fit mt-2">
                 <Shield className="w-3 h-3" />
                 <span>{t("profile:userProfile.verified")}</span>
               </div>
-            )}
+            ) : isInstitution ? (
+              <div className="flex items-center gap-1.5 text-xs text-purple-700 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20 px-2 py-1 rounded-lg w-fit mt-2">
+                <Bot className="w-3 h-3" />
+                <span>{t("profile:userProfile.automated")}</span>
+              </div>
+            ) : null}
 
             <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-2">
               <Calendar className="w-3 h-3" />
@@ -282,12 +287,22 @@ export function UserProfilePage() {
           </div>
         )}
 
+        {/* Automated institution disclaimer */}
+        {isInstitution && !user.identityVerified && (
+          <div className="mt-4 flex items-start gap-2.5 px-3 py-2.5 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
+            <Bot className="w-4 h-4 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-purple-700 dark:text-purple-400">
+              {t("profile:userProfile.automatedInfo")}
+            </p>
+          </div>
+        )}
+
         {/* Send message & visit home buttons */}
         {!isOwnProfile && userId && (
           <div className="mt-4 flex gap-2">
             <button
               onClick={handleSendMessage}
-              disabled={sendingMessage}
+              disabled={sendingMessage || (isInstitution && !user.identityVerified)}
               className="inline-flex items-center gap-2 px-4 py-2 bg-teal-600 text-white text-sm font-medium rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50"
             >
               <Send className="w-4 h-4" />

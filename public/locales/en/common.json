@@ -109,6 +109,7 @@
     "processingTime": "Search took {{ms}}ms",
     "municipality": "Municipality",
     "agency": "Agency",
+    "automated": "Eulesia Summary",
     "discussions_one": "{{count}} discussion",
     "discussions_other": "{{count}} discussions",
     "clubs": "Clubs",

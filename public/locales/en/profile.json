@@ -118,6 +118,8 @@
     "opening": "Opening...",
     "visitHome": "Visit home page",
     "verified": "Verified",
+    "automated": "Automated",
+    "automatedInfo": "This organization is not yet on Eulesia. Updates are automated.",
     "joined": "Joined {{date}}",
     "editProfile": "Edit profile",
     "officialPosts": "Official posts ({{count}})",

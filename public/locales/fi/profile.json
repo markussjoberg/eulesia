@@ -118,6 +118,8 @@
     "opening": "Avataan...",
     "visitHome": "Käy kotisivulla",
     "verified": "Vahvistettu",
+    "automated": "Automaattinen",
+    "automatedInfo": "Organisaatio ei ole vielä mukana Eulesiassa. Päivitykset ovat automatisoituja.",
     "joined": "Liittynyt {{date}}",
     "editProfile": "Muokkaa profiilia",
     "officialPosts": "Viralliset julkaisut ({{count}})",

@@ -10,6 +10,7 @@ import {
   Building2,
   Hash,
   Loader2,
+  Bot,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useSearch } from "../../hooks/useApi";
@@ -188,11 +189,21 @@ function SearchResultsList({ results, onResultClick }: SearchResultsListProps) {
                 </div>
               </div>
               {user.role === "institution" && (
-                <span className="text-xs bg-teal-100 text-teal-700 px-1.5 py-0.5 rounded">
-                  {user.institutionType === "municipality"
-                    ? t("search.municipality")
-                    : t("search.agency")}
-                </span>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  {user.isAutomated && (
+                    <span className="inline-flex items-center gap-0.5 text-xs bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 px-1.5 py-0.5 rounded">
+                      <Bot className="w-3 h-3" />
+                      {t("search.automated")}
+                    </span>
+                  )}
+                  {!user.isAutomated && (
+                    <span className="text-xs bg-teal-100 text-teal-700 px-1.5 py-0.5 rounded">
+                      {user.institutionType === "municipality"
+                        ? t("search.municipality")
+                        : t("search.agency")}
+                    </span>
+                  )}
+                </div>
               )}
             </Link>
           ))}

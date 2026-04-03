@@ -109,6 +109,7 @@
     "processingTime": "Haku kesti {{ms}}ms",
     "municipality": "Kunta",
     "agency": "Virasto",
+    "automated": "Eulesia Summary",
     "discussions_one": "{{count}} keskustelu",
     "discussions_other": "{{count}} keskustelua",
     "clubs": "Klubit",

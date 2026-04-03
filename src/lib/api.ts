@@ -1943,6 +1943,7 @@ export interface SearchUserResult {
   institutionType?: string;
   institutionName?: string;
   municipalityName?: string;
+  isAutomated?: boolean;
 }
 
 export interface SearchThreadResult {
