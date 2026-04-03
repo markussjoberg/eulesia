@@ -93,6 +93,8 @@ async function callMistral(
   options?: {
     temperature?: number;
     maxTokens?: number;
+    /** Override model for this call. Defaults to MISTRAL_MODEL env var. */
+    model?: string;
   },
 ): Promise<string> {
   const apiKey = process.env.MISTRAL_API_KEY;
@@ -115,7 +117,10 @@ async function callMistral(
           Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: process.env.MISTRAL_MODEL || "mistral-small-latest",
+          model:
+            options?.model ||
+            process.env.MISTRAL_MODEL ||
+            "mistral-small-latest",
           messages,
           temperature: options?.temperature ?? 0.3,
           max_tokens: options?.maxTokens ?? 2000,
@@ -305,12 +310,15 @@ export async function writeArticle(
     excerpt: excerpt.slice(0, 15000),
   });
 
+  // Use MISTRAL_WRITE_MODEL for the writing stage if set (e.g. mistral-large-latest)
+  const writeModel = process.env.MISTRAL_WRITE_MODEL || undefined;
+
   const content = await callMistral(
     [
       { role: "system", content: systemPrompt },
       { role: "user", content: userPrompt },
     ],
-    { temperature: 0.3, maxTokens: 2000 },
+    { temperature: 0.3, maxTokens: 4000, model: writeModel },
   );
 
   try {

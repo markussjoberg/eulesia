@@ -11,6 +11,14 @@ on:
         description: "Max meetings to import"
         required: true
         default: "1"
+      purge:
+        description: "Delete existing threads before importing (re-run)"
+        type: boolean
+        default: false
+      max_age:
+        description: "Max meeting age in days (default: 7)"
+        required: false
+        default: "7"
 
 concurrency:
   group: import-minutes
@@ -59,7 +67,9 @@ jobs:
           SSH="ssh -i $HOME/.ssh/id_ed25519 -o UserKnownHostsFile=$HOME/.ssh/known_hosts -o StrictHostKeyChecking=yes root@$EULESIA_TEST_TARGET_HOST"
           MUNICIPALITY="${{ inputs.municipality }}"
           LIMIT="${{ inputs.limit }}"
-          echo "Importing minutes for: $MUNICIPALITY (limit: $LIMIT)"
+          PURGE="${{ inputs.purge }}"
+          MAX_AGE="${{ inputs.max_age }}"
+          echo "Importing minutes for: $MUNICIPALITY (limit: $LIMIT, purge: $PURGE, max_age: $MAX_AGE)"
 
           # Run the import binary with the same env as the API service
           $SSH "bash -c '
@@ -78,7 +88,11 @@ jobs:
 
             if [ -x \"\$IMPORT_BIN\" ]; then
               echo \"Using: \$IMPORT_BIN\"
-              exec \"\$IMPORT_BIN\" --municipality=$MUNICIPALITY --limit=$LIMIT
+              ARGS=\"--municipality=$MUNICIPALITY --limit=$LIMIT --max-age=$MAX_AGE\"
+              if [ \"$PURGE\" = \"true\" ]; then
+                ARGS=\"\$ARGS --purge\"
+              fi
+              exec \"\$IMPORT_BIN\" \$ARGS
             else
               echo \"ERROR: import-minutes binary not found at \$IMPORT_BIN\"
               echo \"Available bins:\"

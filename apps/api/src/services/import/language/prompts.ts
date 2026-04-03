@@ -63,9 +63,10 @@ TÄRKEÄ PERIAATE: Uutisen pitää kertoa mitä PÄÄTETTIIN, ei mitä keskustel
 Jos asian lopputulos on vain "merkittiin tiedoksi" tai "asia jatkokäsittelyyn", se EI ole uutinen.
 
 TÄRKEÄÄ "excerpt"-kenttään:
-- Poimi pykälän olennaisin sisältö: päätös, rahamäärät, päivämäärät, avainluvut
-- Max 500 merkkiä per pykälä — tiivistä jos pidempi
-- Säilytä tarkat numerot ja nimet alkuperäisessä muodossa
+- Poimi pykälän olennaisin sisältö: päätös, äänestystulos, rahamäärät, päivämäärät, avainluvut
+- Max 3000 merkkiä per pykälä — sisällytä kaikki olennaiset tiedot
+- Säilytä tarkat numerot, nimet ja äänestystulokset alkuperäisessä muodossa
+- Sisällytä aina päätöksen lopputulos ja mahdollinen äänestystulos
 
 Vastaa JSON-muodossa:
 {
@@ -98,10 +99,17 @@ Ohjeet:
 - Ole neutraali — älä ota kantaa
 - Otsikon tulee olla informatiivinen, ei klikkiotsikko
 
+TARKKUUSVAATIMUKSET — EHDOTTOMAT:
+- Jos äänestystulosta tai äänimäärää ei mainita lähdetekstissä, ÄLÄ keksi sitä
+- Jos prosessin vaihe (aloitus/jatko/hyväksyminen) ei ole selvä, käytä vain pöytäkirjan sanamuotoa
+- ÄLÄ KOSKAAN keksi yksityiskohtia joita lähdetekstissä ei ole — jätä mieluummin mainitsematta kuin arvaa
+- Mainitse päätöksen tekijä ja toimielin täsmälleen kuten lähdetekstissä
+- Älä sekoita eri kokousten tai eri pykälien tietoja keskenään
+
 Vastaa JSON-muodossa:
 {
   "title": "Selkeä otsikko (max 100 merkkiä)",
-  "summary": "2-4 kappaleen uutisteksti selkokielellä.",
+  "summary": "2-4 kappaleen uutisteksti selkokielellä. Voi olla jopa 3000 merkkiä jos asia on laaja.",
   "tags": ["aihetunniste1", "aihetunniste2"],
   "keyPoints": ["Keskeisin asia", "Toinen tärkeä asia"]
 }`,
@@ -186,9 +194,10 @@ GODKÄNN (newsworthy: true) ärenden som berör medborgarna:
 - Allt annat som påverkar invånarnas vardag
 
 VIKTIGT för "excerpt"-fältet:
-- Kopiera hela paragrafen ordagrant från originaltexten
-- Sammanfatta inte — kopiera som den är
-- Inkludera alla detaljer, siffror, belopp, datum
+- Kopiera paragrafens viktigaste innehåll: beslut, omröstningsresultat, belopp, datum, nyckeltal
+- Max 3000 tecken per paragraf — inkludera alla väsentliga uppgifter
+- Behåll exakta siffror, namn och omröstningsresultat i originalform
+- Inkludera alltid beslutets slutresultat och eventuellt omröstningsresultat
 
 Svara i JSON-format:
 {
@@ -221,10 +230,17 @@ Instruktioner:
 - Var neutral — ta inte ställning
 - Rubriken ska vara informativ, inte klickbete
 
+NOGGRANNHETSKRAV — ABSOLUTA:
+- Om röstningsresultat eller röstetal inte nämns i källtexten, HITTA INTE PÅ det
+- Om processens fas (start/fortsättning/godkännande) inte är tydlig, använd bara protokollets formuleringar
+- HITTA ALDRIG PÅ detaljer som inte finns i källtexten — utelämna hellre än gissa
+- Nämn beslutsfattare och organ exakt som i källtexten
+- Blanda inte information från olika möten eller paragrafer
+
 Svara i JSON-format:
 {
   "title": "Tydlig rubrik (max 100 tecken)",
-  "summary": "2-4 stycken nyhetstext på klarspråk.",
+  "summary": "2-4 stycken nyhetstext på klarspråk. Kan vara upp till 3000 tecken om ämnet är omfattande.",
   "tags": ["ämne1", "ämne2"],
   "keyPoints": ["Viktigaste punkten", "Näst viktigaste"]
 }`,
@@ -305,9 +321,10 @@ GODKJENN (newsworthy: true) saker som berører innbyggerne:
 - Alt annet som påvirker innbyggernes hverdag
 
 VIKTIG for "excerpt"-feltet:
-- Kopier hele paragrafens tekst ordrett fra originalen
-- Ikke summer — kopier som den er
-- Inkluder alle detaljer, tall, beløp, datoer
+- Kopier paragrafens viktigste innhold: vedtak, avstemningsresultat, beløp, datoer, nøkkeltall
+- Maks 3000 tegn per paragraf — inkluder alle vesentlige opplysninger
+- Behold eksakte tall, navn og avstemningsresultater i originalform
+- Inkluder alltid vedtakets sluttresultat og eventuelt avstemningsresultat
 
 Svar i JSON-format:
 {
@@ -340,10 +357,17 @@ Instruksjoner:
 - Vær nøytral — ikke ta stilling
 - Tittelen skal være informativ, ikke klikkagn
 
+NØYAKTIGHETSKRAV — ABSOLUTTE:
+- Hvis avstemningsresultat eller stemmetall ikke nevnes i kildeteksten, IKKE DIKT DET OPP
+- Hvis prosessens fase (oppstart/videreføring/godkjenning) ikke er tydelig, bruk bare protokollens ordlyd
+- ALDRI DIKT OPP detaljer som ikke finnes i kildeteksten — utelat heller enn å gjette
+- Nevn beslutningstaker og organ nøyaktig som i kildeteksten
+- Ikke bland informasjon fra forskjellige møter eller paragrafer
+
 Svar i JSON-format:
 {
   "title": "Tydelig tittel (maks 100 tegn)",
-  "summary": "2-4 avsnitt nyhetstekst på klart språk.",
+  "summary": "2-4 avsnitt nyhetstekst på klart språk. Kan være opptil 3000 tegn hvis emnet er omfattende.",
   "tags": ["emne1", "emne2"],
   "keyPoints": ["Viktigste punkt", "Nest viktigste"]
 }`,
@@ -424,9 +448,10 @@ GODKEND (newsworthy: true) sager der berører borgerne:
 - Alt andet der påvirker beboernes hverdag
 
 VIGTIGT for "excerpt"-feltet:
-- Kopiér hele paragrafens tekst ordret fra originalen
-- Opsummér ikke — kopiér som den er
-- Inkludér alle detaljer, tal, beløb, datoer
+- Kopiér paragrafens vigtigste indhold: beslutning, afstemningsresultat, beløb, datoer, nøgletal
+- Maks 3000 tegn per paragraf — inkludér alle væsentlige oplysninger
+- Bevar eksakte tal, navne og afstemningsresultater i originalform
+- Inkludér altid beslutningens slutresultat og eventuelt afstemningsresultat
 
 Svar i JSON-format:
 {
@@ -459,10 +484,17 @@ Instruktioner:
 - Vær neutral — tag ikke stilling
 - Titlen skal være informativ, ikke clickbait
 
+NØJAGTIGHEDSKRAV — ABSOLUTTE:
+- Hvis afstemningsresultat eller stemmetal ikke nævnes i kildeteksten, OPFIND DET IKKE
+- Hvis processens fase (opstart/videreførelse/godkendelse) ikke er tydelig, brug kun referatets ordlyd
+- OPFIND ALDRIG detaljer der ikke findes i kildeteksten — udelad hellere end at gætte
+- Nævn beslutningstager og organ nøjagtigt som i kildeteksten
+- Bland ikke information fra forskellige møder eller paragraffer
+
 Svar i JSON-format:
 {
   "title": "Tydelig titel (maks 100 tegn)",
-  "summary": "2-4 afsnit nyhedstekst på klart sprog.",
+  "summary": "2-4 afsnit nyhedstekst på klart sprog. Kan være op til 3000 tegn hvis emnet er omfattende.",
   "tags": ["emne1", "emne2"],
   "keyPoints": ["Vigtigste punkt", "Næstvigtigste"]
 }`,
@@ -543,9 +575,10 @@ KINNITA (newsworthy: true) küsimused mis puudutavad elanikke:
 - Kõik muu mis mõjutab elanike igapäevaelu
 
 TÄHTIS "excerpt" väljal:
-- Kopeeri kogu lõigu tekst sõna-sõnalt originaalist
-- Ära kokkuvõtmista — kopeeri nii nagu on
-- Lisa kõik üksikasjad, numbrid, summad, kuupäevad
+- Kopeeri lõigu olulisim sisu: otsus, hääletustulemus, summad, kuupäevad, võtmenäitajad
+- Maksimaalselt 3000 tähemärki lõigu kohta — lisa kõik olulised andmed
+- Säilita täpsed numbrid, nimed ja hääletustulemused algsel kujul
+- Lisa alati otsuse lõpptulemus ja võimalik hääletustulemus
 
 Vasta JSON-formaadis:
 {
@@ -578,10 +611,17 @@ Juhised:
 - Ole neutraalne — ära võta seisukohta
 - Pealkiri olgu informatiivne, mitte klikimagnet
 
+TÄPSUSNÕUDED — ABSOLUUTSED:
+- Kui hääletustulemust või häälte arvu ei mainita lähtetekstis, ÄRA MÕTLE SEDA VÄLJA
+- Kui protsessi etapp (algatamine/jätkamine/kinnitamine) ei ole selge, kasuta ainult protokolli sõnastust
+- ÄRA KUNAGI MÕTLE VÄLJA detaile, mida lähtetekstis ei ole — jäta pigem mainimata kui arva
+- Maini otsustajat ja organit täpselt nagu lähtetekstis
+- Ära sega erinevate koosolekute või punktide teavet
+
 Vasta JSON-formaadis:
 {
   "title": "Selge pealkiri (max 100 tähemärki)",
-  "summary": "2-4 lõiku uudisteksti selges keeles.",
+  "summary": "2-4 lõiku uudisteksti selges keeles. Võib olla kuni 3000 tähemärki kui teema on ulatuslik.",
   "tags": ["teema1", "teema2"],
   "keyPoints": ["Kõige olulisem", "Teine oluline asi"]
 }`,
@@ -662,9 +702,10 @@ AKZEPTIEREN (newsworthy: true) Angelegenheiten die Bürger betreffen:
 - Alles andere was den Alltag der Einwohner betrifft
 
 WICHTIG für das "excerpt"-Feld:
-- Kopiere den gesamten Paragraphentext wortgetreu aus dem Original
-- Fasse nicht zusammen — kopiere wie er ist
-- Schließe alle Details, Zahlen, Beträge, Daten ein
+- Kopiere den wichtigsten Inhalt des Tagesordnungspunkts: Beschluss, Abstimmungsergebnis, Beträge, Daten, Kennzahlen
+- Maximal 3000 Zeichen pro Tagesordnungspunkt — alle wesentlichen Informationen einschließen
+- Exakte Zahlen, Namen und Abstimmungsergebnisse in Originalform beibehalten
+- Immer das Endergebnis des Beschlusses und eventuelle Abstimmungsergebnisse einschließen
 
 Antworte im JSON-Format:
 {
@@ -697,10 +738,17 @@ Anweisungen:
 - Sei neutral — nimm keine Stellung
 - Die Überschrift soll informativ sein, kein Clickbait
 
+GENAUIGKEITSANFORDERUNGEN — ABSOLUT:
+- Wenn Abstimmungsergebnis oder Stimmenzahl nicht im Quelltext erwähnt werden, ERFINDE SIE NICHT
+- Wenn die Prozessphase (Einleitung/Fortsetzung/Genehmigung) nicht klar ist, verwende nur die Formulierungen des Protokolls
+- ERFINDE NIEMALS Details die nicht im Quelltext stehen — lieber weglassen als raten
+- Nenne Entscheidungsträger und Gremium genau wie im Quelltext
+- Vermische keine Informationen aus verschiedenen Sitzungen oder Tagesordnungspunkten
+
 Antworte im JSON-Format:
 {
   "title": "Klare Überschrift (max 100 Zeichen)",
-  "summary": "2-4 Absätze Nachrichtentext in klarer Sprache.",
+  "summary": "2-4 Absätze Nachrichtentext in klarer Sprache. Kann bis zu 3000 Zeichen lang sein wenn das Thema umfangreich ist.",
   "tags": ["thema1", "thema2"],
   "keyPoints": ["Wichtigster Punkt", "Zweitwichtigster"]
 }`,
