@@ -101,6 +101,20 @@ export function ThreadCard({
                 <Bot className="w-3.5 h-3.5" />
               </span>
             )}
+            {isAiGenerated && thread.sourceInstitutionName && (
+              <Link
+                to={
+                  thread.sourceInstitutionId
+                    ? `/user/${thread.sourceInstitutionId}`
+                    : "#"
+                }
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-0.5 text-[10px] text-purple-700 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/30 px-1.5 py-0.5 rounded hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors truncate max-w-[150px] flex-shrink-0"
+              >
+                <Building2 className="w-2.5 h-2.5 flex-shrink-0" />
+                {thread.sourceInstitutionName}
+              </Link>
+            )}
             <span className="text-xs text-gray-400 dark:text-gray-500 flex-shrink-0 ml-auto">
               {formatRelativeTime(thread.updatedAt)}
             </span>

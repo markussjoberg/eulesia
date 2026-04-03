@@ -270,6 +270,7 @@ export function ThreadPage() {
             context={thread.institutionalContext}
             isAiGenerated={thread.aiGenerated}
             sourceInstitutionName={thread.sourceInstitutionName}
+            sourceInstitutionId={thread.sourceInstitutionId}
             sourceUrl={thread.sourceUrl}
           />
         </div>

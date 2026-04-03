@@ -119,7 +119,6 @@ async function syncUsers(): Promise<number> {
 
   const docs: UserDocument[] = allUsers
     .filter((u) => u.role !== null) // Skip users with null role
-    .filter((u) => u.identityProvider !== "eulesia-bot") // Hide bot-managed institution placeholders
     .map((u) => ({
       id: u.id,
       name: u.name,

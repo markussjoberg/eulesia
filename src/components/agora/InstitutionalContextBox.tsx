@@ -10,6 +10,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import type { InstitutionalContext } from "../../types";
 
@@ -17,6 +18,7 @@ interface InstitutionalContextBoxProps {
   context: InstitutionalContext;
   isAiGenerated?: boolean;
   sourceInstitutionName?: string;
+  sourceInstitutionId?: string;
   sourceUrl?: string;
 }
 
@@ -24,6 +26,7 @@ export function InstitutionalContextBox({
   context,
   isAiGenerated,
   sourceInstitutionName,
+  sourceInstitutionId,
   sourceUrl,
 }: InstitutionalContextBoxProps) {
   const { t } = useTranslation("agora");
@@ -53,9 +56,23 @@ export function InstitutionalContextBox({
               {t("institutionalBox.aiGenerated")}
             </h3>
             <p className="text-xs text-purple-700 dark:text-purple-400 mt-1">
-              {sourceInstitutionName
-                ? `${t("institutionalBox.source")}: ${sourceInstitutionName}`
-                : `${t("institutionalBox.source")}: julkinen lähde`}
+              {sourceInstitutionName ? (
+                <>
+                  {t("institutionalBox.source")}:{" "}
+                  {sourceInstitutionId ? (
+                    <Link
+                      to={`/user/${sourceInstitutionId}`}
+                      className="underline hover:text-purple-900 dark:hover:text-purple-200"
+                    >
+                      {sourceInstitutionName}
+                    </Link>
+                  ) : (
+                    sourceInstitutionName
+                  )}
+                </>
+              ) : (
+                `${t("institutionalBox.source")}: julkinen lähde`
+              )}
               {sourceUrl && (
                 <a
                   href={sourceUrl}
@@ -74,12 +91,22 @@ export function InstitutionalContextBox({
             <h3 className="font-semibold text-violet-900 flex items-center gap-2">
               <Building2 className="w-4 h-4" />
               {t("institutionalBox.official")}
-              {sourceInstitutionName ? ` — ${sourceInstitutionName}` : ""}
+              {sourceInstitutionName && (
+                <>
+                  {" — "}
+                  {sourceInstitutionId ? (
+                    <Link
+                      to={`/user/${sourceInstitutionId}`}
+                      className="hover:underline"
+                    >
+                      {sourceInstitutionName}
+                    </Link>
+                  ) : (
+                    sourceInstitutionName
+                  )}
+                </>
+              )}
             </h3>
-            <p className="text-xs text-violet-700 mt-0.5">
-              {t("institutionalBox.official")}
-              {sourceInstitutionName ? ` — ${sourceInstitutionName}` : ""}
-            </p>
           </>
         )}
       </div>
