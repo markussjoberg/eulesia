@@ -437,6 +437,14 @@ export function LoginPage() {
                   </button>
                 )}
 
+                <a
+                  href="/agora"
+                  className="w-full mt-3 text-gray-500 dark:text-gray-400 text-sm hover:text-gray-700 dark:hover:text-gray-300 flex items-center justify-center gap-1"
+                >
+                  {t("browseWithoutAccount")}
+                  <ArrowRight className="w-4 h-4" />
+                </a>
+
                 {/* Future: EUDI Wallet button */}
                 <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-800">
                   <button
