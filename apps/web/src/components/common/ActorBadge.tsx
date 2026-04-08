@@ -1,4 +1,4 @@
-import { Building2, ShieldCheck, ShieldOff } from "lucide-react";
+import { Building2, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 interface ActorUser {
   id: string | null;
@@ -67,11 +67,7 @@ export function ActorBadge({
               <span className="inline-flex items-center gap-0.5 text-xs text-green-600">
                 <ShieldCheck className="w-3 h-3" />
               </span>
-            ) : (
-              <span className="inline-flex items-center gap-0.5 text-xs text-gray-400">
-                <ShieldOff className="w-3 h-3" />
-              </span>
-            )}
+            ) : null}
           </div>
 
           {isInstitution && user.institutionType && (

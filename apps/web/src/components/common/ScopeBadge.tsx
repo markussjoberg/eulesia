@@ -1,8 +1,8 @@
-import { MapPin, Building2, Globe } from "lucide-react";
+import { MapPin, Building2, Globe, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 // Public thread scopes (excludes "club" which is internal to club endpoints)
-type Scope = "local" | "national" | "european";
+type Scope = "local" | "national" | "european" | "personal";
 
 interface ScopeBadgeProps {
   scope: Scope | string;
@@ -28,6 +28,12 @@ const scopeConfig = {
     tKey: "scope.european",
     color:
       "text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20",
+  },
+  personal: {
+    icon: Users,
+    tKey: "scope.personal",
+    color:
+      "text-purple-700 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20",
   },
 };
 

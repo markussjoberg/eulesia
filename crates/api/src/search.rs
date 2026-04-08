@@ -3,10 +3,14 @@ use axum::{
     extract::{Query, State},
     routing::get,
 };
+use sea_orm::sea_query::extension::postgres::PgExpr;
+use sea_orm::sea_query::Expr;
+use sea_orm::{Condition, EntityTrait, QueryFilter, QueryOrder, QuerySelect};
 use serde::{Deserialize, Serialize};
 use tracing::warn;
 
 use eulesia_common::error::ApiError;
+use eulesia_db::entities::municipalities;
 
 use crate::AppState;
 
@@ -50,8 +54,9 @@ async fn search_handler(
         tags: vec![],
     };
 
+    let search_type = params.r#type.as_deref();
+
     if let Some(client) = search_client {
-        let search_type = params.r#type.as_deref();
         if search_type.is_none() || search_type == Some("threads") {
             let threads_index = client.inner().index("threads");
             match threads_index
@@ -86,6 +91,35 @@ async fn search_handler(
                 }
             }
         }
+    }
+
+    // Municipality search via DB (small dataset, no Meilisearch index needed)
+    if search_type.is_none() || search_type == Some("municipalities") {
+        let ilike_pattern = format!("%{}%", params.q);
+        let municipalities = municipalities::Entity::find()
+            .filter(
+                Condition::any()
+                    .add(Expr::col(municipalities::Column::Name).ilike(&ilike_pattern))
+                    .add(Expr::col(municipalities::Column::NameFi).ilike(&ilike_pattern))
+                    .add(Expr::col(municipalities::Column::NameSv).ilike(&ilike_pattern)),
+            )
+            .order_by_asc(municipalities::Column::Name)
+            .limit(limit as u64)
+            .all(&*state.db)
+            .await
+            .unwrap_or_default();
+
+        result.municipalities = municipalities
+            .into_iter()
+            .map(|m| {
+                serde_json::json!({
+                    "id": m.id,
+                    "name": m.name,
+                    "nameFi": m.name_fi,
+                    "region": m.region,
+                })
+            })
+            .collect();
     }
 
     result.processing_time_ms = i64::try_from(started.elapsed().as_millis()).unwrap_or(i64::MAX);
