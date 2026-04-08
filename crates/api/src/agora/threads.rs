@@ -17,6 +17,7 @@ use eulesia_db::repo::bookmarks::BookmarkRepo;
 use eulesia_db::repo::comments::CommentRepo;
 use eulesia_db::repo::follows::FollowRepo;
 use eulesia_db::repo::outbox_helpers::emit_event;
+use eulesia_db::repo::subscriptions::SubscriptionRepo;
 use eulesia_db::repo::tags::TagRepo;
 use eulesia_db::repo::thread_views::ThreadViewRepo;
 use eulesia_db::repo::threads::ThreadRepo;
@@ -327,15 +328,14 @@ pub async fn list_threads(
         None => false,
     };
 
-    // For "following" feed, resolve followed author IDs and use author_id filter
-    let following_author_id = if is_following {
+    // For "following" feed, resolve thread IDs from user_subscriptions
+    // (covers followed users, municipalities, and tags).
+    let subscription_thread_ids = if is_following {
         if let Some(uid) = user_id {
-            let (follows, _) = FollowRepo::following_of(&state.db, uid, 0, 10_000)
+            let (ids, _) = SubscriptionRepo::feed_thread_ids(&state.db, uid, limit, offset)
                 .await
                 .map_err(db_err)?;
-            let ids: Vec<Uuid> = follows.iter().map(|f| f.followed_id).collect();
             if ids.is_empty() {
-                // No follows — return empty result immediately
                 return Ok(Json(ThreadListResponse {
                     data: vec![],
                     total: 0,
@@ -366,20 +366,43 @@ pub async fn list_threads(
         None
     };
 
+    // Merge subscription thread IDs with tag thread IDs if both present
+    let combined_thread_ids = match (&subscription_thread_ids, &tag_ids) {
+        (Some(sub_ids), Some(t_ids)) => {
+            // Intersection: threads that match both subscription and tag filters
+            let tag_set: HashSet<&Uuid> = t_ids.iter().collect();
+            Some(
+                sub_ids
+                    .iter()
+                    .copied()
+                    .filter(|id| tag_set.contains(id))
+                    .collect::<Vec<_>>(),
+            )
+        }
+        (Some(ids), None) => Some(ids.clone()),
+        (None, Some(ids)) => Some(ids.clone()),
+        (None, None) => None,
+    };
+
     let (threads, total) = ThreadRepo::list(
         &state.db,
-        if following_author_id.is_some() {
+        if subscription_thread_ids.is_some() {
             None
         } else {
             scope_filter
         },
         params.municipality_id,
-        following_author_id.as_deref(),
-        tag_ids.as_deref(),
+        None, // author_ids — subscription feed uses thread_ids instead
+        combined_thread_ids.as_deref(),
         &excluded,
         sort,
         params.top_period.as_deref(),
-        offset,
+        // feed_thread_ids already handles pagination, so pass 0/limit for those
+        if subscription_thread_ids.is_some() {
+            0
+        } else {
+            offset
+        },
         limit,
     )
     .await

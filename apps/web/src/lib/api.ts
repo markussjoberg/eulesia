@@ -1150,7 +1150,10 @@ class ApiClient {
   // Notifications
   async getNotifications(limit?: number): Promise<AppNotification[]> {
     const query = limit ? `?limit=${limit}` : "";
-    return this.request(`/notifications${query}`);
+    const res = await this.request<{ items: AppNotification[] }>(
+      `/notifications${query}`,
+    );
+    return res.items;
   }
 
   async getUnreadNotificationCount(): Promise<{ count: number }> {
