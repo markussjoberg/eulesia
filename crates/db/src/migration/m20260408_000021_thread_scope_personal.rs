@@ -15,29 +15,21 @@ impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         let db = manager.get_connection();
 
-        // Add 'personal' and 'club' to the PostgreSQL enum type (if not already present).
-        // 'club' was added via CHECK constraint in migration 17 but the enum type was never updated.
+        // The `scope` column currently uses a PostgreSQL enum type that only
+        // contains {local, national, european}.  ALTER TYPE ... ADD VALUE
+        // cannot run inside a transaction (which sea-orm uses for migrations),
+        // so we convert the column to TEXT instead.  The CHECK constraint
+        // already enforces valid values.
         db.execute_unprepared(
             "
-            DO $$
-            BEGIN
-                IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumtypid = 'scope'::regtype AND enumlabel = 'personal') THEN
-                    ALTER TYPE scope ADD VALUE 'personal';
-                END IF;
-                IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumtypid = 'scope'::regtype AND enumlabel = 'club') THEN
-                    ALTER TYPE scope ADD VALUE 'club';
-                END IF;
-            END
-            $$;
-            ",
-        )
-        .await?;
+            ALTER TABLE threads
+                ALTER COLUMN scope TYPE TEXT USING scope::TEXT;
 
-        // Update the CHECK constraint to include 'personal'.
-        db.execute_unprepared(
-            "
+            DROP TYPE IF EXISTS scope;
+
             ALTER TABLE threads DROP CONSTRAINT IF EXISTS chk_threads_scope;
-            ALTER TABLE threads ADD CONSTRAINT chk_threads_scope CHECK (scope IN ('local', 'national', 'european', 'personal', 'club'));
+            ALTER TABLE threads ADD CONSTRAINT chk_threads_scope
+                CHECK (scope IN ('local', 'national', 'european', 'personal', 'club'));
             ",
         )
         .await?;
@@ -46,14 +38,13 @@ impl MigrationTrait for Migration {
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        // Note: PostgreSQL does not support removing values from an enum type.
-        // We only revert the CHECK constraint.
         manager
             .get_connection()
             .execute_unprepared(
                 "
                 ALTER TABLE threads DROP CONSTRAINT IF EXISTS chk_threads_scope;
-                ALTER TABLE threads ADD CONSTRAINT chk_threads_scope CHECK (scope IN ('local', 'national', 'european', 'club'));
+                ALTER TABLE threads ADD CONSTRAINT chk_threads_scope
+                    CHECK (scope IN ('local', 'national', 'european', 'club'));
                 ",
             )
             .await?;
