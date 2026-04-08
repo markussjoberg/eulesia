@@ -23,6 +23,8 @@ interface InlineThreadFormProps {
   // For municipality pages - prefilled municipality
   municipalityId?: string;
   municipalityName?: string;
+  // Default scope from current feed tab
+  defaultScope?: Scope;
   // Callback when thread is created
   onSuccess: (threadId: string) => void;
 }
@@ -51,6 +53,7 @@ interface UploadedImage {
 export function InlineThreadForm({
   municipalityId,
   municipalityName,
+  defaultScope,
   onSuccess,
 }: InlineThreadFormProps) {
   const { t } = useTranslation("agora");
@@ -79,7 +82,8 @@ export function InlineThreadForm({
 
   // Form state
   const [isExpanded, setIsExpanded] = useState(false);
-  const [scope, setScope] = useState<Scope>(isPrefilled ? "local" : "national");
+  const initialScope: Scope = isPrefilled ? "local" : (defaultScope ?? "national");
+  const [scope, setScope] = useState<Scope>(initialScope);
   const [selectedLocation, setSelectedLocation] =
     useState<LocationResult | null>(null);
   const [title, setTitle] = useState("");
@@ -94,6 +98,13 @@ export function InlineThreadForm({
     null,
   );
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+  // Sync scope when feed tab changes (only when form is collapsed)
+  useEffect(() => {
+    if (!isExpanded && defaultScope && !isPrefilled) {
+      setScope(defaultScope);
+    }
+  }, [defaultScope, isExpanded, isPrefilled]);
 
   // Focus title input when expanded
   useEffect(() => {
@@ -237,7 +248,7 @@ export function InlineThreadForm({
       setSelectedTags([]);
       setSelectedLocation(null);
       setUploadedImage(null);
-      setScope(isPrefilled ? "local" : "national");
+      setScope(isPrefilled ? "local" : (defaultScope ?? "national"));
       setIsExpanded(false);
 
       onSuccess(result.id);
@@ -255,7 +266,7 @@ export function InlineThreadForm({
     setSelectedTags([]);
     setSelectedLocation(null);
     setUploadedImage(null);
-    setScope(isPrefilled ? "local" : "national");
+    setScope(isPrefilled ? "local" : (defaultScope ?? "national"));
     setError(null);
     setIsExpanded(false);
   };

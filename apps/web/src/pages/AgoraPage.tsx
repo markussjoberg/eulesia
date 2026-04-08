@@ -393,7 +393,14 @@ export function AgoraPage() {
         {/* Inline thread creation */}
         {currentUser && (
           <div data-guide="agora-newthread">
-            <InlineThreadForm onSuccess={handleThreadCreated} />
+            <InlineThreadForm
+              defaultScope={
+                ["local", "national", "european", "personal"].includes(feedScope)
+                  ? (feedScope as "local" | "national" | "european" | "personal")
+                  : undefined
+              }
+              onSuccess={handleThreadCreated}
+            />
           </div>
         )}
 
