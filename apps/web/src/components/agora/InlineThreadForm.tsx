@@ -101,12 +101,12 @@ export function InlineThreadForm({
   );
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
-  // Sync scope when feed tab changes (only when form is collapsed)
+  // Sync scope when feed tab changes
   useEffect(() => {
-    if (!isExpanded && defaultScope && !isPrefilled) {
+    if (defaultScope && !isPrefilled) {
       setScope(defaultScope);
     }
-  }, [defaultScope, isExpanded, isPrefilled]);
+  }, [defaultScope, isPrefilled]);
 
   // Focus title input when expanded
   useEffect(() => {
