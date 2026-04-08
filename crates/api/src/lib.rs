@@ -16,7 +16,6 @@ pub mod messaging;
 pub mod moderation;
 mod notifications;
 mod response_wrapper;
-mod rooms;
 mod search;
 mod social;
 mod subscriptions;
@@ -121,7 +120,6 @@ pub fn router(state: AppState) -> Router {
         .merge(search::routes())
         .merge(uploads::routes())
         .merge(clubs::routes())
-        .merge(rooms::routes())
         .merge(discover::routes())
         .merge(institutions::routes())
         .merge(waitlist::routes())

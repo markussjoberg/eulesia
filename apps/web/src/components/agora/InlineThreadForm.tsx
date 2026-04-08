@@ -3,6 +3,7 @@ import {
   MapPin,
   Building2,
   Globe,
+  User,
   Hash,
   Plus,
   X,
@@ -15,7 +16,7 @@ import { useCreateThread } from "../../hooks/useApi";
 import { LocationSearch } from "../common/LocationSearch";
 import { api } from "../../lib/api";
 // Public thread scopes (excludes "club" which is internal to club endpoints)
-type Scope = "local" | "national" | "european";
+type Scope = "local" | "national" | "european" | "personal";
 import type { LocationResult } from "../../lib/api";
 
 interface InlineThreadFormProps {
@@ -63,6 +64,7 @@ export function InlineThreadForm({
     icon: React.ElementType;
     label: string;
   }[] = [
+    { value: "personal", icon: User, label: t("threadForm.scopePersonal") },
     { value: "local", icon: MapPin, label: t("threadForm.scopeLocal") },
     {
       value: "national",

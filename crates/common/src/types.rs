@@ -672,6 +672,7 @@ pub enum ThreadScope {
     Local,
     National,
     European,
+    Personal,
     Club,
 }
 
@@ -681,6 +682,7 @@ impl ThreadScope {
             Self::Local => "local",
             Self::National => "national",
             Self::European => "european",
+            Self::Personal => "personal",
             Self::Club => "club",
         }
     }
@@ -699,6 +701,7 @@ impl std::str::FromStr for ThreadScope {
             "local" => Ok(Self::Local),
             "national" => Ok(Self::National),
             "european" => Ok(Self::European),
+            "personal" => Ok(Self::Personal),
             "club" => Ok(Self::Club),
             other => Err(format!("invalid thread scope: {other}")),
         }

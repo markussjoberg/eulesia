@@ -3,10 +3,10 @@
     "agora": "Agora",
     "clubs": "Klubit",
     "messages": "Viestit",
-    "map": "Kartta",
-    "home": "Koti"
+    "map": "Kartta"
   },
   "scope": {
+    "personal": "Ihmiset",
     "local": "Paikallinen",
     "national": "Valtakunnallinen",
     "european": "EU",

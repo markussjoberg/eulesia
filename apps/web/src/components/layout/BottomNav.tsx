@@ -1,4 +1,4 @@
-import { Landmark, Users, Home, MapPin, MessageSquare } from "lucide-react";
+import { Landmark, Users, MapPin, MessageSquare } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useUnreadDmCount } from "../../hooks/useApi";
@@ -16,7 +16,6 @@ const allNavItems = [
     public: false,
   },
   { to: "/map", icon: MapPin, tKey: "nav.map", public: true },
-  { to: "/home", icon: Home, tKey: "nav.home", public: false },
 ];
 
 export function BottomNav() {

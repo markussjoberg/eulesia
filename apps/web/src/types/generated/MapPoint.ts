@@ -2,11 +2,4 @@
 import type { MapPointType } from "./MapPointType";
 import type { JsonValue } from "./serde_json/JsonValue";
 
-export type MapPoint = {
-  id: string;
-  pointType: MapPointType;
-  name: string;
-  latitude: number;
-  longitude: number;
-  meta: JsonValue;
-};
+export type MapPoint = { id: string, pointType: MapPointType, name: string, latitude: number, longitude: number, meta: JsonValue, };

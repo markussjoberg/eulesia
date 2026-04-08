@@ -45,17 +45,6 @@ const ClubViewPage = lazy(() =>
 const ClubThreadPage = lazy(() =>
   import("./pages/ClubThreadPage").then((m) => ({ default: m.ClubThreadPage })),
 );
-const HomePage = lazy(() =>
-  import("./pages/HomePage").then((m) => ({ default: m.HomePage })),
-);
-const RoomPage = lazy(() =>
-  import("./pages/RoomPage").then((m) => ({ default: m.RoomPage })),
-);
-const RoomThreadPage = lazy(() =>
-  import("./pages/RoomThreadPage").then((m) => ({
-    default: m.RoomThreadPage,
-  })),
-);
 const ProfilePage = lazy(() =>
   import("./pages/ProfilePage").then((m) => ({ default: m.ProfilePage })),
 );
@@ -93,9 +82,6 @@ const DMConversationPage = lazy(() =>
   import("./pages/DMConversationPage").then((m) => ({
     default: m.DMConversationPage,
   })),
-);
-const UserHomePage = lazy(() =>
-  import("./pages/UserHomePage").then((m) => ({ default: m.UserHomePage })),
 );
 const TermsPage = lazy(() =>
   import("./pages/TermsPage").then((m) => ({ default: m.TermsPage })),
@@ -342,47 +328,6 @@ function AppRoutes() {
             <ProtectedRoute>
               <PageErrorBoundary>
                 <MapPage />
-              </PageErrorBoundary>
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/home"
-          element={
-            <ProtectedRoute>
-              <PageErrorBoundary>
-                <HomePage />
-              </PageErrorBoundary>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/home/room/:roomId"
-          element={
-            <ProtectedRoute>
-              <PageErrorBoundary>
-                <RoomPage />
-              </PageErrorBoundary>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/home/room/:roomId/thread/:threadId"
-          element={
-            <ProtectedRoute>
-              <PageErrorBoundary>
-                <RoomThreadPage />
-              </PageErrorBoundary>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/home/:userId"
-          element={
-            <ProtectedRoute>
-              <PageErrorBoundary>
-                <UserHomePage />
               </PageErrorBoundary>
             </ProtectedRoute>
           }

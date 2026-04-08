@@ -202,68 +202,6 @@ export interface ClubThread {
 
 export type ClubComment = Comment;
 
-export interface Room {
-  id: string;
-  name: string;
-  description?: string;
-  visibility: "public" | "private";
-  isPinned: boolean;
-  threadCount: number;
-  createdAt: string;
-  updatedAt: string;
-  canAccess?: boolean;
-}
-
-export interface RoomThread {
-  id: string;
-  roomId: string;
-  title: string;
-  content: string;
-  contentHtml?: string;
-  author: UserSummary | null;
-  authorId?: string | null;
-  editedAt?: string | null;
-  editedBy?: string | null;
-  isPinned: boolean;
-  isLocked: boolean;
-  replyCount: number;
-  score: number;
-  userVote: number;
-  isHidden?: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface RoomComment {
-  id: string;
-  threadId: string;
-  parentId?: string | null;
-  authorId: string;
-  content: string;
-  contentHtml?: string;
-  author: UserSummary | null;
-  score: number;
-  depth: number;
-  userVote: number;
-  isHidden?: boolean;
-  createdAt: string;
-  updatedAt?: string;
-}
-
-export interface RoomInvitation {
-  id: string;
-  roomId: string;
-  inviterId: string;
-  inviteeId: string;
-  status: "pending" | "accepted" | "declined";
-  createdAt: string;
-}
-
-export interface RoomInvitationWithDetails extends RoomInvitation {
-  room: { id: string; name: string; description?: string };
-  inviter: UserSummary;
-}
-
 export interface AppNotification {
   id: string;
   type: string;
@@ -302,14 +240,20 @@ export interface DirectMessage {
   createdAt: string;
 }
 
-export type FeedScope = "following" | "local" | "national" | "european" | "all";
+export type FeedScope =
+  | "following"
+  | "local"
+  | "national"
+  | "european"
+  | "personal"
+  | "all";
 
 export type SortBy = "recent" | "new" | "top";
 
 export type TopPeriod = "day" | "week" | "month" | "year";
 
 export interface ThreadFilters {
-  scope?: "local" | "national" | "european";
+  scope?: "local" | "national" | "european" | "personal";
   municipalityId?: string;
   tags?: string[];
   feedScope?: FeedScope;
@@ -330,7 +274,7 @@ export interface ClubFilters {
 export interface CreateThreadData {
   title: string;
   content: string;
-  scope: "local" | "national" | "european";
+  scope: "local" | "national" | "european" | "personal";
   country?: string;
   municipalityId?: string;
   // Location support: either locationId (existing) or locationOsmId (to be activated)
@@ -366,12 +310,6 @@ export interface CreateClubThreadData {
   title: string;
   content: string;
   language?: string;
-}
-
-export interface CreateRoomData {
-  name: string;
-  description?: string;
-  visibility?: "public" | "private";
 }
 
 export interface MapBounds {

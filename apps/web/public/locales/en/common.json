@@ -3,10 +3,10 @@
     "agora": "Agora",
     "clubs": "Clubs",
     "messages": "Messages",
-    "map": "Map",
-    "home": "Home"
+    "map": "Map"
   },
   "scope": {
+    "personal": "People",
     "local": "Local",
     "national": "National",
     "european": "EU",

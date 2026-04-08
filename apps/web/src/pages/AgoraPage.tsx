@@ -280,6 +280,7 @@ export function AgoraPage() {
   const isPersonalizedScope = ["local", "national", "european"].includes(
     feedScope,
   );
+  // Personal scope doesn't need subscription hints
   const showScopeHint = isPersonalizedScope && !isLoading && !hasSubscriptions;
 
   const handleVote = (threadId: string, value: number) => {

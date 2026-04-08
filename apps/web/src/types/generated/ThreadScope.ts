@@ -3,4 +3,4 @@
 /**
  * Agora thread scope — determines visibility and feed placement.
  */
-export type ThreadScope = "local" | "national" | "european" | "club";
+export type ThreadScope = "local" | "national" | "european" | "personal" | "club";

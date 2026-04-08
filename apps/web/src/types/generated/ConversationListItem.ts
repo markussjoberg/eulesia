@@ -2,14 +2,4 @@
 import type { ConversationUserSummary } from "./ConversationUserSummary";
 import type { LastMessageSummary } from "./LastMessageSummary";
 
-export type ConversationListItem = {
-  id: string;
-  conversationType: string;
-  name: string | null;
-  currentEpoch: number;
-  otherUser: ConversationUserSummary | null;
-  lastMessage: LastMessageSummary | null;
-  unreadCount: number;
-  createdAt: string;
-  updatedAt: string;
-};
+export type ConversationListItem = { id: string, conversationType: string, name: string | null, currentEpoch: number, otherUser: ConversationUserSummary | null, lastMessage: LastMessageSummary | null, unreadCount: number, createdAt: string, updatedAt: string, };

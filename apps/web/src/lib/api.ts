@@ -9,11 +9,6 @@ import type {
   ClubThread,
   ClubComment,
   Comment,
-  Room,
-  RoomThread,
-  RoomComment,
-  RoomInvitation,
-  RoomInvitationWithDetails,
   UserSummary,
   DirectMessage,
   ExploreThread,
@@ -28,7 +23,6 @@ import type {
   CreateCommentData,
   CreateClubData,
   CreateClubThreadData,
-  CreateRoomData,
   ClubInvitation,
   ClubInvitationWithDetails,
   AppNotification,
@@ -145,31 +139,7 @@ interface ClubWithThreads extends Club {
 
 interface ClubThreadWithComments extends ClubThread {
   memberRole?: string | null;
-  isRoomOwner?: boolean;
   comments: ClubComment[];
-}
-
-interface RoomThreadWithComments extends RoomThread {
-  isRoomOwner: boolean;
-  comments: RoomComment[];
-}
-
-interface RoomWithThreads extends Room {
-  owner: UserSummary;
-  members: UserSummary[];
-  threads: RoomThread[];
-  isOwner: boolean;
-  canPost: boolean;
-}
-
-interface HomeData {
-  owner: UserSummary;
-  rooms: Room[];
-  recentActivity: {
-    threads: { id: string; title: string; scope: string; createdAt: string }[];
-    clubs: { id: string; name: string; slug: string }[];
-  };
-  isOwnHome: boolean;
 }
 
 interface EditHistoryEntry {
@@ -632,92 +602,6 @@ class ApiClient {
     return this.request(`/agora/comments/${id}`, { method: "DELETE" });
   }
 
-  // Room threads
-  async createRoomThread(
-    roomId: string,
-    data: { title: string; content: string },
-  ): Promise<RoomThread> {
-    return this.request(`/home/rooms/${roomId}/threads`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  }
-
-  async getRoomThread(
-    roomId: string,
-    threadId: string,
-  ): Promise<RoomThreadWithComments> {
-    return this.request(`/home/rooms/${roomId}/threads/${threadId}`);
-  }
-
-  async addRoomComment(
-    roomId: string,
-    threadId: string,
-    data: { content: string; parentId?: string },
-  ): Promise<RoomComment> {
-    return this.request(`/home/rooms/${roomId}/threads/${threadId}/comments`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  }
-
-  async voteRoomThread(
-    roomId: string,
-    threadId: string,
-    value: number,
-  ): Promise<{ threadId: string; score: number; userVote: number }> {
-    return this.request(`/home/rooms/${roomId}/threads/${threadId}/vote`, {
-      method: "POST",
-      body: JSON.stringify({ value }),
-    });
-  }
-
-  async voteRoomComment(
-    roomId: string,
-    threadId: string,
-    commentId: string,
-    value: number,
-  ): Promise<{ commentId: string; score: number; userVote: number }> {
-    return this.request(
-      `/home/rooms/${roomId}/threads/${threadId}/comments/${commentId}/vote`,
-      {
-        method: "POST",
-        body: JSON.stringify({ value }),
-      },
-    );
-  }
-
-  async deleteRoomThread(
-    roomId: string,
-    threadId: string,
-  ): Promise<{ deleted: boolean }> {
-    return this.request(`/home/rooms/${roomId}/threads/${threadId}`, {
-      method: "DELETE",
-    });
-  }
-
-  async updateRoomThread(
-    roomId: string,
-    threadId: string,
-    data: { isLocked?: boolean; isPinned?: boolean },
-  ): Promise<RoomThread> {
-    return this.request(`/home/rooms/${roomId}/threads/${threadId}`, {
-      method: "PATCH",
-      body: JSON.stringify(data),
-    });
-  }
-
-  async deleteRoomComment(
-    roomId: string,
-    threadId: string,
-    commentId: string,
-  ): Promise<{ deleted: boolean }> {
-    return this.request(
-      `/home/rooms/${roomId}/threads/${threadId}/comments/${commentId}`,
-      { method: "DELETE" },
-    );
-  }
-
   async editDirectMessage(
     conversationId: string,
     messageId: string,
@@ -935,83 +819,6 @@ class ApiClient {
         body: JSON.stringify({ value }),
       },
     );
-  }
-
-  // Home
-  async getHome(userId: string): Promise<HomeData> {
-    return this.request(`/home/${userId}`);
-  }
-
-  async createRoom(data: CreateRoomData): Promise<Room> {
-    return this.request("/home/rooms", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  }
-
-  async getRoom(roomId: string): Promise<RoomWithThreads> {
-    return this.request(`/home/rooms/${roomId}`);
-  }
-
-  async updateRoom(
-    roomId: string,
-    data: Partial<CreateRoomData>,
-  ): Promise<Room> {
-    return this.request(`/home/rooms/${roomId}`, {
-      method: "PATCH",
-      body: JSON.stringify(data),
-    });
-  }
-
-  async deleteRoom(roomId: string): Promise<void> {
-    await this.request(`/home/rooms/${roomId}`, { method: "DELETE" });
-  }
-
-  // sendRoomMessage removed — rooms now use threads
-
-  async inviteToRoom(roomId: string, userId: string): Promise<RoomInvitation> {
-    return this.request(`/home/rooms/${roomId}/invite`, {
-      method: "POST",
-      body: JSON.stringify({ userId }),
-    });
-  }
-
-  async getInvitations(): Promise<RoomInvitationWithDetails[]> {
-    return this.request("/home/invitations");
-  }
-
-  async acceptInvitation(invitationId: string): Promise<void> {
-    await this.request(`/home/invitations/${invitationId}/accept`, {
-      method: "POST",
-    });
-  }
-
-  async declineInvitation(invitationId: string): Promise<void> {
-    await this.request(`/home/invitations/${invitationId}/decline`, {
-      method: "POST",
-    });
-  }
-
-  async leaveRoom(roomId: string, userId: string): Promise<void> {
-    await this.request(`/home/rooms/${roomId}/members/${userId}`, {
-      method: "DELETE",
-    });
-  }
-
-  async addRoomMember(
-    roomId: string,
-    userId: string,
-  ): Promise<{ userId: string; name: string }> {
-    return this.request(`/home/rooms/${roomId}/members`, {
-      method: "POST",
-      body: JSON.stringify({ userId }),
-    });
-  }
-
-  async removeRoomMember(roomId: string, memberId: string): Promise<void> {
-    await this.request(`/home/rooms/${roomId}/members/${memberId}`, {
-      method: "DELETE",
-    });
   }
 
   // Map

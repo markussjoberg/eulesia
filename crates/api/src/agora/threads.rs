@@ -27,14 +27,14 @@ use super::types::{
     ThreadListResponse, ThreadResponse, ThreadWithCommentsResponse, UpdateThreadRequest,
 };
 
-const VALID_SCOPES: &[&str] = &["local", "national", "european"];
+const VALID_SCOPES: &[&str] = &["local", "national", "european", "personal"];
 const DEFAULT_LIMIT: u64 = 20;
 const MAX_LIMIT: u64 = 100;
 
 fn validate_scope(scope: &str) -> Result<(), ApiError> {
     if !VALID_SCOPES.contains(&scope) {
         return Err(ApiError::BadRequest(format!(
-            "invalid scope '{scope}': must be local, national, or european"
+            "invalid scope '{scope}': must be local, national, european, or personal"
         )));
     }
     Ok(())

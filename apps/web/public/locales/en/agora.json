@@ -78,6 +78,8 @@
     "content": "Content",
     "contentPlaceholder": "Tell more about the topic...",
     "scope": "Scope",
+    "scopePersonal": "People",
+    "scopePersonalDesc": "Visible to your followers",
     "scopeLocal": "Local",
     "scopeLocalDesc": "Municipality, village or area",
     "scopeNational": "National",

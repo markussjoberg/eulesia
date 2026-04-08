@@ -932,7 +932,7 @@ export function ClubViewPage() {
                 >
                   {member.id && (member.canViewProfile ?? true) ? (
                     <Link
-                      to={`/home/${member.id}`}
+                      to={`/user/${member.id}`}
                       className="flex items-center gap-1.5"
                     >
                       {member.avatarUrl ? (

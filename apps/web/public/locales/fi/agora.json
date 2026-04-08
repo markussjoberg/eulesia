@@ -78,6 +78,8 @@
     "content": "Sisältö",
     "contentPlaceholder": "Kerro tarkemmin aiheesta...",
     "scope": "Laajuus",
+    "scopePersonal": "Ihmiset",
+    "scopePersonalDesc": "Näkyy seuraajillesi",
     "scopeLocal": "Paikallinen",
     "scopeLocalDesc": "Kunta, kylä tai alue",
     "scopeNational": "Valtakunnallinen",

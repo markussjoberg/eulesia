@@ -2,15 +2,4 @@
 import type { InvitationClubSummary } from "./InvitationClubSummary";
 import type { InvitationUserSummary } from "./InvitationUserSummary";
 
-export type InvitationResponse = {
-  id: string;
-  clubId: string;
-  clubName: string | null;
-  club: InvitationClubSummary | null;
-  userId: string;
-  invitee: InvitationUserSummary | null;
-  invitedBy: string;
-  inviter: InvitationUserSummary | null;
-  status: string;
-  createdAt: string;
-};
+export type InvitationResponse = { id: string, clubId: string, clubName: string | null, club: InvitationClubSummary | null, userId: string, invitee: InvitationUserSummary | null, invitedBy: string, inviter: InvitationUserSummary | null, status: string, createdAt: string, };

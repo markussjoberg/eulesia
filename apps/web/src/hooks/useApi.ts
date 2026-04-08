@@ -8,7 +8,6 @@ import type {
   CreateCommentData,
   CreateClubData,
   CreateClubThreadData,
-  CreateRoomData,
   EntityType,
   SubscribeData,
   OsmType,
@@ -41,13 +40,6 @@ export const queryKeys = {
   clubCategories: ["clubCategories"] as const,
   clubInvitations: (clubId: string) => ["clubInvitations", clubId] as const,
   myClubInvitations: ["myClubInvitations"] as const,
-
-  // Home
-  home: (userId: string) => ["home", userId] as const,
-  room: (id: string) => ["room", id] as const,
-  roomThread: (roomId: string, threadId: string) =>
-    ["roomThread", roomId, threadId] as const,
-  invitations: ["invitations"] as const,
 
   // Direct Messages
   conversations: ["conversations"] as const,
@@ -278,107 +270,6 @@ export function useDeleteComment(threadId: string, sort?: CommentSort) {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.thread(threadId, sort),
-      });
-    },
-  });
-}
-
-// Room thread hooks
-export function useRoomThread(roomId: string, threadId: string) {
-  return useQuery({
-    queryKey: queryKeys.roomThread(roomId, threadId),
-    queryFn: () => api.getRoomThread(roomId, threadId),
-    enabled: !!roomId && !!threadId,
-  });
-}
-
-export function useCreateRoomThread(roomId: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (data: { title: string; content: string }) =>
-      api.createRoomThread(roomId, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.room(roomId) });
-    },
-  });
-}
-
-export function useAddRoomComment(roomId: string, threadId: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (data: { content: string; parentId?: string }) =>
-      api.addRoomComment(roomId, threadId, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.roomThread(roomId, threadId),
-      });
-    },
-  });
-}
-
-export function useVoteRoomThread(roomId: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ threadId, value }: { threadId: string; value: number }) =>
-      api.voteRoomThread(roomId, threadId, value),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.room(roomId) });
-    },
-  });
-}
-
-export function useVoteRoomComment(roomId: string, threadId: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ commentId, value }: { commentId: string; value: number }) =>
-      api.voteRoomComment(roomId, threadId, commentId, value),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.roomThread(roomId, threadId),
-      });
-    },
-  });
-}
-
-export function useDeleteRoomThread(roomId: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (threadId: string) => api.deleteRoomThread(roomId, threadId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.room(roomId) });
-    },
-  });
-}
-
-export function useUpdateRoomThread(roomId: string, threadId: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (data: { isLocked?: boolean; isPinned?: boolean }) =>
-      api.updateRoomThread(roomId, threadId, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.room(roomId) });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.roomThread(roomId, threadId),
-      });
-    },
-  });
-}
-
-export function useDeleteRoomComment(roomId: string, threadId: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (commentId: string) =>
-      api.deleteRoomComment(roomId, threadId, commentId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.roomThread(roomId, threadId),
       });
     },
   });
@@ -794,120 +685,6 @@ export function useVoteClubComment(clubId: string, threadId: string) {
           };
         },
       );
-    },
-  });
-}
-
-// Home hooks
-export function useHome(userId: string) {
-  return useQuery({
-    queryKey: queryKeys.home(userId),
-    queryFn: () => api.getHome(userId),
-    enabled: !!userId,
-  });
-}
-
-export function useRoom(roomId: string) {
-  return useQuery({
-    queryKey: queryKeys.room(roomId),
-    queryFn: () => api.getRoom(roomId),
-    enabled: !!roomId,
-  });
-}
-
-export function useInvitations() {
-  return useQuery({
-    queryKey: queryKeys.invitations,
-    queryFn: () => api.getInvitations(),
-  });
-}
-
-export function useCreateRoom() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (data: CreateRoomData) => api.createRoom(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["home"] });
-    },
-  });
-}
-
-export function useUpdateRoom(roomId: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (data: Partial<CreateRoomData>) => api.updateRoom(roomId, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.room(roomId) });
-      queryClient.invalidateQueries({ queryKey: ["home"] });
-    },
-  });
-}
-
-export function useDeleteRoom() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (roomId: string) => api.deleteRoom(roomId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["home"] });
-    },
-  });
-}
-
-export function useInviteToRoom(roomId: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (userId: string) => api.inviteToRoom(roomId, userId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.room(roomId) });
-    },
-  });
-}
-
-export function useAddRoomMember(roomId: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (userId: string) => api.addRoomMember(roomId, userId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.room(roomId) });
-    },
-  });
-}
-
-export function useRemoveRoomMember(roomId: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (memberId: string) => api.removeRoomMember(roomId, memberId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.room(roomId) });
-    },
-  });
-}
-
-export function useAcceptInvitation() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (invitationId: string) => api.acceptInvitation(invitationId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.invitations });
-      queryClient.invalidateQueries({ queryKey: ["home"] });
-    },
-  });
-}
-
-export function useDeclineInvitation() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (invitationId: string) => api.declineInvitation(invitationId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.invitations });
     },
   });
 }

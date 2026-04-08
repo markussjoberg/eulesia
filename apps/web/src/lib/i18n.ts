@@ -16,7 +16,6 @@ i18n
       "auth",
       "agora",
       "clubs",
-      "home",
       "messages",
       "profile",
       "about",
