@@ -24,11 +24,13 @@
   "emptyQuoteAttribution_5": "vapaasti Descartesia mukaillen",
   "emptyQuoteAttribution_6": "ikivanha filosofinen kysymys",
   "emptyQuoteCta": "Aloita ensimmäinen keskustelu",
+  "emptyQuoteCtaPersonal": "Seuraa muita",
   "editSubscriptions": "Muokkaa seuraamisia",
   "emptyScope": {
     "local": "Seuraa kuntia ja paikkakuntia nähdäksesi paikallisia keskusteluja ja päätöksiä.",
     "national": "Seuraa ministeriöitä, organisaatioita ja aiheita nähdäksesi valtakunnallisia keskusteluja.",
     "european": "Seuraa EU-instituutioita ja aiheita nähdäksesi EU-tason keskusteluja.",
+    "personal": "Seuraa muita käyttäjiä nähdäksesi heidän keskustelunsa tässä feedissä.",
     "startFollowing": "Aloita seuraaminen",
     "hint": "Täällä näkyy sisältö seuraamiltasi tahoilta. Selaa-näkymästä löydät kaiken sisällön."
   },

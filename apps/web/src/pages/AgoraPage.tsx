@@ -24,6 +24,7 @@ import {
   Users,
   HelpCircle,
   MessageSquarePlus,
+  UserPlus,
 } from "lucide-react";
 import {
   useThreads,
@@ -498,22 +499,32 @@ export function AgoraPage() {
                 )}
               </p>
               {currentUser ? (
-                <button
-                  onClick={() => {
-                    const form = document.querySelector(
-                      '[data-guide="agora-newthread"]',
-                    );
-                    if (form) {
-                      form.scrollIntoView({ behavior: "smooth" });
-                      const input = form.querySelector("input, textarea");
-                      if (input) (input as HTMLElement).focus();
-                    }
-                  }}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  <MessageSquarePlus className="w-4 h-4" />
-                  {t("emptyQuoteCta")}
-                </button>
+                feedScope === "personal" ? (
+                  <button
+                    onClick={() => navigate("/explore")}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <UserPlus className="w-4 h-4" />
+                    {t("emptyQuoteCtaPersonal")}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      const form = document.querySelector(
+                        '[data-guide="agora-newthread"]',
+                      );
+                      if (form) {
+                        form.scrollIntoView({ behavior: "smooth" });
+                        const input = form.querySelector("input, textarea");
+                        if (input) (input as HTMLElement).focus();
+                      }
+                    }}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <MessageSquarePlus className="w-4 h-4" />
+                    {t("emptyQuoteCta")}
+                  </button>
+                )
               ) : null}
             </div>
           </div>

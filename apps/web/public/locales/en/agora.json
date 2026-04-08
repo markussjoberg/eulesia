@@ -24,11 +24,13 @@
   "emptyQuoteAttribution_5": "loosely after Descartes",
   "emptyQuoteAttribution_6": "an age-old philosophical question",
   "emptyQuoteCta": "Start the first discussion",
+  "emptyQuoteCtaPersonal": "Follow people",
   "editSubscriptions": "Edit subscriptions",
   "emptyScope": {
     "local": "Follow municipalities and places to see local discussions and decisions.",
     "national": "Follow ministries, organizations and topics to see national discussions.",
     "european": "Follow EU institutions and topics to see EU-level discussions.",
+    "personal": "Follow other users to see their discussions in this feed.",
     "startFollowing": "Start following",
     "hint": "This shows content from people and organizations you follow. Browse all content in the Explore view."
   },
