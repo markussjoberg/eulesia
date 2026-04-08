@@ -1,0 +1,5238 @@
+[
+  {
+    "official_code": "005",
+    "name_fi": "Alajärvi",
+    "name_sv": "Alajärvi",
+    "name": "Alajärvi",
+    "region": "Etelä-Pohjanmaa",
+    "country": "FI",
+    "population": 8982,
+    "latitude": 62.942241,
+    "longitude": 23.924666,
+    "bounds": {
+      "south": 62.736484,
+      "north": 63.147998,
+      "west": 23.490325,
+      "east": 24.359008
+    }
+  },
+  {
+    "official_code": "009",
+    "name_fi": "Alavieska",
+    "name_sv": "Alavieska",
+    "name": "Alavieska",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 2384,
+    "latitude": 64.170805,
+    "longitude": 24.359568,
+    "bounds": {
+      "south": 64.041516,
+      "north": 64.300094,
+      "west": 24.137082,
+      "east": 24.582054
+    }
+  },
+  {
+    "official_code": "010",
+    "name_fi": "Alavus",
+    "name_sv": "Alavo",
+    "name": "Alavus",
+    "region": "Etelä-Pohjanmaa",
+    "country": "FI",
+    "population": 10634,
+    "latitude": 62.574581,
+    "longitude": 23.5774,
+    "bounds": {
+      "south": 62.386556,
+      "north": 62.762606,
+      "west": 23.161226,
+      "east": 23.993574
+    }
+  },
+  {
+    "official_code": "016",
+    "name_fi": "Asikkala",
+    "name_sv": "Asikkala",
+    "name": "Asikkala",
+    "region": "Päijät-Häme",
+    "country": "FI",
+    "population": 7841,
+    "latitude": 61.230459,
+    "longitude": 25.565076,
+    "bounds": {
+      "south": 61.096291,
+      "north": 61.364628,
+      "west": 25.202824,
+      "east": 25.927328
+    }
+  },
+  {
+    "official_code": "018",
+    "name_fi": "Askola",
+    "name_sv": "Askola",
+    "name": "Askola",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 4677,
+    "latitude": 60.541893,
+    "longitude": 25.61936,
+    "bounds": {
+      "south": 60.469911,
+      "north": 60.613875,
+      "west": 25.415492,
+      "east": 25.823227
+    }
+  },
+  {
+    "official_code": "019",
+    "name_fi": "Aura",
+    "name_sv": "Aura",
+    "name": "Aura",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 3937,
+    "latitude": 60.65194,
+    "longitude": 22.54856,
+    "bounds": {
+      "south": 60.566587,
+      "north": 60.737294,
+      "west": 22.415004,
+      "east": 22.682117
+    }
+  },
+  {
+    "official_code": "020",
+    "name_fi": "Akaa",
+    "name_sv": "Ackas",
+    "name": "Akaa",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 16429,
+    "latitude": 61.158167,
+    "longitude": 23.726576,
+    "bounds": {
+      "south": 61.057355,
+      "north": 61.258979,
+      "west": 23.494139,
+      "east": 23.959014
+    }
+  },
+  {
+    "official_code": "035",
+    "name_fi": "Brändö",
+    "name_sv": "Brändö",
+    "name": "Brändö",
+    "region": "Ahvenanmaa",
+    "country": "FI",
+    "population": 430,
+    "latitude": 60.450726,
+    "longitude": 21.015503,
+    "bounds": {
+      "south": 60.344098,
+      "north": 60.557353,
+      "west": 20.902314,
+      "east": 21.128692
+    }
+  },
+  {
+    "official_code": "043",
+    "name_fi": "Eckerö",
+    "name_sv": "Eckerö",
+    "name": "Eckerö",
+    "region": "Ahvenanmaa",
+    "country": "FI",
+    "population": 961,
+    "latitude": 60.221029,
+    "longitude": 19.575524,
+    "bounds": {
+      "south": 60.144096,
+      "north": 60.297961,
+      "west": 19.472754,
+      "east": 19.678294
+    }
+  },
+  {
+    "official_code": "046",
+    "name_fi": "Enonkoski",
+    "name_sv": "Enonkoski",
+    "name": "Enonkoski",
+    "region": "Etelä-Savo",
+    "country": "FI",
+    "population": 1273,
+    "latitude": 62.143877,
+    "longitude": 28.861662,
+    "bounds": {
+      "south": 62.000994,
+      "north": 62.28676,
+      "west": 28.597476,
+      "east": 29.125848
+    }
+  },
+  {
+    "official_code": "047",
+    "name_fi": "Enontekiö",
+    "name_sv": "Enontekis",
+    "name": "Enontekiö",
+    "region": "Lappi",
+    "country": "FI",
+    "population": 1769,
+    "latitude": 68.713909,
+    "longitude": 22.789762,
+    "bounds": {
+      "south": 68.115933,
+      "north": 69.311884,
+      "west": 20.552328,
+      "east": 25.027196
+    }
+  },
+  {
+    "official_code": "049",
+    "name_fi": "Espoo",
+    "name_sv": "Esbo",
+    "name": "Espoo",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 325716,
+    "latitude": 60.245504,
+    "longitude": 24.668919,
+    "bounds": {
+      "south": 60.131766,
+      "north": 60.359241,
+      "west": 24.503201,
+      "east": 24.834638
+    }
+  },
+  {
+    "official_code": "050",
+    "name_fi": "Eura",
+    "name_sv": "Eura",
+    "name": "Eura",
+    "region": "Satakunta",
+    "country": "FI",
+    "population": 11005,
+    "latitude": 61.084355,
+    "longitude": 22.053871,
+    "bounds": {
+      "south": 60.872006,
+      "north": 61.296704,
+      "west": 21.84411,
+      "east": 22.263632
+    }
+  },
+  {
+    "official_code": "051",
+    "name_fi": "Eurajoki",
+    "name_sv": "Euraåminne",
+    "name": "Eurajoki",
+    "region": "Satakunta",
+    "country": "FI",
+    "population": 8920,
+    "latitude": 61.294169,
+    "longitude": 21.694344,
+    "bounds": {
+      "south": 61.145663,
+      "north": 61.442676,
+      "west": 21.442738,
+      "east": 21.94595
+    }
+  },
+  {
+    "official_code": "052",
+    "name_fi": "Evijärvi",
+    "name_sv": "Evijärvi",
+    "name": "Evijärvi",
+    "region": "Etelä-Pohjanmaa",
+    "country": "FI",
+    "population": 2267,
+    "latitude": 63.389911,
+    "longitude": 23.454869,
+    "bounds": {
+      "south": 63.281775,
+      "north": 63.498047,
+      "west": 23.20704,
+      "east": 23.702698
+    }
+  },
+  {
+    "official_code": "060",
+    "name_fi": "Finström",
+    "name_sv": "Finström",
+    "name": "Finström",
+    "region": "Ahvenanmaa",
+    "country": "FI",
+    "population": 2625,
+    "latitude": 60.281996,
+    "longitude": 19.905387,
+    "bounds": {
+      "south": 60.187667,
+      "north": 60.376325,
+      "west": 19.785722,
+      "east": 20.025052
+    }
+  },
+  {
+    "official_code": "061",
+    "name_fi": "Forssa",
+    "name_sv": "Forssa",
+    "name": "Forssa",
+    "region": "Kanta-Häme",
+    "country": "FI",
+    "population": 16307,
+    "latitude": 60.89428,
+    "longitude": 23.656731,
+    "bounds": {
+      "south": 60.779527,
+      "north": 61.009034,
+      "west": 23.474091,
+      "east": 23.83937
+    }
+  },
+  {
+    "official_code": "062",
+    "name_fi": "Föglö",
+    "name_sv": "Föglö",
+    "name": "Föglö",
+    "region": "Ahvenanmaa",
+    "country": "FI",
+    "population": 512,
+    "latitude": 60.050489,
+    "longitude": 20.454736,
+    "bounds": {
+      "south": 59.983548,
+      "north": 60.11743,
+      "west": 20.318741,
+      "east": 20.590731
+    }
+  },
+  {
+    "official_code": "065",
+    "name_fi": "Geta",
+    "name_sv": "Geta",
+    "name": "Geta",
+    "region": "Ahvenanmaa",
+    "country": "FI",
+    "population": 512,
+    "latitude": 60.376498,
+    "longitude": 19.866229,
+    "bounds": {
+      "south": 60.329703,
+      "north": 60.423293,
+      "west": 19.764591,
+      "east": 19.967868
+    }
+  },
+  {
+    "official_code": "069",
+    "name_fi": "Haapajärvi",
+    "name_sv": "Haapajärvi",
+    "name": "Haapajärvi",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 6441,
+    "latitude": 63.75687,
+    "longitude": 25.308786,
+    "bounds": {
+      "south": 63.58148,
+      "north": 63.932261,
+      "west": 24.955615,
+      "east": 25.661958
+    }
+  },
+  {
+    "official_code": "071",
+    "name_fi": "Haapavesi",
+    "name_sv": "Haapavesi",
+    "name": "Haapavesi",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 6298,
+    "latitude": 64.14209,
+    "longitude": 25.341837,
+    "bounds": {
+      "south": 63.921603,
+      "north": 64.362578,
+      "west": 24.906374,
+      "east": 25.777301
+    }
+  },
+  {
+    "official_code": "072",
+    "name_fi": "Hailuoto",
+    "name_sv": "Karlö",
+    "name": "Hailuoto",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 912,
+    "latitude": 65.026183,
+    "longitude": 24.825228,
+    "bounds": {
+      "south": 64.951399,
+      "north": 65.100968,
+      "west": 24.569733,
+      "east": 25.080723
+    }
+  },
+  {
+    "official_code": "074",
+    "name_fi": "Halsua",
+    "name_sv": "Halso",
+    "name": "Halsua",
+    "region": "Keski-Pohjanmaa",
+    "country": "FI",
+    "population": 975,
+    "latitude": 63.454486,
+    "longitude": 24.297706,
+    "bounds": {
+      "south": 63.331918,
+      "north": 63.577055,
+      "west": 24.040818,
+      "east": 24.554594
+    }
+  },
+  {
+    "official_code": "075",
+    "name_fi": "Hamina",
+    "name_sv": "Fredrikshamn",
+    "name": "Hamina",
+    "region": "Kymenlaakso",
+    "country": "FI",
+    "population": 19113,
+    "latitude": 60.675432,
+    "longitude": 27.188408,
+    "bounds": {
+      "south": 60.508225,
+      "north": 60.84264,
+      "west": 26.922136,
+      "east": 27.454679
+    }
+  },
+  {
+    "official_code": "076",
+    "name_fi": "Hammarland",
+    "name_sv": "Hammarland",
+    "name": "Hammarland",
+    "region": "Ahvenanmaa",
+    "country": "FI",
+    "population": 1644,
+    "latitude": 60.228862,
+    "longitude": 19.730266,
+    "bounds": {
+      "south": 60.131817,
+      "north": 60.325906,
+      "west": 19.619351,
+      "east": 19.841181
+    }
+  },
+  {
+    "official_code": "077",
+    "name_fi": "Hankasalmi",
+    "name_sv": "Hankasalmi",
+    "name": "Hankasalmi",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 4436,
+    "latitude": 62.389312,
+    "longitude": 26.494926,
+    "bounds": {
+      "south": 62.200471,
+      "north": 62.578154,
+      "west": 26.213726,
+      "east": 26.776125
+    }
+  },
+  {
+    "official_code": "078",
+    "name_fi": "Hanko",
+    "name_sv": "Hangö",
+    "name": "Hanko",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 7620,
+    "latitude": 59.870359,
+    "longitude": 23.090558,
+    "bounds": {
+      "south": 59.808412,
+      "north": 59.932307,
+      "west": 22.88595,
+      "east": 23.295167
+    }
+  },
+  {
+    "official_code": "079",
+    "name_fi": "Harjavalta",
+    "name_sv": "Harjavalta",
+    "name": "Harjavalta",
+    "region": "Satakunta",
+    "country": "FI",
+    "population": 6565,
+    "latitude": 61.336257,
+    "longitude": 22.146609,
+    "bounds": {
+      "south": 61.265115,
+      "north": 61.407398,
+      "west": 22.021195,
+      "east": 22.272024
+    }
+  },
+  {
+    "official_code": "081",
+    "name_fi": "Hartola",
+    "name_sv": "Gustav Adolfs  ",
+    "name": "Hartola",
+    "region": "Päijät-Häme",
+    "country": "FI",
+    "population": 2401,
+    "latitude": 61.597151,
+    "longitude": 26.043109,
+    "bounds": {
+      "south": 61.392894,
+      "north": 61.801408,
+      "west": 25.771179,
+      "east": 26.315039
+    }
+  },
+  {
+    "official_code": "082",
+    "name_fi": "Hattula",
+    "name_sv": "Hattula",
+    "name": "Hattula",
+    "region": "Kanta-Häme",
+    "country": "FI",
+    "population": 9346,
+    "latitude": 61.045324,
+    "longitude": 24.328498,
+    "bounds": {
+      "south": 60.857432,
+      "north": 61.233216,
+      "west": 24.0326,
+      "east": 24.624397
+    }
+  },
+  {
+    "official_code": "086",
+    "name_fi": "Hausjärvi",
+    "name_sv": "Hausjärvi",
+    "name": "Hausjärvi",
+    "region": "Kanta-Häme",
+    "country": "FI",
+    "population": 7862,
+    "latitude": 60.794706,
+    "longitude": 24.934742,
+    "bounds": {
+      "south": 60.661596,
+      "north": 60.927816,
+      "west": 24.714608,
+      "east": 25.154876
+    }
+  },
+  {
+    "official_code": "090",
+    "name_fi": "Heinävesi",
+    "name_sv": "Heinävesi",
+    "name": "Heinävesi",
+    "region": "Pohjois-Karjala",
+    "country": "FI",
+    "population": 2888,
+    "latitude": 62.434619,
+    "longitude": 28.706506,
+    "bounds": {
+      "south": 62.212216,
+      "north": 62.657022,
+      "west": 28.244772,
+      "east": 29.16824
+    }
+  },
+  {
+    "official_code": "091",
+    "name_fi": "Helsinki",
+    "name_sv": "Helsingfors",
+    "name": "Helsinki",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 694392,
+    "latitude": 60.214412,
+    "longitude": 25.051525,
+    "bounds": {
+      "south": 60.130744,
+      "north": 60.29808,
+      "west": 24.831403,
+      "east": 25.271647
+    }
+  },
+  {
+    "official_code": "092",
+    "name_fi": "Vantaa",
+    "name_sv": "Vanda",
+    "name": "Vantaa",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 252956,
+    "latitude": 60.319242,
+    "longitude": 24.969767,
+    "bounds": {
+      "south": 60.237228,
+      "north": 60.401255,
+      "west": 24.749283,
+      "east": 25.19025
+    }
+  },
+  {
+    "official_code": "097",
+    "name_fi": "Hirvensalmi",
+    "name_sv": "Hirvensalmi",
+    "name": "Hirvensalmi",
+    "region": "Etelä-Savo",
+    "country": "FI",
+    "population": 2023,
+    "latitude": 61.680984,
+    "longitude": 26.693312,
+    "bounds": {
+      "south": 61.503426,
+      "north": 61.858541,
+      "west": 26.367181,
+      "east": 27.019442
+    }
+  },
+  {
+    "official_code": "098",
+    "name_fi": "Hollola",
+    "name_sv": "Hollola",
+    "name": "Hollola",
+    "region": "Päijät-Häme",
+    "country": "FI",
+    "population": 22775,
+    "latitude": 61.002533,
+    "longitude": 25.424935,
+    "bounds": {
+      "south": 60.854359,
+      "north": 61.150707,
+      "west": 25.027676,
+      "east": 25.822195
+    }
+  },
+  {
+    "official_code": "102",
+    "name_fi": "Huittinen",
+    "name_sv": "Vittis",
+    "name": "Huittinen",
+    "region": "Satakunta",
+    "country": "FI",
+    "population": 9546,
+    "latitude": 61.144458,
+    "longitude": 22.73715,
+    "bounds": {
+      "south": 60.986936,
+      "north": 61.30198,
+      "west": 22.480341,
+      "east": 22.993958
+    }
+  },
+  {
+    "official_code": "103",
+    "name_fi": "Humppila",
+    "name_sv": "Humppila",
+    "name": "Humppila",
+    "region": "Kanta-Häme",
+    "country": "FI",
+    "population": 2074,
+    "latitude": 60.944815,
+    "longitude": 23.348057,
+    "bounds": {
+      "south": 60.871075,
+      "north": 61.018554,
+      "west": 23.195366,
+      "east": 23.500747
+    }
+  },
+  {
+    "official_code": "105",
+    "name_fi": "Hyrynsalmi",
+    "name_sv": "Hyrynsalmi",
+    "name": "Hyrynsalmi",
+    "region": "Kainuu",
+    "country": "FI",
+    "population": 1984,
+    "latitude": 64.676486,
+    "longitude": 28.757735,
+    "bounds": {
+      "south": 64.454597,
+      "north": 64.898375,
+      "west": 28.056014,
+      "east": 29.459456
+    }
+  },
+  {
+    "official_code": "106",
+    "name_fi": "Hyvinkää",
+    "name_sv": "Hyvinge",
+    "name": "Hyvinkää",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 47015,
+    "latitude": 60.600826,
+    "longitude": 24.839686,
+    "bounds": {
+      "south": 60.516659,
+      "north": 60.684992,
+      "west": 24.566911,
+      "east": 25.112462
+    }
+  },
+  {
+    "official_code": "108",
+    "name_fi": "Hämeenkyrö",
+    "name_sv": "Tavastkyro",
+    "name": "Hämeenkyrö",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 10249,
+    "latitude": 61.626654,
+    "longitude": 23.162273,
+    "bounds": {
+      "south": 61.518904,
+      "north": 61.734404,
+      "west": 22.824069,
+      "east": 23.500477
+    }
+  },
+  {
+    "official_code": "109",
+    "name_fi": "Hämeenlinna",
+    "name_sv": "Tavastehus",
+    "name": "Hämeenlinna",
+    "region": "Kanta-Häme",
+    "country": "FI",
+    "population": 68614,
+    "latitude": 61.048045,
+    "longitude": 24.508312,
+    "bounds": {
+      "south": 60.771209,
+      "north": 61.324881,
+      "west": 23.756757,
+      "east": 25.259867
+    }
+  },
+  {
+    "official_code": "111",
+    "name_fi": "Heinola",
+    "name_sv": "Heinola",
+    "name": "Heinola",
+    "region": "Päijät-Häme",
+    "country": "FI",
+    "population": 17694,
+    "latitude": 61.248375,
+    "longitude": 26.159289,
+    "bounds": {
+      "south": 61.07092,
+      "north": 61.425831,
+      "west": 25.804915,
+      "east": 26.513663
+    }
+  },
+  {
+    "official_code": "139",
+    "name_fi": "Ii",
+    "name_sv": "Ijo",
+    "name": "Ii",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 9755,
+    "latitude": 65.531375,
+    "longitude": 25.62636,
+    "bounds": {
+      "south": 65.240416,
+      "north": 65.822335,
+      "west": 25.09261,
+      "east": 26.160111
+    }
+  },
+  {
+    "official_code": "140",
+    "name_fi": "Iisalmi",
+    "name_sv": "Idensalmi",
+    "name": "Iisalmi",
+    "region": "Pohjois-Savo",
+    "country": "FI",
+    "population": 20205,
+    "latitude": 63.505032,
+    "longitude": 27.214093,
+    "bounds": {
+      "south": 63.321224,
+      "north": 63.688839,
+      "west": 26.803005,
+      "east": 27.625181
+    }
+  },
+  {
+    "official_code": "142",
+    "name_fi": "Iitti",
+    "name_sv": "Itis",
+    "name": "Iitti",
+    "region": "Päijät-Häme",
+    "country": "FI",
+    "population": 6329,
+    "latitude": 60.952346,
+    "longitude": 26.293585,
+    "bounds": {
+      "south": 60.749206,
+      "north": 61.155485,
+      "west": 26.042201,
+      "east": 26.544968
+    }
+  },
+  {
+    "official_code": "143",
+    "name_fi": "Ikaalinen",
+    "name_sv": "Ikalis",
+    "name": "Ikaalinen",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 6704,
+    "latitude": 61.823362,
+    "longitude": 23.142442,
+    "bounds": {
+      "south": 61.675139,
+      "north": 61.971585,
+      "west": 22.691009,
+      "east": 23.593875
+    }
+  },
+  {
+    "official_code": "145",
+    "name_fi": "Ilmajoki",
+    "name_sv": "Ilmola",
+    "name": "Ilmajoki",
+    "region": "Etelä-Pohjanmaa",
+    "country": "FI",
+    "population": 12405,
+    "latitude": 62.735579,
+    "longitude": 22.513836,
+    "bounds": {
+      "south": 62.599855,
+      "north": 62.871303,
+      "west": 22.150152,
+      "east": 22.87752
+    }
+  },
+  {
+    "official_code": "146",
+    "name_fi": "Ilomantsi",
+    "name_sv": "Ilomants",
+    "name": "Ilomantsi",
+    "region": "Pohjois-Karjala",
+    "country": "FI",
+    "population": 4293,
+    "latitude": 62.790042,
+    "longitude": 30.974045,
+    "bounds": {
+      "south": 62.384951,
+      "north": 63.195133,
+      "west": 30.361387,
+      "east": 31.586703
+    }
+  },
+  {
+    "official_code": "148",
+    "name_fi": "Inari",
+    "name_sv": "Enare",
+    "name": "Inari",
+    "region": "Lappi",
+    "country": "FI",
+    "population": 7244,
+    "latitude": 69.063382,
+    "longitude": 27.119831,
+    "bounds": {
+      "south": 68.277572,
+      "north": 69.849193,
+      "west": 24.903166,
+      "east": 29.336497
+    }
+  },
+  {
+    "official_code": "149",
+    "name_fi": "Inkoo",
+    "name_sv": "Ingå",
+    "name": "Inkoo",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 5391,
+    "latitude": 60.048607,
+    "longitude": 24.017577,
+    "bounds": {
+      "south": 59.947097,
+      "north": 60.150117,
+      "west": 23.759067,
+      "east": 24.276088
+    }
+  },
+  {
+    "official_code": "151",
+    "name_fi": "Isojoki",
+    "name_sv": "Storå",
+    "name": "Isojoki",
+    "region": "Etelä-Pohjanmaa",
+    "country": "FI",
+    "population": 1771,
+    "latitude": 62.132076,
+    "longitude": 21.920211,
+    "bounds": {
+      "south": 61.97976,
+      "north": 62.284391,
+      "west": 21.6417,
+      "east": 22.198722
+    }
+  },
+  {
+    "official_code": "152",
+    "name_fi": "Isokyrö",
+    "name_sv": "Storkyro",
+    "name": "Isokyrö",
+    "region": "Etelä-Pohjanmaa",
+    "country": "FI",
+    "population": 4261,
+    "latitude": 62.94653,
+    "longitude": 22.410101,
+    "bounds": {
+      "south": 62.791142,
+      "north": 63.101918,
+      "west": 22.143973,
+      "east": 22.67623
+    }
+  },
+  {
+    "official_code": "153",
+    "name_fi": "Imatra",
+    "name_sv": "Imatra",
+    "name": "Imatra",
+    "region": "Etelä-Karjala",
+    "country": "FI",
+    "population": 24345,
+    "latitude": 61.178445,
+    "longitude": 28.861823,
+    "bounds": {
+      "south": 61.079255,
+      "north": 61.277635,
+      "west": 28.70168,
+      "east": 29.021966
+    }
+  },
+  {
+    "official_code": "165",
+    "name_fi": "Janakkala",
+    "name_sv": "Janakkala",
+    "name": "Janakkala",
+    "region": "Kanta-Häme",
+    "country": "FI",
+    "population": 15867,
+    "latitude": 60.885001,
+    "longitude": 24.689546,
+    "bounds": {
+      "south": 60.744569,
+      "north": 61.025433,
+      "west": 24.398698,
+      "east": 24.980394
+    }
+  },
+  {
+    "official_code": "167",
+    "name_fi": "Joensuu",
+    "name_sv": "Joensuu",
+    "name": "Joensuu",
+    "region": "Pohjois-Karjala",
+    "country": "FI",
+    "population": 79129,
+    "latitude": 62.648282,
+    "longitude": 30.365365,
+    "bounds": {
+      "south": 62.250803,
+      "north": 63.045761,
+      "west": 29.637208,
+      "east": 31.093522
+    }
+  },
+  {
+    "official_code": "169",
+    "name_fi": "Jokioinen",
+    "name_sv": "Jockis",
+    "name": "Jokioinen",
+    "region": "Kanta-Häme",
+    "country": "FI",
+    "population": 4795,
+    "latitude": 60.843696,
+    "longitude": 23.4134,
+    "bounds": {
+      "south": 60.739774,
+      "north": 60.947618,
+      "west": 23.276335,
+      "east": 23.550465
+    }
+  },
+  {
+    "official_code": "170",
+    "name_fi": "Jomala",
+    "name_sv": "Jomala",
+    "name": "Jomala",
+    "region": "Ahvenanmaa",
+    "country": "FI",
+    "population": 5817,
+    "latitude": 60.149851,
+    "longitude": 19.899897,
+    "bounds": {
+      "south": 60.088843,
+      "north": 60.210859,
+      "west": 19.747954,
+      "east": 20.05184
+    }
+  },
+  {
+    "official_code": "171",
+    "name_fi": "Joroinen",
+    "name_sv": "Jorois",
+    "name": "Joroinen",
+    "region": "Pohjois-Savo",
+    "country": "FI",
+    "population": 4494,
+    "latitude": 62.181259,
+    "longitude": 27.805846,
+    "bounds": {
+      "south": 61.987759,
+      "north": 62.37476,
+      "west": 27.531605,
+      "east": 28.080088
+    }
+  },
+  {
+    "official_code": "172",
+    "name_fi": "Joutsa",
+    "name_sv": "Joutsa",
+    "name": "Joutsa",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 4079,
+    "latitude": 61.823465,
+    "longitude": 26.186022,
+    "bounds": {
+      "south": 61.608449,
+      "north": 62.03848,
+      "west": 25.844956,
+      "east": 26.527087
+    }
+  },
+  {
+    "official_code": "176",
+    "name_fi": "Juuka",
+    "name_sv": "Juga",
+    "name": "Juuka",
+    "region": "Pohjois-Karjala",
+    "country": "FI",
+    "population": 4059,
+    "latitude": 63.209101,
+    "longitude": 29.198984,
+    "bounds": {
+      "south": 62.968487,
+      "north": 63.449716,
+      "west": 28.610804,
+      "east": 29.787164
+    }
+  },
+  {
+    "official_code": "177",
+    "name_fi": "Juupajoki",
+    "name_sv": "Juupajoki",
+    "name": "Juupajoki",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 1663,
+    "latitude": 61.813052,
+    "longitude": 24.447033,
+    "bounds": {
+      "south": 61.715538,
+      "north": 61.910566,
+      "west": 24.227415,
+      "east": 24.666651
+    }
+  },
+  {
+    "official_code": "178",
+    "name_fi": "Juva",
+    "name_sv": "Juva",
+    "name": "Juva",
+    "region": "Etelä-Savo",
+    "country": "FI",
+    "population": 5569,
+    "latitude": 61.790228,
+    "longitude": 27.810123,
+    "bounds": {
+      "south": 61.545596,
+      "north": 62.034861,
+      "west": 27.392462,
+      "east": 28.227785
+    }
+  },
+  {
+    "official_code": "179",
+    "name_fi": "Jyväskylä",
+    "name_sv": "Jyväskylä",
+    "name": "Jyväskylä",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 149895,
+    "latitude": 62.134132,
+    "longitude": 25.655887,
+    "bounds": {
+      "south": 61.839519,
+      "north": 62.428746,
+      "west": 25.26078,
+      "east": 26.050995
+    }
+  },
+  {
+    "official_code": "181",
+    "name_fi": "Jämijärvi",
+    "name_sv": "Jämijärvi",
+    "name": "Jämijärvi",
+    "region": "Satakunta",
+    "country": "FI",
+    "population": 1663,
+    "latitude": 61.844937,
+    "longitude": 22.672396,
+    "bounds": {
+      "south": 61.737766,
+      "north": 61.952108,
+      "west": 22.51637,
+      "east": 22.828422
+    }
+  },
+  {
+    "official_code": "182",
+    "name_fi": "Jämsä",
+    "name_sv": "Jämsä",
+    "name": "Jämsä",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 19020,
+    "latitude": 61.920727,
+    "longitude": 25.060527,
+    "bounds": {
+      "south": 61.630653,
+      "north": 62.210801,
+      "west": 24.524644,
+      "east": 25.59641
+    }
+  },
+  {
+    "official_code": "186",
+    "name_fi": "Järvenpää",
+    "name_sv": "Träskända",
+    "name": "Järvenpää",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 46944,
+    "latitude": 60.488045,
+    "longitude": 25.105849,
+    "bounds": {
+      "south": 60.447561,
+      "north": 60.528529,
+      "west": 25.03099,
+      "east": 25.180709
+    }
+  },
+  {
+    "official_code": "202",
+    "name_fi": "Kaarina",
+    "name_sv": "S:t Karins",
+    "name": "Kaarina",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 36675,
+    "latitude": 60.426104,
+    "longitude": 22.440848,
+    "bounds": {
+      "south": 60.357133,
+      "north": 60.495074,
+      "west": 22.274216,
+      "east": 22.60748
+    }
+  },
+  {
+    "official_code": "204",
+    "name_fi": "Kaavi",
+    "name_sv": "Kaavi",
+    "name": "Kaavi",
+    "region": "Pohjois-Savo",
+    "country": "FI",
+    "population": 2547,
+    "latitude": 62.955671,
+    "longitude": 28.741775,
+    "bounds": {
+      "south": 62.774626,
+      "north": 63.136715,
+      "west": 28.385947,
+      "east": 29.097602
+    }
+  },
+  {
+    "official_code": "205",
+    "name_fi": "Kajaani",
+    "name_sv": "Kajana",
+    "name": "Kajaani",
+    "region": "Kainuu",
+    "country": "FI",
+    "population": 36370,
+    "latitude": 64.10487,
+    "longitude": 27.450169,
+    "bounds": {
+      "south": 63.84457,
+      "north": 64.36517,
+      "west": 26.7675,
+      "east": 28.132839
+    }
+  },
+  {
+    "official_code": "208",
+    "name_fi": "Kalajoki",
+    "name_sv": "Kalajoki",
+    "name": "Kalajoki",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 12155,
+    "latitude": 64.175374,
+    "longitude": 23.955917,
+    "bounds": {
+      "south": 63.973732,
+      "north": 64.377015,
+      "west": 23.565497,
+      "east": 24.346336
+    }
+  },
+  {
+    "official_code": "211",
+    "name_fi": "Kangasala",
+    "name_sv": "Kangasala",
+    "name": "Kangasala",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 34379,
+    "latitude": 61.478837,
+    "longitude": 24.430337,
+    "bounds": {
+      "south": 61.330484,
+      "north": 61.627191,
+      "west": 23.890193,
+      "east": 24.970481
+    }
+  },
+  {
+    "official_code": "213",
+    "name_fi": "Kangasniemi",
+    "name_sv": "Kangasniemi",
+    "name": "Kangasniemi",
+    "region": "Etelä-Savo",
+    "country": "FI",
+    "population": 4952,
+    "latitude": 62.053835,
+    "longitude": 26.673648,
+    "bounds": {
+      "south": 61.799943,
+      "north": 62.307726,
+      "west": 26.220723,
+      "east": 27.126574
+    }
+  },
+  {
+    "official_code": "214",
+    "name_fi": "Kankaanpää",
+    "name_sv": "Kankaanpää",
+    "name": "Kankaanpää",
+    "region": "Satakunta",
+    "country": "FI",
+    "population": 12508,
+    "latitude": 61.914257,
+    "longitude": 22.334194,
+    "bounds": {
+      "south": 61.686067,
+      "north": 62.142448,
+      "west": 21.974686,
+      "east": 22.693702
+    }
+  },
+  {
+    "official_code": "216",
+    "name_fi": "Kannonkoski",
+    "name_sv": "Kannonkoski",
+    "name": "Kannonkoski",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 1137,
+    "latitude": 62.958867,
+    "longitude": 25.380088,
+    "bounds": {
+      "south": 62.818464,
+      "north": 63.099269,
+      "west": 25.052487,
+      "east": 25.70769
+    }
+  },
+  {
+    "official_code": "217",
+    "name_fi": "Kannus",
+    "name_sv": "Kannus",
+    "name": "Kannus",
+    "region": "Keski-Pohjanmaa",
+    "country": "FI",
+    "population": 5246,
+    "latitude": 63.92576,
+    "longitude": 23.979154,
+    "bounds": {
+      "south": 63.756255,
+      "north": 64.095266,
+      "west": 23.710855,
+      "east": 24.247452
+    }
+  },
+  {
+    "official_code": "218",
+    "name_fi": "Karijoki",
+    "name_sv": "Bötom",
+    "name": "Karijoki",
+    "region": "Etelä-Pohjanmaa",
+    "country": "FI",
+    "population": 1134,
+    "latitude": 62.323491,
+    "longitude": 21.746556,
+    "bounds": {
+      "south": 62.222683,
+      "north": 62.424299,
+      "west": 21.55413,
+      "east": 21.938981
+    }
+  },
+  {
+    "official_code": "224",
+    "name_fi": "Karkkila",
+    "name_sv": "Högfors",
+    "name": "Karkkila",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 8274,
+    "latitude": 60.558895,
+    "longitude": 24.218116,
+    "bounds": {
+      "south": 60.475466,
+      "north": 60.642325,
+      "west": 23.971327,
+      "east": 24.464904
+    }
+  },
+  {
+    "official_code": "226",
+    "name_fi": "Karstula",
+    "name_sv": "Karstula",
+    "name": "Karstula",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 3514,
+    "latitude": 62.878381,
+    "longitude": 24.821191,
+    "bounds": {
+      "south": 62.71043,
+      "north": 63.046332,
+      "west": 24.341976,
+      "east": 25.300406
+    }
+  },
+  {
+    "official_code": "230",
+    "name_fi": "Karvia",
+    "name_sv": "Karvia",
+    "name": "Karvia",
+    "region": "Satakunta",
+    "country": "FI",
+    "population": 2133,
+    "latitude": 62.154616,
+    "longitude": 22.617657,
+    "bounds": {
+      "south": 61.998106,
+      "north": 62.311126,
+      "west": 22.373688,
+      "east": 22.861626
+    }
+  },
+  {
+    "official_code": "231",
+    "name_fi": "Kaskinen",
+    "name_sv": "Kaskö",
+    "name": "Kaskinen",
+    "region": "Pohjanmaa",
+    "country": "FI",
+    "population": 1248,
+    "latitude": 62.394046,
+    "longitude": 21.253768,
+    "bounds": {
+      "south": 62.361892,
+      "north": 62.4262,
+      "west": 21.16581,
+      "east": 21.341725
+    }
+  },
+  {
+    "official_code": "232",
+    "name_fi": "Kauhajoki",
+    "name_sv": "Kauhajoki",
+    "name": "Kauhajoki",
+    "region": "Etelä-Pohjanmaa",
+    "country": "FI",
+    "population": 12429,
+    "latitude": 62.322275,
+    "longitude": 22.258764,
+    "bounds": {
+      "south": 62.103106,
+      "north": 62.541445,
+      "west": 21.875631,
+      "east": 22.641897
+    }
+  },
+  {
+    "official_code": "233",
+    "name_fi": "Kauhava",
+    "name_sv": "Kauhava",
+    "name": "Kauhava",
+    "region": "Etelä-Pohjanmaa",
+    "country": "FI",
+    "population": 14909,
+    "latitude": 63.213132,
+    "longitude": 23.014731,
+    "bounds": {
+      "south": 63.027303,
+      "north": 63.398961,
+      "west": 22.574635,
+      "east": 23.454827
+    }
+  },
+  {
+    "official_code": "235",
+    "name_fi": "Kauniainen",
+    "name_sv": "Grankulla",
+    "name": "Kauniainen",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 10318,
+    "latitude": 60.216131,
+    "longitude": 24.726414,
+    "bounds": {
+      "south": 60.187589,
+      "north": 60.244674,
+      "west": 24.661057,
+      "east": 24.79177
+    }
+  },
+  {
+    "official_code": "236",
+    "name_fi": "Kaustinen",
+    "name_sv": "Kaustby",
+    "name": "Kaustinen",
+    "region": "Keski-Pohjanmaa",
+    "country": "FI",
+    "population": 4074,
+    "latitude": 63.579205,
+    "longitude": 23.760677,
+    "bounds": {
+      "south": 63.482973,
+      "north": 63.675437,
+      "west": 23.422407,
+      "east": 24.098947
+    }
+  },
+  {
+    "official_code": "239",
+    "name_fi": "Keitele",
+    "name_sv": "Keitele",
+    "name": "Keitele",
+    "region": "Pohjois-Savo",
+    "country": "FI",
+    "population": 1922,
+    "latitude": 63.218838,
+    "longitude": 26.346641,
+    "bounds": {
+      "south": 62.998814,
+      "north": 63.438862,
+      "west": 26.070541,
+      "east": 26.622741
+    }
+  },
+  {
+    "official_code": "240",
+    "name_fi": "Kemi",
+    "name_sv": "Kemi",
+    "name": "Kemi",
+    "region": "Lappi",
+    "country": "FI",
+    "population": 19339,
+    "latitude": 65.720759,
+    "longitude": 24.591803,
+    "bounds": {
+      "south": 65.65156,
+      "north": 65.789958,
+      "west": 24.436193,
+      "east": 24.747412
+    }
+  },
+  {
+    "official_code": "241",
+    "name_fi": "Keminmaa",
+    "name_sv": "Keminmaa",
+    "name": "Keminmaa",
+    "region": "Lappi",
+    "country": "FI",
+    "population": 7576,
+    "latitude": 65.86274,
+    "longitude": 24.830934,
+    "bounds": {
+      "south": 65.695037,
+      "north": 66.030443,
+      "west": 24.436193,
+      "east": 25.225675
+    }
+  },
+  {
+    "official_code": "244",
+    "name_fi": "Kempele",
+    "name_sv": "Kempele",
+    "name": "Kempele",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 19702,
+    "latitude": 64.894918,
+    "longitude": 25.577,
+    "bounds": {
+      "south": 64.846847,
+      "north": 64.94299,
+      "west": 25.425698,
+      "east": 25.728301
+    }
+  },
+  {
+    "official_code": "245",
+    "name_fi": "Kerava",
+    "name_sv": "Kervo",
+    "name": "Kerava",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 38767,
+    "latitude": 60.398848,
+    "longitude": 25.114159,
+    "bounds": {
+      "south": 60.356611,
+      "north": 60.441086,
+      "west": 25.051492,
+      "east": 25.176826
+    }
+  },
+  {
+    "official_code": "249",
+    "name_fi": "Keuruu",
+    "name_sv": "Keuru",
+    "name": "Keuruu",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 9014,
+    "latitude": 62.2758,
+    "longitude": 24.542429,
+    "bounds": {
+      "south": 62.023192,
+      "north": 62.528408,
+      "west": 24.013003,
+      "east": 25.071854
+    }
+  },
+  {
+    "official_code": "250",
+    "name_fi": "Kihniö",
+    "name_sv": "Kihniö",
+    "name": "Kihniö",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 1670,
+    "latitude": 62.208416,
+    "longitude": 23.209183,
+    "bounds": {
+      "south": 62.082665,
+      "north": 62.334167,
+      "west": 22.994364,
+      "east": 23.424002
+    }
+  },
+  {
+    "official_code": "256",
+    "name_fi": "Kinnula",
+    "name_sv": "Kinnula",
+    "name": "Kinnula",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 1472,
+    "latitude": 63.349364,
+    "longitude": 25.053195,
+    "bounds": {
+      "south": 63.23156,
+      "north": 63.467168,
+      "west": 24.772921,
+      "east": 25.333469
+    }
+  },
+  {
+    "official_code": "257",
+    "name_fi": "Kirkkonummi",
+    "name_sv": "Kyrkslätt",
+    "name": "Kirkkonummi",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 41725,
+    "latitude": 60.132549,
+    "longitude": 24.464684,
+    "bounds": {
+      "south": 59.970957,
+      "north": 60.294141,
+      "west": 24.292807,
+      "east": 24.63656
+    }
+  },
+  {
+    "official_code": "260",
+    "name_fi": "Kitee",
+    "name_sv": "Kides",
+    "name": "Kitee",
+    "region": "Pohjois-Karjala",
+    "country": "FI",
+    "population": 9397,
+    "latitude": 61.983189,
+    "longitude": 29.955117,
+    "bounds": {
+      "south": 61.722073,
+      "north": 62.244305,
+      "west": 29.427146,
+      "east": 30.483087
+    }
+  },
+  {
+    "official_code": "261",
+    "name_fi": "Kittilä",
+    "name_sv": "Kittilä",
+    "name": "Kittilä",
+    "region": "Lappi",
+    "country": "FI",
+    "population": 6973,
+    "latitude": 67.773289,
+    "longitude": 25.054307,
+    "bounds": {
+      "south": 67.151289,
+      "north": 68.395289,
+      "west": 24.100774,
+      "east": 26.00784
+    }
+  },
+  {
+    "official_code": "263",
+    "name_fi": "Kiuruvesi",
+    "name_sv": "Kiuruvesi",
+    "name": "Kiuruvesi",
+    "region": "Pohjois-Savo",
+    "country": "FI",
+    "population": 7255,
+    "latitude": 63.703557,
+    "longitude": 26.530062,
+    "bounds": {
+      "south": 63.443425,
+      "north": 63.963688,
+      "west": 26.165383,
+      "east": 26.894742
+    }
+  },
+  {
+    "official_code": "265",
+    "name_fi": "Kivijärvi",
+    "name_sv": "Kivijärvi",
+    "name": "Kivijärvi",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 1001,
+    "latitude": 63.143271,
+    "longitude": 25.064631,
+    "bounds": {
+      "south": 63.007888,
+      "north": 63.278654,
+      "west": 24.754168,
+      "east": 25.375095
+    }
+  },
+  {
+    "official_code": "271",
+    "name_fi": "Kokemäki",
+    "name_sv": "Kumo",
+    "name": "Kokemäki",
+    "region": "Satakunta",
+    "country": "FI",
+    "population": 6583,
+    "latitude": 61.329773,
+    "longitude": 22.364524,
+    "bounds": {
+      "south": 61.170623,
+      "north": 61.488923,
+      "west": 22.129939,
+      "east": 22.599108
+    }
+  },
+  {
+    "official_code": "272",
+    "name_fi": "Kokkola",
+    "name_sv": "Karleby",
+    "name": "Kokkola",
+    "region": "Keski-Pohjanmaa",
+    "country": "FI",
+    "population": 48338,
+    "latitude": 63.791639,
+    "longitude": 23.637442,
+    "bounds": {
+      "south": 63.49911,
+      "north": 64.084168,
+      "west": 22.808019,
+      "east": 24.466864
+    }
+  },
+  {
+    "official_code": "273",
+    "name_fi": "Kolari",
+    "name_sv": "Kolari",
+    "name": "Kolari",
+    "region": "Lappi",
+    "country": "FI",
+    "population": 4001,
+    "latitude": 67.286705,
+    "longitude": 24.205348,
+    "bounds": {
+      "south": 66.937877,
+      "north": 67.635534,
+      "west": 23.54049,
+      "east": 24.870206
+    }
+  },
+  {
+    "official_code": "275",
+    "name_fi": "Konnevesi",
+    "name_sv": "Konnevesi",
+    "name": "Konnevesi",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 2404,
+    "latitude": 62.668158,
+    "longitude": 26.311592,
+    "bounds": {
+      "south": 62.489476,
+      "north": 62.846841,
+      "west": 26.024797,
+      "east": 26.598386
+    }
+  },
+  {
+    "official_code": "276",
+    "name_fi": "Kontiolahti",
+    "name_sv": "Kontiolax",
+    "name": "Kontiolahti",
+    "region": "Pohjois-Karjala",
+    "country": "FI",
+    "population": 15060,
+    "latitude": 62.815998,
+    "longitude": 29.925616,
+    "bounds": {
+      "south": 62.566244,
+      "north": 63.065752,
+      "west": 29.563227,
+      "east": 30.288005
+    }
+  },
+  {
+    "official_code": "280",
+    "name_fi": "Korsnäs",
+    "name_sv": "Korsnäs",
+    "name": "Korsnäs",
+    "region": "Pohjanmaa",
+    "country": "FI",
+    "population": 1984,
+    "latitude": 62.779278,
+    "longitude": 21.203211,
+    "bounds": {
+      "south": 62.669039,
+      "north": 62.889516,
+      "west": 21.032015,
+      "east": 21.374407
+    }
+  },
+  {
+    "official_code": "284",
+    "name_fi": "Koski Tl",
+    "name_sv": "Koskis",
+    "name": "Koski Tl",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 2144,
+    "latitude": 60.673849,
+    "longitude": 23.11147,
+    "bounds": {
+      "south": 60.573529,
+      "north": 60.774168,
+      "west": 22.965244,
+      "east": 23.257696
+    }
+  },
+  {
+    "official_code": "285",
+    "name_fi": "Kotka",
+    "name_sv": "Kotka",
+    "name": "Kotka",
+    "region": "Kymenlaakso",
+    "country": "FI",
+    "population": 50029,
+    "latitude": 60.472782,
+    "longitude": 26.995031,
+    "bounds": {
+      "south": 60.272061,
+      "north": 60.673503,
+      "west": 26.741133,
+      "east": 27.24893
+    }
+  },
+  {
+    "official_code": "286",
+    "name_fi": "Kouvola",
+    "name_sv": "Kouvola",
+    "name": "Kouvola",
+    "region": "Kymenlaakso",
+    "country": "FI",
+    "population": 77625,
+    "latitude": 60.931076,
+    "longitude": 26.831405,
+    "bounds": {
+      "south": 60.575006,
+      "north": 61.287146,
+      "west": 26.23445,
+      "east": 27.42836
+    }
+  },
+  {
+    "official_code": "287",
+    "name_fi": "Kristiinankaupunki",
+    "name_sv": "Kristinestad",
+    "name": "Kristiinankaupunki",
+    "region": "Pohjanmaa",
+    "country": "FI",
+    "population": 6113,
+    "latitude": 62.195632,
+    "longitude": 21.522329,
+    "bounds": {
+      "south": 61.966965,
+      "north": 62.424299,
+      "west": 21.277147,
+      "east": 21.76751
+    }
+  },
+  {
+    "official_code": "288",
+    "name_fi": "Kruunupyy",
+    "name_sv": "Kronoby",
+    "name": "Kruunupyy",
+    "region": "Pohjanmaa",
+    "country": "FI",
+    "population": 6268,
+    "latitude": 63.586015,
+    "longitude": 23.286879,
+    "bounds": {
+      "south": 63.380321,
+      "north": 63.79171,
+      "west": 22.829677,
+      "east": 23.744081
+    }
+  },
+  {
+    "official_code": "290",
+    "name_fi": "Kuhmo",
+    "name_sv": "Kuhmo",
+    "name": "Kuhmo",
+    "region": "Kainuu",
+    "country": "FI",
+    "population": 7300,
+    "latitude": 64.16936,
+    "longitude": 29.652674,
+    "bounds": {
+      "south": 63.703356,
+      "north": 64.635364,
+      "west": 28.751946,
+      "east": 30.553402
+    }
+  },
+  {
+    "official_code": "291",
+    "name_fi": "Kuhmoinen",
+    "name_sv": "Kuhmois",
+    "name": "Kuhmoinen",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 1979,
+    "latitude": 61.615132,
+    "longitude": 25.173627,
+    "bounds": {
+      "south": 61.450704,
+      "north": 61.779559,
+      "west": 24.812034,
+      "east": 25.535221
+    }
+  },
+  {
+    "official_code": "295",
+    "name_fi": "Kumlinge",
+    "name_sv": "Kumlinge",
+    "name": "Kumlinge",
+    "region": "Ahvenanmaa",
+    "country": "FI",
+    "population": 271,
+    "latitude": 60.280826,
+    "longitude": 20.794705,
+    "bounds": {
+      "south": 60.185288,
+      "north": 60.376364,
+      "west": 20.648678,
+      "east": 20.940732
+    }
+  },
+  {
+    "official_code": "297",
+    "name_fi": "Kuopio",
+    "name_sv": "Kuopio",
+    "name": "Kuopio",
+    "region": "Pohjois-Savo",
+    "country": "FI",
+    "population": 126572,
+    "latitude": 63.007865,
+    "longitude": 27.828944,
+    "bounds": {
+      "south": 62.61242,
+      "north": 63.403311,
+      "west": 26.8955,
+      "east": 28.762387
+    }
+  },
+  {
+    "official_code": "300",
+    "name_fi": "Kuortane",
+    "name_sv": "Kuortane",
+    "name": "Kuortane",
+    "region": "Etelä-Pohjanmaa",
+    "country": "FI",
+    "population": 3306,
+    "latitude": 62.78532,
+    "longitude": 23.559152,
+    "bounds": {
+      "south": 62.651011,
+      "north": 62.919628,
+      "west": 23.271255,
+      "east": 23.847049
+    }
+  },
+  {
+    "official_code": "301",
+    "name_fi": "Kurikka",
+    "name_sv": "Kurikka",
+    "name": "Kurikka",
+    "region": "Etelä-Pohjanmaa",
+    "country": "FI",
+    "population": 19441,
+    "latitude": 62.567224,
+    "longitude": 22.403381,
+    "bounds": {
+      "south": 62.270884,
+      "north": 62.863564,
+      "west": 21.662245,
+      "east": 23.144518
+    }
+  },
+  {
+    "official_code": "304",
+    "name_fi": "Kustavi",
+    "name_sv": "Gustavs",
+    "name": "Kustavi",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 972,
+    "latitude": 60.571833,
+    "longitude": 21.362439,
+    "bounds": {
+      "south": 60.480357,
+      "north": 60.663309,
+      "west": 21.226509,
+      "east": 21.498368
+    }
+  },
+  {
+    "official_code": "305",
+    "name_fi": "Kuusamo",
+    "name_sv": "Kuusamo",
+    "name": "Kuusamo",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 14800,
+    "latitude": 65.991609,
+    "longitude": 29.255318,
+    "bounds": {
+      "south": 65.497366,
+      "north": 66.485853,
+      "west": 28.372171,
+      "east": 30.138465
+    }
+  },
+  {
+    "official_code": "309",
+    "name_fi": "Outokumpu",
+    "name_sv": "Outokumpu",
+    "name": "Outokumpu",
+    "region": "Pohjois-Karjala",
+    "country": "FI",
+    "population": 6365,
+    "latitude": 62.71121,
+    "longitude": 28.968332,
+    "bounds": {
+      "south": 62.576831,
+      "north": 62.84559,
+      "west": 28.632706,
+      "east": 29.303957
+    }
+  },
+  {
+    "official_code": "312",
+    "name_fi": "Kyyjärvi",
+    "name_sv": "Kyyjärvi",
+    "name": "Kyyjärvi",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 1129,
+    "latitude": 63.049578,
+    "longitude": 24.579837,
+    "bounds": {
+      "south": 62.941676,
+      "north": 63.157481,
+      "west": 24.278017,
+      "east": 24.881658
+    }
+  },
+  {
+    "official_code": "316",
+    "name_fi": "Kärkölä",
+    "name_sv": "Kärkölä",
+    "name": "Kärkölä",
+    "region": "Päijät-Häme",
+    "country": "FI",
+    "population": 4052,
+    "latitude": 60.866816,
+    "longitude": 25.270704,
+    "bounds": {
+      "south": 60.751955,
+      "north": 60.981677,
+      "west": 25.108109,
+      "east": 25.4333
+    }
+  },
+  {
+    "official_code": "317",
+    "name_fi": "Kärsämäki",
+    "name_sv": "Kärsämäki",
+    "name": "Kärsämäki",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 2324,
+    "latitude": 63.955208,
+    "longitude": 25.892447,
+    "bounds": {
+      "south": 63.799772,
+      "north": 64.110644,
+      "west": 25.534042,
+      "east": 26.250853
+    }
+  },
+  {
+    "official_code": "318",
+    "name_fi": "Kökar",
+    "name_sv": "Kökar",
+    "name": "Kökar",
+    "region": "Ahvenanmaa",
+    "country": "FI",
+    "population": 211,
+    "latitude": 59.931313,
+    "longitude": 20.930699,
+    "bounds": {
+      "south": 59.898371,
+      "north": 59.964256,
+      "west": 20.849637,
+      "east": 21.01176
+    }
+  },
+  {
+    "official_code": "320",
+    "name_fi": "Kemijärvi",
+    "name_sv": "Kemijärvi",
+    "name": "Kemijärvi",
+    "region": "Lappi",
+    "country": "FI",
+    "population": 6919,
+    "latitude": 66.651441,
+    "longitude": 27.354947,
+    "bounds": {
+      "south": 66.289068,
+      "north": 67.013815,
+      "west": 26.517974,
+      "east": 28.19192
+    }
+  },
+  {
+    "official_code": "322",
+    "name_fi": "Kemiönsaari",
+    "name_sv": "Kimitoön",
+    "name": "Kemiönsaari",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 6340,
+    "latitude": 60.045641,
+    "longitude": 22.604706,
+    "bounds": {
+      "south": 59.843128,
+      "north": 60.248155,
+      "west": 22.332782,
+      "east": 22.876629
+    }
+  },
+  {
+    "official_code": "398",
+    "name_fi": "Lahti",
+    "name_sv": "Lahtis",
+    "name": "Lahti",
+    "region": "Päijät-Häme",
+    "country": "FI",
+    "population": 121832,
+    "latitude": 60.994658,
+    "longitude": 25.840126,
+    "bounds": {
+      "south": 60.886649,
+      "north": 61.102666,
+      "west": 25.540308,
+      "east": 26.139944
+    }
+  },
+  {
+    "official_code": "399",
+    "name_fi": "Laihia",
+    "name_sv": "Laihela",
+    "name": "Laihia",
+    "region": "Pohjanmaa",
+    "country": "FI",
+    "population": 7534,
+    "latitude": 62.900169,
+    "longitude": 22.022963,
+    "bounds": {
+      "south": 62.751574,
+      "north": 63.048765,
+      "west": 21.772061,
+      "east": 22.273866
+    }
+  },
+  {
+    "official_code": "400",
+    "name_fi": "Laitila",
+    "name_sv": "Letala",
+    "name": "Laitila",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 8400,
+    "latitude": 60.886287,
+    "longitude": 21.817009,
+    "bounds": {
+      "south": 60.738463,
+      "north": 61.034112,
+      "west": 21.50555,
+      "east": 22.128467
+    }
+  },
+  {
+    "official_code": "402",
+    "name_fi": "Lapinlahti",
+    "name_sv": "Lapinlahti",
+    "name": "Lapinlahti",
+    "region": "Pohjois-Savo",
+    "country": "FI",
+    "population": 8803,
+    "latitude": 63.356142,
+    "longitude": 27.622918,
+    "bounds": {
+      "south": 63.162167,
+      "north": 63.550117,
+      "west": 27.119092,
+      "east": 28.126744
+    }
+  },
+  {
+    "official_code": "403",
+    "name_fi": "Lappajärvi",
+    "name_sv": "Lappajärvi",
+    "name": "Lappajärvi",
+    "region": "Etelä-Pohjanmaa",
+    "country": "FI",
+    "population": 2704,
+    "latitude": 63.179679,
+    "longitude": 23.588317,
+    "bounds": {
+      "south": 62.979037,
+      "north": 63.380321,
+      "west": 23.314614,
+      "east": 23.862021
+    }
+  },
+  {
+    "official_code": "405",
+    "name_fi": "Lappeenranta",
+    "name_sv": "Villmanstrand",
+    "name": "Lappeenranta",
+    "region": "Etelä-Karjala",
+    "country": "FI",
+    "population": 73241,
+    "latitude": 60.976836,
+    "longitude": 28.245266,
+    "bounds": {
+      "south": 60.668985,
+      "north": 61.284687,
+      "west": 27.713884,
+      "east": 28.776649
+    }
+  },
+  {
+    "official_code": "407",
+    "name_fi": "Lapinjärvi",
+    "name_sv": "Lappträsk",
+    "name": "Lapinjärvi",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 2430,
+    "latitude": 60.629096,
+    "longitude": 26.142588,
+    "bounds": {
+      "south": 60.500197,
+      "north": 60.757994,
+      "west": 25.904959,
+      "east": 26.380217
+    }
+  },
+  {
+    "official_code": "408",
+    "name_fi": "Lapua",
+    "name_sv": "Lappo",
+    "name": "Lapua",
+    "region": "Etelä-Pohjanmaa",
+    "country": "FI",
+    "population": 13927,
+    "latitude": 62.924112,
+    "longitude": 23.151794,
+    "bounds": {
+      "south": 62.774709,
+      "north": 63.073514,
+      "west": 22.784116,
+      "east": 23.519471
+    }
+  },
+  {
+    "official_code": "410",
+    "name_fi": "Laukaa",
+    "name_sv": "Laukas",
+    "name": "Laukaa",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 18808,
+    "latitude": 62.382432,
+    "longitude": 25.951644,
+    "bounds": {
+      "south": 62.181279,
+      "north": 62.583586,
+      "west": 25.579133,
+      "east": 26.324154
+    }
+  },
+  {
+    "official_code": "416",
+    "name_fi": "Lemi",
+    "name_sv": "Lemi",
+    "name": "Lemi",
+    "region": "Etelä-Karjala",
+    "country": "FI",
+    "population": 2878,
+    "latitude": 61.078714,
+    "longitude": 27.78195,
+    "bounds": {
+      "south": 60.993752,
+      "north": 61.163676,
+      "west": 27.572789,
+      "east": 27.991111
+    }
+  },
+  {
+    "official_code": "417",
+    "name_fi": "Lemland",
+    "name_sv": "Lemland",
+    "name": "Lemland",
+    "region": "Ahvenanmaa",
+    "country": "FI",
+    "population": 2139,
+    "latitude": 60.038471,
+    "longitude": 20.118043,
+    "bounds": {
+      "south": 59.973545,
+      "north": 60.103397,
+      "west": 19.99957,
+      "east": 20.236517
+    }
+  },
+  {
+    "official_code": "418",
+    "name_fi": "Lempäälä",
+    "name_sv": "Lempäälä",
+    "name": "Lempäälä",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 25041,
+    "latitude": 61.331437,
+    "longitude": 23.753054,
+    "bounds": {
+      "south": 61.230712,
+      "north": 61.432162,
+      "west": 23.548337,
+      "east": 23.957771
+    }
+  },
+  {
+    "official_code": "420",
+    "name_fi": "Leppävirta",
+    "name_sv": "Leppävirta",
+    "name": "Leppävirta",
+    "region": "Pohjois-Savo",
+    "country": "FI",
+    "population": 8924,
+    "latitude": 62.500638,
+    "longitude": 27.964641,
+    "bounds": {
+      "south": 62.295484,
+      "north": 62.705791,
+      "west": 27.408509,
+      "east": 28.520774
+    }
+  },
+  {
+    "official_code": "421",
+    "name_fi": "Lestijärvi",
+    "name_sv": "Lestijärvi",
+    "name": "Lestijärvi",
+    "region": "Keski-Pohjanmaa",
+    "country": "FI",
+    "population": 656,
+    "latitude": 63.504786,
+    "longitude": 24.722431,
+    "bounds": {
+      "south": 63.358684,
+      "north": 63.650888,
+      "west": 24.408547,
+      "east": 25.036316
+    }
+  },
+  {
+    "official_code": "422",
+    "name_fi": "Lieksa",
+    "name_sv": "Lieksa",
+    "name": "Lieksa",
+    "region": "Pohjois-Karjala",
+    "country": "FI",
+    "population": 9846,
+    "latitude": 63.377784,
+    "longitude": 30.353561,
+    "bounds": {
+      "south": 62.998402,
+      "north": 63.757165,
+      "west": 29.467287,
+      "east": 31.239835
+    }
+  },
+  {
+    "official_code": "423",
+    "name_fi": "Lieto",
+    "name_sv": "Lundo",
+    "name": "Lieto",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 20732,
+    "latitude": 60.546789,
+    "longitude": 22.609984,
+    "bounds": {
+      "south": 60.452671,
+      "north": 60.640907,
+      "west": 22.365285,
+      "east": 22.854684
+    }
+  },
+  {
+    "official_code": "425",
+    "name_fi": "Liminka",
+    "name_sv": "Limingo",
+    "name": "Liminka",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 10116,
+    "latitude": 64.677536,
+    "longitude": 25.729671,
+    "bounds": {
+      "south": 64.462682,
+      "north": 64.892389,
+      "west": 25.168236,
+      "east": 26.291106
+    }
+  },
+  {
+    "official_code": "426",
+    "name_fi": "Liperi",
+    "name_sv": "Libelits",
+    "name": "Liperi",
+    "region": "Pohjois-Karjala",
+    "country": "FI",
+    "population": 11980,
+    "latitude": 62.541048,
+    "longitude": 29.35362,
+    "bounds": {
+      "south": 62.359748,
+      "north": 62.722347,
+      "west": 28.944019,
+      "east": 29.763221
+    }
+  },
+  {
+    "official_code": "430",
+    "name_fi": "Loimaa",
+    "name_sv": "Loimaa",
+    "name": "Loimaa",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 15124,
+    "latitude": 60.900121,
+    "longitude": 22.908197,
+    "bounds": {
+      "south": 60.698807,
+      "north": 61.101435,
+      "west": 22.522466,
+      "east": 23.293929
+    }
+  },
+  {
+    "official_code": "433",
+    "name_fi": "Loppi",
+    "name_sv": "Loppi",
+    "name": "Loppi",
+    "region": "Kanta-Häme",
+    "country": "FI",
+    "population": 7574,
+    "latitude": 60.679528,
+    "longitude": 24.368849,
+    "bounds": {
+      "south": 60.552492,
+      "north": 60.806565,
+      "west": 24.046748,
+      "east": 24.69095
+    }
+  },
+  {
+    "official_code": "434",
+    "name_fi": "Loviisa",
+    "name_sv": "Lovisa",
+    "name": "Loviisa",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 14196,
+    "latitude": 60.463877,
+    "longitude": 26.172647,
+    "bounds": {
+      "south": 60.266396,
+      "north": 60.661358,
+      "west": 25.801002,
+      "east": 26.544292
+    }
+  },
+  {
+    "official_code": "435",
+    "name_fi": "Luhanka",
+    "name_sv": "Luhanka",
+    "name": "Luhanka",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 695,
+    "latitude": 61.784591,
+    "longitude": 25.711304,
+    "bounds": {
+      "south": 61.676859,
+      "north": 61.892323,
+      "west": 25.501333,
+      "east": 25.921275
+    }
+  },
+  {
+    "official_code": "436",
+    "name_fi": "Lumijoki",
+    "name_sv": "Lumijoki",
+    "name": "Lumijoki",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 2018,
+    "latitude": 64.826544,
+    "longitude": 25.128574,
+    "bounds": {
+      "south": 64.734183,
+      "north": 64.918906,
+      "west": 24.95344,
+      "east": 25.303708
+    }
+  },
+  {
+    "official_code": "438",
+    "name_fi": "Lumparland",
+    "name_sv": "Lumparland",
+    "name": "Lumparland",
+    "region": "Ahvenanmaa",
+    "country": "FI",
+    "population": 371,
+    "latitude": 60.107079,
+    "longitude": 20.2563,
+    "bounds": {
+      "south": 60.06227,
+      "north": 60.151888,
+      "west": 20.213547,
+      "east": 20.299054
+    }
+  },
+  {
+    "official_code": "440",
+    "name_fi": "Luoto",
+    "name_sv": "Larsmo",
+    "name": "Luoto",
+    "region": "Pohjanmaa",
+    "country": "FI",
+    "population": 5955,
+    "latitude": 63.792539,
+    "longitude": 22.734698,
+    "bounds": {
+      "south": 63.695067,
+      "north": 63.890012,
+      "west": 22.54786,
+      "east": 22.921536
+    }
+  },
+  {
+    "official_code": "441",
+    "name_fi": "Luumäki",
+    "name_sv": "Luumäki",
+    "name": "Luumäki",
+    "region": "Etelä-Karjala",
+    "country": "FI",
+    "population": 4304,
+    "latitude": 60.948362,
+    "longitude": 27.530221,
+    "bounds": {
+      "south": 60.795332,
+      "north": 61.101393,
+      "west": 27.13611,
+      "east": 27.924332
+    }
+  },
+  {
+    "official_code": "444",
+    "name_fi": "Lohja",
+    "name_sv": "Lojo",
+    "name": "Lohja",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 45435,
+    "latitude": 60.389625,
+    "longitude": 23.946009,
+    "bounds": {
+      "south": 60.129493,
+      "north": 60.649757,
+      "west": 23.586322,
+      "east": 24.305696
+    }
+  },
+  {
+    "official_code": "445",
+    "name_fi": "Parainen",
+    "name_sv": "Pargas",
+    "name": "Parainen",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 14712,
+    "latitude": 60.127894,
+    "longitude": 21.837811,
+    "bounds": {
+      "south": 59.808583,
+      "north": 60.447205,
+      "west": 21.178434,
+      "east": 22.497188
+    }
+  },
+  {
+    "official_code": "475",
+    "name_fi": "Maalahti",
+    "name_sv": "Malax",
+    "name": "Maalahti",
+    "region": "Pohjanmaa",
+    "country": "FI",
+    "population": 5392,
+    "latitude": 62.880308,
+    "longitude": 21.29198,
+    "bounds": {
+      "south": 62.743267,
+      "north": 63.017348,
+      "west": 20.798827,
+      "east": 21.785132
+    }
+  },
+  {
+    "official_code": "478",
+    "name_fi": "Maarianhamina - Mariehamn",
+    "name_sv": "Mariehamn",
+    "name": "Maarianhamina - Mariehamn",
+    "region": "Ahvenanmaa",
+    "country": "FI",
+    "population": 11957,
+    "latitude": 60.096051,
+    "longitude": 19.93934,
+    "bounds": {
+      "south": 60.040177,
+      "north": 60.151925,
+      "west": 19.870806,
+      "east": 20.007874
+    }
+  },
+  {
+    "official_code": "480",
+    "name_fi": "Marttila",
+    "name_sv": "S:t Mårtens  ",
+    "name": "Marttila",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 1890,
+    "latitude": 60.613278,
+    "longitude": 22.949966,
+    "bounds": {
+      "south": 60.510883,
+      "north": 60.715674,
+      "west": 22.799214,
+      "east": 23.100717
+    }
+  },
+  {
+    "official_code": "481",
+    "name_fi": "Masku",
+    "name_sv": "Masku",
+    "name": "Masku",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 9612,
+    "latitude": 60.558255,
+    "longitude": 22.001877,
+    "bounds": {
+      "south": 60.500404,
+      "north": 60.616105,
+      "west": 21.793709,
+      "east": 22.210045
+    }
+  },
+  {
+    "official_code": "483",
+    "name_fi": "Merijärvi",
+    "name_sv": "Merijärvi",
+    "name": "Merijärvi",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 1031,
+    "latitude": 64.286117,
+    "longitude": 24.530872,
+    "bounds": {
+      "south": 64.186453,
+      "north": 64.385781,
+      "west": 24.264593,
+      "east": 24.79715
+    }
+  },
+  {
+    "official_code": "484",
+    "name_fi": "Merikarvia",
+    "name_sv": "Sastmola",
+    "name": "Merikarvia",
+    "region": "Satakunta",
+    "country": "FI",
+    "population": 2834,
+    "latitude": 61.878513,
+    "longitude": 21.540711,
+    "bounds": {
+      "south": 61.737441,
+      "north": 62.019585,
+      "west": 21.332017,
+      "east": 21.749405
+    }
+  },
+  {
+    "official_code": "489",
+    "name_fi": "Miehikkälä",
+    "name_sv": "Miehikkälä",
+    "name": "Miehikkälä",
+    "region": "Kymenlaakso",
+    "country": "FI",
+    "population": 1664,
+    "latitude": 60.727791,
+    "longitude": 27.709821,
+    "bounds": {
+      "south": 60.612942,
+      "north": 60.84264,
+      "west": 27.42836,
+      "east": 27.991283
+    }
+  },
+  {
+    "official_code": "491",
+    "name_fi": "Mikkeli",
+    "name_sv": "S:t Michel",
+    "name": "Mikkeli",
+    "region": "Etelä-Savo",
+    "country": "FI",
+    "population": 51551,
+    "latitude": 61.706698,
+    "longitude": 27.365938,
+    "bounds": {
+      "south": 61.214239,
+      "north": 62.199156,
+      "west": 26.831494,
+      "east": 27.900382
+    }
+  },
+  {
+    "official_code": "494",
+    "name_fi": "Muhos",
+    "name_sv": "Muhos",
+    "name": "Muhos",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 8767,
+    "latitude": 64.728454,
+    "longitude": 26.106019,
+    "bounds": {
+      "south": 64.479064,
+      "north": 64.977845,
+      "west": 25.750454,
+      "east": 26.461583
+    }
+  },
+  {
+    "official_code": "495",
+    "name_fi": "Multia",
+    "name_sv": "Multia",
+    "name": "Multia",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 1386,
+    "latitude": 62.490313,
+    "longitude": 24.890343,
+    "bounds": {
+      "south": 62.31584,
+      "north": 62.664786,
+      "west": 24.528773,
+      "east": 25.251913
+    }
+  },
+  {
+    "official_code": "498",
+    "name_fi": "Muonio",
+    "name_sv": "Muonio",
+    "name": "Muonio",
+    "region": "Lappi",
+    "country": "FI",
+    "population": 2323,
+    "latitude": 67.816836,
+    "longitude": 23.779823,
+    "bounds": {
+      "south": 67.446378,
+      "north": 68.187295,
+      "west": 23.286698,
+      "east": 24.272949
+    }
+  },
+  {
+    "official_code": "499",
+    "name_fi": "Mustasaari",
+    "name_sv": "Korsholm",
+    "name": "Mustasaari",
+    "region": "Pohjanmaa",
+    "country": "FI",
+    "population": 19792,
+    "latitude": 63.143075,
+    "longitude": 21.564494,
+    "bounds": {
+      "south": 62.893989,
+      "north": 63.392161,
+      "west": 21.07831,
+      "east": 22.050677
+    }
+  },
+  {
+    "official_code": "500",
+    "name_fi": "Muurame",
+    "name_sv": "Muurame",
+    "name": "Muurame",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 10646,
+    "latitude": 62.15319,
+    "longitude": 25.637282,
+    "bounds": {
+      "south": 62.063554,
+      "north": 62.242827,
+      "west": 25.479357,
+      "east": 25.795207
+    }
+  },
+  {
+    "official_code": "503",
+    "name_fi": "Mynämäki",
+    "name_sv": "Virmo",
+    "name": "Mynämäki",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 7424,
+    "latitude": 60.741648,
+    "longitude": 22.099045,
+    "bounds": {
+      "south": 60.579092,
+      "north": 60.904205,
+      "west": 21.783087,
+      "east": 22.415004
+    }
+  },
+  {
+    "official_code": "504",
+    "name_fi": "Myrskylä",
+    "name_sv": "Mörskom",
+    "name": "Myrskylä",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 1692,
+    "latitude": 60.643434,
+    "longitude": 25.83012,
+    "bounds": {
+      "south": 60.550998,
+      "north": 60.735871,
+      "west": 25.659647,
+      "east": 26.000594
+    }
+  },
+  {
+    "official_code": "505",
+    "name_fi": "Mäntsälä",
+    "name_sv": "Mäntsälä",
+    "name": "Mäntsälä",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 20861,
+    "latitude": 60.671241,
+    "longitude": 25.282314,
+    "bounds": {
+      "south": 60.501631,
+      "north": 60.840851,
+      "west": 25.045343,
+      "east": 25.519284
+    }
+  },
+  {
+    "official_code": "507",
+    "name_fi": "Mäntyharju",
+    "name_sv": "Mäntyharju",
+    "name": "Mäntyharju",
+    "region": "Etelä-Savo",
+    "country": "FI",
+    "population": 7034,
+    "latitude": 61.404933,
+    "longitude": 26.821684,
+    "bounds": {
+      "south": 61.152061,
+      "north": 61.657805,
+      "west": 26.264849,
+      "east": 27.378518
+    }
+  },
+  {
+    "official_code": "508",
+    "name_fi": "Mänttä-Vilppula",
+    "name_sv": "Mänttä-Vilppula",
+    "name": "Mänttä-Vilppula",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 9109,
+    "latitude": 62.08083,
+    "longitude": 24.383212,
+    "bounds": {
+      "south": 61.909333,
+      "north": 62.252326,
+      "west": 24.03551,
+      "east": 24.730913
+    }
+  },
+  {
+    "official_code": "529",
+    "name_fi": "Naantali",
+    "name_sv": "Nådendal",
+    "name": "Naantali",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 20390,
+    "latitude": 60.424712,
+    "longitude": 21.8315,
+    "bounds": {
+      "south": 60.294179,
+      "north": 60.555245,
+      "west": 21.555158,
+      "east": 22.107843
+    }
+  },
+  {
+    "official_code": "531",
+    "name_fi": "Nakkila",
+    "name_sv": "Nakkila",
+    "name": "Nakkila",
+    "region": "Satakunta",
+    "country": "FI",
+    "population": 4890,
+    "latitude": 61.357596,
+    "longitude": 21.939687,
+    "bounds": {
+      "south": 61.29444,
+      "north": 61.420751,
+      "west": 21.713248,
+      "east": 22.166126
+    }
+  },
+  {
+    "official_code": "535",
+    "name_fi": "Nivala",
+    "name_sv": "Nivala",
+    "name": "Nivala",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 10300,
+    "latitude": 63.919892,
+    "longitude": 25.002754,
+    "bounds": {
+      "south": 63.771845,
+      "north": 64.067938,
+      "west": 24.639093,
+      "east": 25.366416
+    }
+  },
+  {
+    "official_code": "536",
+    "name_fi": "Nokia",
+    "name_sv": "Nokia",
+    "name": "Nokia",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 36571,
+    "latitude": 61.450316,
+    "longitude": 23.392142,
+    "bounds": {
+      "south": 61.328405,
+      "north": 61.572228,
+      "west": 23.171146,
+      "east": 23.613138
+    }
+  },
+  {
+    "official_code": "538",
+    "name_fi": "Nousiainen",
+    "name_sv": "Nousis",
+    "name": "Nousiainen",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 4667,
+    "latitude": 60.650762,
+    "longitude": 22.171189,
+    "bounds": {
+      "south": 60.56423,
+      "north": 60.737294,
+      "west": 21.927374,
+      "east": 22.415004
+    }
+  },
+  {
+    "official_code": "541",
+    "name_fi": "Nurmes",
+    "name_sv": "Nurmes",
+    "name": "Nurmes",
+    "region": "Pohjois-Karjala",
+    "country": "FI",
+    "population": 8760,
+    "latitude": 63.615132,
+    "longitude": 29.06764,
+    "bounds": {
+      "south": 63.34785,
+      "north": 63.882415,
+      "west": 28.35959,
+      "east": 29.775689
+    }
+  },
+  {
+    "official_code": "543",
+    "name_fi": "Nurmijärvi",
+    "name_sv": "Nurmijärvi",
+    "name": "Nurmijärvi",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 45333,
+    "latitude": 60.465327,
+    "longitude": 24.749615,
+    "bounds": {
+      "south": 60.341783,
+      "north": 60.588871,
+      "west": 24.524839,
+      "east": 24.974392
+    }
+  },
+  {
+    "official_code": "545",
+    "name_fi": "Närpiö",
+    "name_sv": "Närpes",
+    "name": "Närpiö",
+    "region": "Pohjanmaa",
+    "country": "FI",
+    "population": 9538,
+    "latitude": 62.543212,
+    "longitude": 21.415833,
+    "bounds": {
+      "south": 62.318759,
+      "north": 62.767665,
+      "west": 21.040698,
+      "east": 21.790968
+    }
+  },
+  {
+    "official_code": "560",
+    "name_fi": "Orimattila",
+    "name_sv": "Orimattila",
+    "name": "Orimattila",
+    "region": "Päijät-Häme",
+    "country": "FI",
+    "population": 15575,
+    "latitude": 60.803018,
+    "longitude": 25.808238,
+    "bounds": {
+      "south": 60.671476,
+      "north": 60.93456,
+      "west": 25.402218,
+      "east": 26.214258
+    }
+  },
+  {
+    "official_code": "561",
+    "name_fi": "Oripää",
+    "name_sv": "Oripää",
+    "name": "Oripää",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 1264,
+    "latitude": 60.876193,
+    "longitude": 22.669408,
+    "bounds": {
+      "south": 60.815328,
+      "north": 60.937057,
+      "west": 22.552463,
+      "east": 22.786353
+    }
+  },
+  {
+    "official_code": "562",
+    "name_fi": "Orivesi",
+    "name_sv": "Orivesi",
+    "name": "Orivesi",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 8858,
+    "latitude": 61.688366,
+    "longitude": 24.459565,
+    "bounds": {
+      "south": 61.513742,
+      "north": 61.86299,
+      "west": 24.090788,
+      "east": 24.828343
+    }
+  },
+  {
+    "official_code": "563",
+    "name_fi": "Oulainen",
+    "name_sv": "Oulainen",
+    "name": "Oulainen",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 6832,
+    "latitude": 64.250618,
+    "longitude": 24.869486,
+    "bounds": {
+      "south": 64.109451,
+      "north": 64.391785,
+      "west": 24.538798,
+      "east": 25.200173
+    }
+  },
+  {
+    "official_code": "564",
+    "name_fi": "Oulu",
+    "name_sv": "Uleåborg",
+    "name": "Oulu",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 217469,
+    "latitude": 65.199814,
+    "longitude": 25.960623,
+    "bounds": {
+      "south": 64.844416,
+      "north": 65.555211,
+      "west": 25.152822,
+      "east": 26.768424
+    }
+  },
+  {
+    "official_code": "576",
+    "name_fi": "Padasjoki",
+    "name_sv": "Padasjoki",
+    "name": "Padasjoki",
+    "region": "Päijät-Häme",
+    "country": "FI",
+    "population": 2656,
+    "latitude": 61.363922,
+    "longitude": 25.202556,
+    "bounds": {
+      "south": 61.240938,
+      "north": 61.486906,
+      "west": 24.859953,
+      "east": 25.545159
+    }
+  },
+  {
+    "official_code": "577",
+    "name_fi": "Paimio",
+    "name_sv": "Pemar",
+    "name": "Paimio",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 11284,
+    "latitude": 60.459309,
+    "longitude": 22.727349,
+    "bounds": {
+      "south": 60.372921,
+      "north": 60.545697,
+      "west": 22.578785,
+      "east": 22.875914
+    }
+  },
+  {
+    "official_code": "578",
+    "name_fi": "Paltamo",
+    "name_sv": "Paltamo",
+    "name": "Paltamo",
+    "region": "Kainuu",
+    "country": "FI",
+    "population": 2941,
+    "latitude": 64.435097,
+    "longitude": 27.824059,
+    "bounds": {
+      "south": 64.292891,
+      "north": 64.577304,
+      "west": 27.185077,
+      "east": 28.463041
+    }
+  },
+  {
+    "official_code": "580",
+    "name_fi": "Parikkala",
+    "name_sv": "Parikkala",
+    "name": "Parikkala",
+    "region": "Etelä-Karjala",
+    "country": "FI",
+    "population": 4235,
+    "latitude": 61.638841,
+    "longitude": 29.69019,
+    "bounds": {
+      "south": 61.424474,
+      "north": 61.853209,
+      "west": 29.236423,
+      "east": 30.143957
+    }
+  },
+  {
+    "official_code": "581",
+    "name_fi": "Parkano",
+    "name_sv": "Parkano",
+    "name": "Parkano",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 6011,
+    "latitude": 62.092752,
+    "longitude": 22.94399,
+    "bounds": {
+      "south": 61.8966,
+      "north": 62.288904,
+      "west": 22.522595,
+      "east": 23.365385
+    }
+  },
+  {
+    "official_code": "583",
+    "name_fi": "Pelkosenniemi",
+    "name_sv": "Pelkosenniemi",
+    "name": "Pelkosenniemi",
+    "region": "Lappi",
+    "country": "FI",
+    "population": 932,
+    "latitude": 67.155605,
+    "longitude": 27.438901,
+    "bounds": {
+      "south": 66.88591,
+      "north": 67.4253,
+      "west": 26.517974,
+      "east": 28.359828
+    }
+  },
+  {
+    "official_code": "584",
+    "name_fi": "Perho",
+    "name_sv": "Perho",
+    "name": "Perho",
+    "region": "Keski-Pohjanmaa",
+    "country": "FI",
+    "population": 2547,
+    "latitude": 63.254331,
+    "longitude": 24.427815,
+    "bounds": {
+      "south": 63.11643,
+      "north": 63.392233,
+      "west": 24.052028,
+      "east": 24.803603
+    }
+  },
+  {
+    "official_code": "592",
+    "name_fi": "Petäjävesi",
+    "name_sv": "Petäjävesi",
+    "name": "Petäjävesi",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 3511,
+    "latitude": 62.289692,
+    "longitude": 25.219348,
+    "bounds": {
+      "south": 62.152362,
+      "north": 62.427022,
+      "west": 24.968808,
+      "east": 25.469888
+    }
+  },
+  {
+    "official_code": "593",
+    "name_fi": "Pieksämäki",
+    "name_sv": "Pieksämäki",
+    "name": "Pieksämäki",
+    "region": "Etelä-Savo",
+    "country": "FI",
+    "population": 17124,
+    "latitude": 62.254874,
+    "longitude": 27.180478,
+    "bounds": {
+      "south": 62.005862,
+      "north": 62.503886,
+      "west": 26.669044,
+      "east": 27.691911
+    }
+  },
+  {
+    "official_code": "595",
+    "name_fi": "Pielavesi",
+    "name_sv": "Pielavesi",
+    "name": "Pielavesi",
+    "region": "Pohjois-Savo",
+    "country": "FI",
+    "population": 3873,
+    "latitude": 63.279239,
+    "longitude": 26.651186,
+    "bounds": {
+      "south": 63.042071,
+      "north": 63.516408,
+      "west": 26.165383,
+      "east": 27.136989
+    }
+  },
+  {
+    "official_code": "598",
+    "name_fi": "Pietarsaari",
+    "name_sv": "Jakobstad",
+    "name": "Pietarsaari",
+    "region": "Pohjanmaa",
+    "country": "FI",
+    "population": 19657,
+    "latitude": 63.665899,
+    "longitude": 22.639359,
+    "bounds": {
+      "south": 63.610761,
+      "north": 63.721037,
+      "west": 22.49248,
+      "east": 22.786238
+    }
+  },
+  {
+    "official_code": "599",
+    "name_fi": "Pedersören kunta",
+    "name_sv": "Pedersöre",
+    "name": "Pedersören kunta",
+    "region": "Pohjanmaa",
+    "country": "FI",
+    "population": 11289,
+    "latitude": 63.54695,
+    "longitude": 22.966146,
+    "bounds": {
+      "south": 63.357988,
+      "north": 63.735911,
+      "west": 22.539403,
+      "east": 23.392889
+    }
+  },
+  {
+    "official_code": "601",
+    "name_fi": "Pihtipudas",
+    "name_sv": "Pihtipudas",
+    "name": "Pihtipudas",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 3676,
+    "latitude": 63.427953,
+    "longitude": 25.629292,
+    "bounds": {
+      "south": 63.245631,
+      "north": 63.610276,
+      "west": 25.081872,
+      "east": 26.176712
+    }
+  },
+  {
+    "official_code": "604",
+    "name_fi": "Pirkkala",
+    "name_sv": "Birkala",
+    "name": "Pirkkala",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 21373,
+    "latitude": 61.421195,
+    "longitude": 23.609373,
+    "bounds": {
+      "south": 61.358299,
+      "north": 61.484092,
+      "west": 23.477621,
+      "east": 23.741124
+    }
+  },
+  {
+    "official_code": "607",
+    "name_fi": "Polvijärvi",
+    "name_sv": "Polvijärvi",
+    "name": "Polvijärvi",
+    "region": "Pohjois-Karjala",
+    "country": "FI",
+    "population": 3942,
+    "latitude": 62.89392,
+    "longitude": 29.347514,
+    "bounds": {
+      "south": 62.680854,
+      "north": 63.106987,
+      "west": 28.971774,
+      "east": 29.723255
+    }
+  },
+  {
+    "official_code": "608",
+    "name_fi": "Pomarkku",
+    "name_sv": "Påmark",
+    "name": "Pomarkku",
+    "region": "Satakunta",
+    "country": "FI",
+    "population": 1893,
+    "latitude": 61.698835,
+    "longitude": 22.055365,
+    "bounds": {
+      "south": 61.61501,
+      "north": 61.782659,
+      "west": 21.728052,
+      "east": 22.382677
+    }
+  },
+  {
+    "official_code": "609",
+    "name_fi": "Pori",
+    "name_sv": "Björneborg",
+    "name": "Pori",
+    "region": "Satakunta",
+    "country": "FI",
+    "population": 83010,
+    "latitude": 61.566533,
+    "longitude": 22.056834,
+    "bounds": {
+      "south": 61.385146,
+      "north": 61.74792,
+      "west": 21.388738,
+      "east": 22.72493
+    }
+  },
+  {
+    "official_code": "611",
+    "name_fi": "Pornainen",
+    "name_sv": "Borgnäs",
+    "name": "Pornainen",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 4919,
+    "latitude": 60.478652,
+    "longitude": 25.357141,
+    "bounds": {
+      "south": 60.406098,
+      "north": 60.551207,
+      "west": 25.204087,
+      "east": 25.510196
+    }
+  },
+  {
+    "official_code": "614",
+    "name_fi": "Posio",
+    "name_sv": "Posio",
+    "name": "Posio",
+    "region": "Lappi",
+    "country": "FI",
+    "population": 2826,
+    "latitude": 66.146425,
+    "longitude": 28.007044,
+    "bounds": {
+      "south": 65.800595,
+      "north": 66.492254,
+      "west": 27.249849,
+      "east": 28.76424
+    }
+  },
+  {
+    "official_code": "615",
+    "name_fi": "Pudasjärvi",
+    "name_sv": "Pudasjärvi",
+    "name": "Pudasjärvi",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 7168,
+    "latitude": 65.524865,
+    "longitude": 27.15785,
+    "bounds": {
+      "south": 65.089371,
+      "north": 65.96036,
+      "west": 26.153319,
+      "east": 28.16238
+    }
+  },
+  {
+    "official_code": "616",
+    "name_fi": "Pukkila",
+    "name_sv": "Pukkila",
+    "name": "Pukkila",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 1720,
+    "latitude": 60.643961,
+    "longitude": 25.58602,
+    "bounds": {
+      "south": 60.57986,
+      "north": 60.708061,
+      "west": 25.425289,
+      "east": 25.74675
+    }
+  },
+  {
+    "official_code": "619",
+    "name_fi": "Punkalaidun",
+    "name_sv": "Punkalaidun",
+    "name": "Punkalaidun",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 2546,
+    "latitude": 61.111173,
+    "longitude": 23.153771,
+    "bounds": {
+      "south": 61.00122,
+      "north": 61.221125,
+      "west": 22.924181,
+      "east": 23.38336
+    }
+  },
+  {
+    "official_code": "620",
+    "name_fi": "Puolanka",
+    "name_sv": "Puolanka",
+    "name": "Puolanka",
+    "region": "Kainuu",
+    "country": "FI",
+    "population": 2322,
+    "latitude": 64.861894,
+    "longitude": 27.721196,
+    "bounds": {
+      "south": 64.50259,
+      "north": 65.221197,
+      "west": 27.148092,
+      "east": 28.294301
+    }
+  },
+  {
+    "official_code": "623",
+    "name_fi": "Puumala",
+    "name_sv": "Puumala",
+    "name": "Puumala",
+    "region": "Etelä-Savo",
+    "country": "FI",
+    "population": 2081,
+    "latitude": 61.533667,
+    "longitude": 28.245285,
+    "bounds": {
+      "south": 61.350393,
+      "north": 61.716941,
+      "west": 27.678792,
+      "east": 28.811778
+    }
+  },
+  {
+    "official_code": "624",
+    "name_fi": "Pyhtää",
+    "name_sv": "Pyttis",
+    "name": "Pyhtää",
+    "region": "Kymenlaakso",
+    "country": "FI",
+    "population": 5016,
+    "latitude": 60.495165,
+    "longitude": 26.644867,
+    "bounds": {
+      "south": 60.341037,
+      "north": 60.649294,
+      "west": 26.44784,
+      "east": 26.841894
+    }
+  },
+  {
+    "official_code": "625",
+    "name_fi": "Pyhäjoki",
+    "name_sv": "Pyhäjoki",
+    "name": "Pyhäjoki",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 2938,
+    "latitude": 64.426757,
+    "longitude": 24.431195,
+    "bounds": {
+      "south": 64.312106,
+      "north": 64.541408,
+      "west": 23.984469,
+      "east": 24.877921
+    }
+  },
+  {
+    "official_code": "626",
+    "name_fi": "Pyhäjärvi",
+    "name_sv": "Pyhäjärvi",
+    "name": "Pyhäjärvi",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 4551,
+    "latitude": 63.677748,
+    "longitude": 25.819924,
+    "bounds": {
+      "south": 63.42912,
+      "north": 63.926376,
+      "west": 25.348044,
+      "east": 26.291804
+    }
+  },
+  {
+    "official_code": "630",
+    "name_fi": "Pyhäntä",
+    "name_sv": "Pyhäntä",
+    "name": "Pyhäntä",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 1678,
+    "latitude": 64.034966,
+    "longitude": 26.506338,
+    "bounds": {
+      "south": 63.841035,
+      "north": 64.228897,
+      "west": 26.142274,
+      "east": 26.870402
+    }
+  },
+  {
+    "official_code": "631",
+    "name_fi": "Pyhäranta",
+    "name_sv": "Pyhäranta",
+    "name": "Pyhäranta",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 1892,
+    "latitude": 60.983971,
+    "longitude": 21.484855,
+    "bounds": {
+      "south": 60.878998,
+      "north": 61.088944,
+      "west": 21.304117,
+      "east": 21.665592
+    }
+  },
+  {
+    "official_code": "635",
+    "name_fi": "Pälkäne",
+    "name_sv": "Pälkäne",
+    "name": "Pälkäne",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 6146,
+    "latitude": 61.362111,
+    "longitude": 24.496541,
+    "bounds": {
+      "south": 61.233216,
+      "north": 61.491007,
+      "west": 24.079139,
+      "east": 24.913943
+    }
+  },
+  {
+    "official_code": "636",
+    "name_fi": "Pöytyä",
+    "name_sv": "Pöytyä",
+    "name": "Pöytyä",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 7903,
+    "latitude": 60.784027,
+    "longitude": 22.549379,
+    "bounds": {
+      "south": 60.629263,
+      "north": 60.93879,
+      "west": 22.160314,
+      "east": 22.938445
+    }
+  },
+  {
+    "official_code": "638",
+    "name_fi": "Porvoo",
+    "name_sv": "Borgå",
+    "name": "Porvoo",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 51863,
+    "latitude": 60.368224,
+    "longitude": 25.663832,
+    "bounds": {
+      "south": 60.18545,
+      "north": 60.550998,
+      "west": 25.363441,
+      "east": 25.964223
+    }
+  },
+  {
+    "official_code": "678",
+    "name_fi": "Raahe",
+    "name_sv": "Brahestad",
+    "name": "Raahe",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 23413,
+    "latitude": 64.556325,
+    "longitude": 24.879802,
+    "bounds": {
+      "south": 64.32094,
+      "north": 64.79171,
+      "west": 24.296678,
+      "east": 25.462927
+    }
+  },
+  {
+    "official_code": "680",
+    "name_fi": "Raisio",
+    "name_sv": "Reso",
+    "name": "Raisio",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 26036,
+    "latitude": 60.488832,
+    "longitude": 22.160311,
+    "bounds": {
+      "south": 60.44794,
+      "north": 60.529723,
+      "west": 22.07476,
+      "east": 22.245861
+    }
+  },
+  {
+    "official_code": "681",
+    "name_fi": "Rantasalmi",
+    "name_sv": "Rantasalmi",
+    "name": "Rantasalmi",
+    "region": "Etelä-Savo",
+    "country": "FI",
+    "population": 3219,
+    "latitude": 62.07532,
+    "longitude": 28.291184,
+    "bounds": {
+      "south": 61.915348,
+      "north": 62.235293,
+      "west": 27.866774,
+      "east": 28.715594
+    }
+  },
+  {
+    "official_code": "683",
+    "name_fi": "Ranua",
+    "name_sv": "Ranua",
+    "name": "Ranua",
+    "region": "Lappi",
+    "country": "FI",
+    "population": 3530,
+    "latitude": 66.001519,
+    "longitude": 26.575101,
+    "bounds": {
+      "south": 65.701145,
+      "north": 66.301894,
+      "west": 25.681004,
+      "east": 27.469198
+    }
+  },
+  {
+    "official_code": "684",
+    "name_fi": "Rauma",
+    "name_sv": "Raumo",
+    "name": "Rauma",
+    "region": "Satakunta",
+    "country": "FI",
+    "population": 38773,
+    "latitude": 61.114415,
+    "longitude": 21.702558,
+    "bounds": {
+      "south": 60.996332,
+      "north": 61.232497,
+      "west": 21.3344,
+      "east": 22.070715
+    }
+  },
+  {
+    "official_code": "686",
+    "name_fi": "Rautalampi",
+    "name_sv": "Rautalampi",
+    "name": "Rautalampi",
+    "region": "Pohjois-Savo",
+    "country": "FI",
+    "population": 2928,
+    "latitude": 62.648984,
+    "longitude": 26.698604,
+    "bounds": {
+      "south": 62.448809,
+      "north": 62.849159,
+      "west": 26.44656,
+      "east": 26.950649
+    }
+  },
+  {
+    "official_code": "687",
+    "name_fi": "Rautavaara",
+    "name_sv": "Rautavaara",
+    "name": "Rautavaara",
+    "region": "Pohjois-Savo",
+    "country": "FI",
+    "population": 1398,
+    "latitude": 63.479294,
+    "longitude": 28.400669,
+    "bounds": {
+      "south": 63.203835,
+      "north": 63.754753,
+      "west": 28.041811,
+      "east": 28.759526
+    }
+  },
+  {
+    "official_code": "689",
+    "name_fi": "Rautjärvi",
+    "name_sv": "Rautjärvi",
+    "name": "Rautjärvi",
+    "region": "Etelä-Karjala",
+    "country": "FI",
+    "population": 2888,
+    "latitude": 61.365324,
+    "longitude": 29.233633,
+    "bounds": {
+      "south": 61.210435,
+      "north": 61.520213,
+      "west": 29.022962,
+      "east": 29.444305
+    }
+  },
+  {
+    "official_code": "691",
+    "name_fi": "Reisjärvi",
+    "name_sv": "Reisjärvi",
+    "name": "Reisjärvi",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 2476,
+    "latitude": 63.607781,
+    "longitude": 24.931947,
+    "bounds": {
+      "south": 63.458073,
+      "north": 63.757489,
+      "west": 24.618714,
+      "east": 25.24518
+    }
+  },
+  {
+    "official_code": "694",
+    "name_fi": "Riihimäki",
+    "name_sv": "Riihimäki",
+    "name": "Riihimäki",
+    "region": "Kanta-Häme",
+    "country": "FI",
+    "population": 28555,
+    "latitude": 60.721979,
+    "longitude": 24.721026,
+    "bounds": {
+      "south": 60.647496,
+      "north": 60.796462,
+      "west": 24.605616,
+      "east": 24.836435
+    }
+  },
+  {
+    "official_code": "697",
+    "name_fi": "Ristijärvi",
+    "name_sv": "Ristijärvi",
+    "name": "Ristijärvi",
+    "region": "Kainuu",
+    "country": "FI",
+    "population": 1158,
+    "latitude": 64.473508,
+    "longitude": 28.365159,
+    "bounds": {
+      "south": 64.310236,
+      "north": 64.63678,
+      "west": 27.87048,
+      "east": 28.859837
+    }
+  },
+  {
+    "official_code": "698",
+    "name_fi": "Rovaniemi",
+    "name_sv": "Rovaniemi",
+    "name": "Rovaniemi",
+    "region": "Lappi",
+    "country": "FI",
+    "population": 66191,
+    "latitude": 66.668123,
+    "longitude": 25.99899,
+    "bounds": {
+      "south": 66.159127,
+      "north": 67.177119,
+      "west": 24.736799,
+      "east": 27.261181
+    }
+  },
+  {
+    "official_code": "700",
+    "name_fi": "Ruokolahti",
+    "name_sv": "Ruokolax",
+    "name": "Ruokolahti",
+    "region": "Etelä-Karjala",
+    "country": "FI",
+    "population": 4679,
+    "latitude": 61.373129,
+    "longitude": 28.756883,
+    "bounds": {
+      "south": 61.188489,
+      "north": 61.55777,
+      "west": 28.252198,
+      "east": 29.261568
+    }
+  },
+  {
+    "official_code": "702",
+    "name_fi": "Ruovesi",
+    "name_sv": "Ruovesi",
+    "name": "Ruovesi",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 3995,
+    "latitude": 61.979054,
+    "longitude": 24.059628,
+    "bounds": {
+      "south": 61.787161,
+      "north": 62.170946,
+      "west": 23.680622,
+      "east": 24.438634
+    }
+  },
+  {
+    "official_code": "704",
+    "name_fi": "Rusko",
+    "name_sv": "Rusko",
+    "name": "Rusko",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 6381,
+    "latitude": 60.621157,
+    "longitude": 22.27942,
+    "bounds": {
+      "south": 60.50502,
+      "north": 60.737294,
+      "west": 22.143837,
+      "east": 22.415004
+    }
+  },
+  {
+    "official_code": "707",
+    "name_fi": "Rääkkylä",
+    "name_sv": "Rääkkylä",
+    "name": "Rääkkylä",
+    "region": "Pohjois-Karjala",
+    "country": "FI",
+    "population": 1830,
+    "latitude": 62.276778,
+    "longitude": 29.655972,
+    "bounds": {
+      "south": 62.146117,
+      "north": 62.407439,
+      "west": 29.295965,
+      "east": 30.015979
+    }
+  },
+  {
+    "official_code": "710",
+    "name_fi": "Raasepori",
+    "name_sv": "Raseborg",
+    "name": "Raasepori",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 26856,
+    "latitude": 60.03107,
+    "longitude": 23.398686,
+    "bounds": {
+      "south": 59.85614,
+      "north": 60.206001,
+      "west": 22.854995,
+      "east": 23.942378
+    }
+  },
+  {
+    "official_code": "729",
+    "name_fi": "Saarijärvi",
+    "name_sv": "Saarijärvi",
+    "name": "Saarijärvi",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 8763,
+    "latitude": 62.714658,
+    "longitude": 25.10042,
+    "bounds": {
+      "south": 62.520826,
+      "north": 62.908491,
+      "west": 24.504239,
+      "east": 25.696601
+    }
+  },
+  {
+    "official_code": "732",
+    "name_fi": "Salla",
+    "name_sv": "Salla",
+    "name": "Salla",
+    "region": "Lappi",
+    "country": "FI",
+    "population": 3231,
+    "latitude": 67.105553,
+    "longitude": 28.949323,
+    "bounds": {
+      "south": 66.408147,
+      "north": 67.802959,
+      "west": 27.881602,
+      "east": 30.017043
+    }
+  },
+  {
+    "official_code": "734",
+    "name_fi": "Salo",
+    "name_sv": "Salo",
+    "name": "Salo",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 50339,
+    "latitude": 60.304257,
+    "longitude": 23.30471,
+    "bounds": {
+      "south": 60.012838,
+      "north": 60.595677,
+      "west": 22.818932,
+      "east": 23.790487
+    }
+  },
+  {
+    "official_code": "736",
+    "name_fi": "Saltvik",
+    "name_sv": "Saltvik",
+    "name": "Saltvik",
+    "region": "Ahvenanmaa",
+    "country": "FI",
+    "population": 1802,
+    "latitude": 60.313054,
+    "longitude": 20.07508,
+    "bounds": {
+      "south": 60.230576,
+      "north": 60.395532,
+      "west": 19.946083,
+      "east": 20.204077
+    }
+  },
+  {
+    "official_code": "738",
+    "name_fi": "Sauvo",
+    "name_sv": "Sagu",
+    "name": "Sauvo",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 2957,
+    "latitude": 60.314852,
+    "longitude": 22.686713,
+    "bounds": {
+      "south": 60.24786,
+      "north": 60.381843,
+      "west": 22.493107,
+      "east": 22.880318
+    }
+  },
+  {
+    "official_code": "739",
+    "name_fi": "Savitaipale",
+    "name_sv": "Savitaipale",
+    "name": "Savitaipale",
+    "region": "Etelä-Karjala",
+    "country": "FI",
+    "population": 3094,
+    "latitude": 61.189885,
+    "longitude": 27.568488,
+    "bounds": {
+      "south": 61.017692,
+      "north": 61.362078,
+      "west": 27.20582,
+      "east": 27.931155
+    }
+  },
+  {
+    "official_code": "740",
+    "name_fi": "Savonlinna",
+    "name_sv": "Nyslott",
+    "name": "Savonlinna",
+    "region": "Etelä-Savo",
+    "country": "FI",
+    "population": 31008,
+    "latitude": 61.979211,
+    "longitude": 29.033759,
+    "bounds": {
+      "south": 61.540664,
+      "north": 62.417757,
+      "west": 28.370692,
+      "east": 29.696826
+    }
+  },
+  {
+    "official_code": "742",
+    "name_fi": "Savukoski",
+    "name_sv": "Savukoski",
+    "name": "Savukoski",
+    "region": "Lappi",
+    "country": "FI",
+    "population": 974,
+    "latitude": 67.652208,
+    "longitude": 28.440652,
+    "bounds": {
+      "south": 67.108113,
+      "north": 68.196303,
+      "west": 27.221899,
+      "east": 29.659405
+    }
+  },
+  {
+    "official_code": "743",
+    "name_fi": "Seinäjoki",
+    "name_sv": "Seinäjoki",
+    "name": "Seinäjoki",
+    "region": "Etelä-Pohjanmaa",
+    "country": "FI",
+    "population": 67283,
+    "latitude": 62.701529,
+    "longitude": 22.820192,
+    "bounds": {
+      "south": 62.319198,
+      "north": 63.08386,
+      "west": 22.30262,
+      "east": 23.337764
+    }
+  },
+  {
+    "official_code": "746",
+    "name_fi": "Sievi",
+    "name_sv": "Sievi",
+    "name": "Sievi",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 4585,
+    "latitude": 63.836504,
+    "longitude": 24.547231,
+    "bounds": {
+      "south": 63.650888,
+      "north": 64.022121,
+      "west": 24.127078,
+      "east": 24.967384
+    }
+  },
+  {
+    "official_code": "747",
+    "name_fi": "Siikainen",
+    "name_sv": "Siikais",
+    "name": "Siikainen",
+    "region": "Satakunta",
+    "country": "FI",
+    "population": 1229,
+    "latitude": 61.881277,
+    "longitude": 21.927204,
+    "bounds": {
+      "south": 61.746693,
+      "north": 62.015862,
+      "west": 21.678973,
+      "east": 22.175435
+    }
+  },
+  {
+    "official_code": "748",
+    "name_fi": "Siikajoki",
+    "name_sv": "Siikajoki",
+    "name": "Siikajoki",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 4723,
+    "latitude": 64.661776,
+    "longitude": 25.039027,
+    "bounds": {
+      "south": 64.415806,
+      "north": 64.907747,
+      "west": 24.557785,
+      "east": 25.520269
+    }
+  },
+  {
+    "official_code": "749",
+    "name_fi": "Siilinjärvi",
+    "name_sv": "Siilinjärvi",
+    "name": "Siilinjärvi",
+    "region": "Pohjois-Savo",
+    "country": "FI",
+    "population": 21348,
+    "latitude": 63.100943,
+    "longitude": 27.647857,
+    "bounds": {
+      "south": 62.951872,
+      "north": 63.250014,
+      "west": 27.352463,
+      "east": 27.94325
+    }
+  },
+  {
+    "official_code": "751",
+    "name_fi": "Simo",
+    "name_sv": "Simo",
+    "name": "Simo",
+    "region": "Lappi",
+    "country": "FI",
+    "population": 2701,
+    "latitude": 65.855211,
+    "longitude": 25.302137,
+    "bounds": {
+      "south": 65.594183,
+      "north": 66.116239,
+      "west": 24.665083,
+      "east": 25.939191
+    }
+  },
+  {
+    "official_code": "753",
+    "name_fi": "Sipoo",
+    "name_sv": "Sibbo",
+    "name": "Sipoo",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 23006,
+    "latitude": 60.364128,
+    "longitude": 25.315644,
+    "bounds": {
+      "south": 60.222024,
+      "north": 60.506231,
+      "west": 25.116819,
+      "east": 25.514469
+    }
+  },
+  {
+    "official_code": "755",
+    "name_fi": "Siuntio",
+    "name_sv": "Sjundeå",
+    "name": "Siuntio",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 6192,
+    "latitude": 60.177171,
+    "longitude": 24.184898,
+    "bounds": {
+      "south": 60.059697,
+      "north": 60.294645,
+      "west": 24.008263,
+      "east": 24.361534
+    }
+  },
+  {
+    "official_code": "758",
+    "name_fi": "Sodankylä",
+    "name_sv": "Sodankylä",
+    "name": "Sodankylä",
+    "region": "Lappi",
+    "country": "FI",
+    "population": 8095,
+    "latitude": 67.704557,
+    "longitude": 26.998084,
+    "bounds": {
+      "south": 66.942924,
+      "north": 68.466191,
+      "west": 25.350017,
+      "east": 28.646151
+    }
+  },
+  {
+    "official_code": "759",
+    "name_fi": "Soini",
+    "name_sv": "Soini",
+    "name": "Soini",
+    "region": "Etelä-Pohjanmaa",
+    "country": "FI",
+    "population": 1772,
+    "latitude": 62.849525,
+    "longitude": 24.255778,
+    "bounds": {
+      "south": 62.685776,
+      "north": 63.013274,
+      "west": 23.991964,
+      "east": 24.519592
+    }
+  },
+  {
+    "official_code": "761",
+    "name_fi": "Somero",
+    "name_sv": "Somero",
+    "name": "Somero",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 8339,
+    "latitude": 60.620747,
+    "longitude": 23.537582,
+    "bounds": {
+      "south": 60.467326,
+      "north": 60.774168,
+      "west": 23.154615,
+      "east": 23.920549
+    }
+  },
+  {
+    "official_code": "762",
+    "name_fi": "Sonkajärvi",
+    "name_sv": "Sonkajärvi",
+    "name": "Sonkajärvi",
+    "region": "Pohjois-Savo",
+    "country": "FI",
+    "population": 3521,
+    "latitude": 63.746625,
+    "longitude": 27.644044,
+    "bounds": {
+      "south": 63.50247,
+      "north": 63.990779,
+      "west": 27.119271,
+      "east": 28.168816
+    }
+  },
+  {
+    "official_code": "765",
+    "name_fi": "Sotkamo",
+    "name_sv": "Sotkamo",
+    "name": "Sotkamo",
+    "region": "Kainuu",
+    "country": "FI",
+    "population": 10161,
+    "latitude": 64.02203,
+    "longitude": 28.503914,
+    "bounds": {
+      "south": 63.668811,
+      "north": 64.375249,
+      "west": 27.796786,
+      "east": 29.211042
+    }
+  },
+  {
+    "official_code": "766",
+    "name_fi": "Sottunga",
+    "name_sv": "Sottunga",
+    "name": "Sottunga",
+    "region": "Ahvenanmaa",
+    "country": "FI",
+    "population": 101,
+    "latitude": 60.124955,
+    "longitude": 20.67276,
+    "bounds": {
+      "south": 60.08062,
+      "north": 60.169289,
+      "west": 20.60443,
+      "east": 20.741091
+    }
+  },
+  {
+    "official_code": "768",
+    "name_fi": "Sulkava",
+    "name_sv": "Sulkava",
+    "name": "Sulkava",
+    "region": "Etelä-Savo",
+    "country": "FI",
+    "population": 2310,
+    "latitude": 61.736676,
+    "longitude": 28.522417,
+    "bounds": {
+      "south": 61.535777,
+      "north": 61.937574,
+      "west": 28.088783,
+      "east": 28.95605
+    }
+  },
+  {
+    "official_code": "771",
+    "name_fi": "Sund",
+    "name_sv": "Sund",
+    "name": "Sund",
+    "region": "Ahvenanmaa",
+    "country": "FI",
+    "population": 1018,
+    "latitude": 60.249633,
+    "longitude": 20.146891,
+    "bounds": {
+      "south": 60.185281,
+      "north": 60.313986,
+      "west": 20.023996,
+      "east": 20.269787
+    }
+  },
+  {
+    "official_code": "777",
+    "name_fi": "Suomussalmi",
+    "name_sv": "Suomussalmi",
+    "name": "Suomussalmi",
+    "region": "Kainuu",
+    "country": "FI",
+    "population": 6957,
+    "latitude": 65.042384,
+    "longitude": 29.06574,
+    "bounds": {
+      "south": 64.566291,
+      "north": 65.518477,
+      "west": 27.995642,
+      "east": 30.135837
+    }
+  },
+  {
+    "official_code": "778",
+    "name_fi": "Suonenjoki",
+    "name_sv": "Suonenjoki",
+    "name": "Suonenjoki",
+    "region": "Pohjois-Savo",
+    "country": "FI",
+    "population": 6549,
+    "latitude": 62.6554,
+    "longitude": 27.185968,
+    "bounds": {
+      "south": 62.460855,
+      "north": 62.849946,
+      "west": 26.842141,
+      "east": 27.529795
+    }
+  },
+  {
+    "official_code": "781",
+    "name_fi": "Sysmä",
+    "name_sv": "Sysmä",
+    "name": "Sysmä",
+    "region": "Päijät-Häme",
+    "country": "FI",
+    "population": 3367,
+    "latitude": 61.513763,
+    "longitude": 25.805189,
+    "bounds": {
+      "south": 61.3134,
+      "north": 61.714126,
+      "west": 25.437427,
+      "east": 26.172951
+    }
+  },
+  {
+    "official_code": "783",
+    "name_fi": "Säkylä",
+    "name_sv": "Säkylä",
+    "name": "Säkylä",
+    "region": "Satakunta",
+    "country": "FI",
+    "population": 6221,
+    "latitude": 61.089402,
+    "longitude": 22.421724,
+    "bounds": {
+      "south": 60.926864,
+      "north": 61.251941,
+      "west": 22.141904,
+      "east": 22.701544
+    }
+  },
+  {
+    "official_code": "785",
+    "name_fi": "Vaala",
+    "name_sv": "Vaala",
+    "name": "Vaala",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 2544,
+    "latitude": 64.550226,
+    "longitude": 26.844043,
+    "bounds": {
+      "south": 64.265166,
+      "north": 64.835287,
+      "west": 26.291106,
+      "east": 27.396981
+    }
+  },
+  {
+    "official_code": "790",
+    "name_fi": "Sastamala",
+    "name_sv": "Sastamala",
+    "name": "Sastamala",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 23332,
+    "latitude": 61.444051,
+    "longitude": 22.860746,
+    "bounds": {
+      "south": 61.185554,
+      "north": 61.702547,
+      "west": 22.434162,
+      "east": 23.287331
+    }
+  },
+  {
+    "official_code": "791",
+    "name_fi": "Siikalatva",
+    "name_sv": "Siikalatva",
+    "name": "Siikalatva",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 4861,
+    "latitude": 64.312025,
+    "longitude": 26.075209,
+    "bounds": {
+      "south": 63.995108,
+      "north": 64.628943,
+      "west": 25.379548,
+      "east": 26.770871
+    }
+  },
+  {
+    "official_code": "831",
+    "name_fi": "Taipalsaari",
+    "name_sv": "Taipalsaari",
+    "name": "Taipalsaari",
+    "region": "Etelä-Karjala",
+    "country": "FI",
+    "population": 4574,
+    "latitude": 61.220607,
+    "longitude": 28.081558,
+    "bounds": {
+      "south": 61.061528,
+      "north": 61.379687,
+      "west": 27.753923,
+      "east": 28.409193
+    }
+  },
+  {
+    "official_code": "832",
+    "name_fi": "Taivalkoski",
+    "name_sv": "Taivalkoski",
+    "name": "Taivalkoski",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 3555,
+    "latitude": 65.548278,
+    "longitude": 28.462879,
+    "bounds": {
+      "south": 65.250349,
+      "north": 65.846208,
+      "west": 27.71254,
+      "east": 29.213218
+    }
+  },
+  {
+    "official_code": "833",
+    "name_fi": "Taivassalo",
+    "name_sv": "Tövsala",
+    "name": "Taivassalo",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 1707,
+    "latitude": 60.563939,
+    "longitude": 21.578985,
+    "bounds": {
+      "south": 60.504555,
+      "north": 60.623323,
+      "west": 21.435291,
+      "east": 21.72268
+    }
+  },
+  {
+    "official_code": "834",
+    "name_fi": "Tammela",
+    "name_sv": "Tammela",
+    "name": "Tammela",
+    "region": "Kanta-Häme",
+    "country": "FI",
+    "population": 5777,
+    "latitude": 60.804869,
+    "longitude": 23.78269,
+    "bounds": {
+      "south": 60.638201,
+      "north": 60.971536,
+      "west": 23.502137,
+      "east": 24.063243
+    }
+  },
+  {
+    "official_code": "837",
+    "name_fi": "Tampere",
+    "name_sv": "Tammerfors",
+    "name": "Tampere",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 263337,
+    "latitude": 61.63,
+    "longitude": 23.830408,
+    "bounds": {
+      "south": 61.423387,
+      "north": 61.836614,
+      "west": 23.5423,
+      "east": 24.118517
+    }
+  },
+  {
+    "official_code": "844",
+    "name_fi": "Tervo",
+    "name_sv": "Tervo",
+    "name": "Tervo",
+    "region": "Pohjois-Savo",
+    "country": "FI",
+    "population": 1388,
+    "latitude": 62.961142,
+    "longitude": 26.834595,
+    "bounds": {
+      "south": 62.804591,
+      "north": 63.117693,
+      "west": 26.543631,
+      "east": 27.12556
+    }
+  },
+  {
+    "official_code": "845",
+    "name_fi": "Tervola",
+    "name_sv": "Tervola",
+    "name": "Tervola",
+    "region": "Lappi",
+    "country": "FI",
+    "population": 2837,
+    "latitude": 66.146884,
+    "longitude": 25.280701,
+    "bounds": {
+      "south": 65.961531,
+      "north": 66.332236,
+      "west": 24.494078,
+      "east": 26.067324
+    }
+  },
+  {
+    "official_code": "846",
+    "name_fi": "Teuva",
+    "name_sv": "Östermark",
+    "name": "Teuva",
+    "region": "Etelä-Pohjanmaa",
+    "country": "FI",
+    "population": 4574,
+    "latitude": 62.500971,
+    "longitude": 21.826876,
+    "bounds": {
+      "south": 62.361897,
+      "north": 62.640045,
+      "west": 21.55413,
+      "east": 22.099622
+    }
+  },
+  {
+    "official_code": "848",
+    "name_fi": "Tohmajärvi",
+    "name_sv": "Tohmajärvi",
+    "name": "Tohmajärvi",
+    "region": "Pohjois-Karjala",
+    "country": "FI",
+    "population": 3869,
+    "latitude": 62.240097,
+    "longitude": 30.369411,
+    "bounds": {
+      "south": 62.063844,
+      "north": 62.416349,
+      "west": 29.949641,
+      "east": 30.789182
+    }
+  },
+  {
+    "official_code": "849",
+    "name_fi": "Toholampi",
+    "name_sv": "Toholampi",
+    "name": "Toholampi",
+    "region": "Keski-Pohjanmaa",
+    "country": "FI",
+    "population": 2750,
+    "latitude": 63.721477,
+    "longitude": 24.301964,
+    "bounds": {
+      "south": 63.566005,
+      "north": 63.87695,
+      "west": 23.985214,
+      "east": 24.618714
+    }
+  },
+  {
+    "official_code": "850",
+    "name_fi": "Toivakka",
+    "name_sv": "Toivakka",
+    "name": "Toivakka",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 2307,
+    "latitude": 62.11623,
+    "longitude": 26.049831,
+    "bounds": {
+      "south": 61.996596,
+      "north": 62.235864,
+      "west": 25.767989,
+      "east": 26.331674
+    }
+  },
+  {
+    "official_code": "851",
+    "name_fi": "Tornio",
+    "name_sv": "Torneå",
+    "name": "Tornio",
+    "region": "Lappi",
+    "country": "FI",
+    "population": 20823,
+    "latitude": 66.0497,
+    "longitude": 24.341843,
+    "bounds": {
+      "south": 65.767163,
+      "north": 66.332236,
+      "west": 23.891862,
+      "east": 24.791825
+    }
+  },
+  {
+    "official_code": "853",
+    "name_fi": "Turku",
+    "name_sv": "Åbo",
+    "name": "Turku",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 209633,
+    "latitude": 60.54414,
+    "longitude": 22.27447,
+    "bounds": {
+      "south": 60.350986,
+      "north": 60.737294,
+      "west": 22.103229,
+      "east": 22.445712
+    }
+  },
+  {
+    "official_code": "854",
+    "name_fi": "Pello",
+    "name_sv": "Pello",
+    "name": "Pello",
+    "region": "Lappi",
+    "country": "FI",
+    "population": 3146,
+    "latitude": 66.737472,
+    "longitude": 24.386218,
+    "bounds": {
+      "south": 66.465421,
+      "north": 67.009523,
+      "west": 23.784384,
+      "east": 24.988052
+    }
+  },
+  {
+    "official_code": "857",
+    "name_fi": "Tuusniemi",
+    "name_sv": "Tuusniemi",
+    "name": "Tuusniemi",
+    "region": "Pohjois-Savo",
+    "country": "FI",
+    "population": 2270,
+    "latitude": 62.773512,
+    "longitude": 28.455552,
+    "bounds": {
+      "south": 62.583163,
+      "north": 62.963861,
+      "west": 28.166693,
+      "east": 28.744412
+    }
+  },
+  {
+    "official_code": "858",
+    "name_fi": "Tuusula",
+    "name_sv": "Tusby",
+    "name": "Tuusula",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 42479,
+    "latitude": 60.454656,
+    "longitude": 25.024824,
+    "bounds": {
+      "south": 60.332449,
+      "north": 60.576863,
+      "west": 24.868939,
+      "east": 25.180709
+    }
+  },
+  {
+    "official_code": "859",
+    "name_fi": "Tyrnävä",
+    "name_sv": "Tyrnävä",
+    "name": "Tyrnävä",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 6470,
+    "latitude": 64.735338,
+    "longitude": 25.788053,
+    "bounds": {
+      "south": 64.56622,
+      "north": 64.904455,
+      "west": 25.501053,
+      "east": 26.075053
+    }
+  },
+  {
+    "official_code": "886",
+    "name_fi": "Ulvila",
+    "name_sv": "Ulvsby",
+    "name": "Ulvila",
+    "region": "Satakunta",
+    "country": "FI",
+    "population": 12339,
+    "latitude": 61.479198,
+    "longitude": 22.118937,
+    "bounds": {
+      "south": 61.385146,
+      "north": 61.573251,
+      "west": 21.803713,
+      "east": 22.434162
+    }
+  },
+  {
+    "official_code": "887",
+    "name_fi": "Urjala",
+    "name_sv": "Urjala",
+    "name": "Urjala",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 4440,
+    "latitude": 61.08898,
+    "longitude": 23.554625,
+    "bounds": {
+      "south": 60.939706,
+      "north": 61.238254,
+      "west": 23.252675,
+      "east": 23.856575
+    }
+  },
+  {
+    "official_code": "889",
+    "name_fi": "Utajärvi",
+    "name_sv": "Utajärvi",
+    "name": "Utajärvi",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 2399,
+    "latitude": 64.835938,
+    "longitude": 26.792976,
+    "bounds": {
+      "south": 64.565052,
+      "north": 65.106824,
+      "west": 26.183312,
+      "east": 27.40264
+    }
+  },
+  {
+    "official_code": "890",
+    "name_fi": "Utsjoki",
+    "name_sv": "Utsjoki",
+    "name": "Utsjoki",
+    "region": "Lappi",
+    "country": "FI",
+    "population": 1112,
+    "latitude": 69.61984,
+    "longitude": 27.019932,
+    "bounds": {
+      "south": 69.14758,
+      "north": 70.0921,
+      "west": 25.694595,
+      "east": 28.345268
+    }
+  },
+  {
+    "official_code": "892",
+    "name_fi": "Uurainen",
+    "name_sv": "Uurainen",
+    "name": "Uurainen",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 3651,
+    "latitude": 62.47196,
+    "longitude": 25.409989,
+    "bounds": {
+      "south": 62.389181,
+      "north": 62.554739,
+      "west": 25.124827,
+      "east": 25.695151
+    }
+  },
+  {
+    "official_code": "893",
+    "name_fi": "Uusikaarlepyy",
+    "name_sv": "Nykarleby",
+    "name": "Uusikaarlepyy",
+    "region": "Pohjanmaa",
+    "country": "FI",
+    "population": 7391,
+    "latitude": 63.45272,
+    "longitude": 22.589978,
+    "bounds": {
+      "south": 63.282048,
+      "north": 63.623393,
+      "west": 22.208356,
+      "east": 22.9716
+    }
+  },
+  {
+    "official_code": "895",
+    "name_fi": "Uusikaupunki",
+    "name_sv": "Nystad",
+    "name": "Uusikaupunki",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 14783,
+    "latitude": 60.811994,
+    "longitude": 21.467543,
+    "bounds": {
+      "south": 60.621312,
+      "north": 61.002676,
+      "west": 21.203078,
+      "east": 21.732009
+    }
+  },
+  {
+    "official_code": "905",
+    "name_fi": "Vaasa",
+    "name_sv": "Vasa",
+    "name": "Vaasa",
+    "region": "Pohjanmaa",
+    "country": "FI",
+    "population": 71209,
+    "latitude": 63.067077,
+    "longitude": 21.802597,
+    "bounds": {
+      "south": 62.963107,
+      "north": 63.171047,
+      "west": 21.362872,
+      "east": 22.242323
+    }
+  },
+  {
+    "official_code": "908",
+    "name_fi": "Valkeakoski",
+    "name_sv": "Valkeakoski",
+    "name": "Valkeakoski",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 20762,
+    "latitude": 61.216639,
+    "longitude": 24.056916,
+    "bounds": {
+      "south": 61.101929,
+      "north": 61.331349,
+      "west": 23.811448,
+      "east": 24.302385
+    }
+  },
+  {
+    "official_code": "915",
+    "name_fi": "Varkaus",
+    "name_sv": "Varkaus",
+    "name": "Varkaus",
+    "region": "Pohjois-Savo",
+    "country": "FI",
+    "population": 19433,
+    "latitude": 62.265063,
+    "longitude": 28.196589,
+    "bounds": {
+      "south": 62.14962,
+      "north": 62.380506,
+      "west": 27.740369,
+      "east": 28.652808
+    }
+  },
+  {
+    "official_code": "918",
+    "name_fi": "Vehmaa",
+    "name_sv": "Vemo",
+    "name": "Vehmaa",
+    "region": "Varsinais-Suomi",
+    "country": "FI",
+    "population": 2263,
+    "latitude": 60.676626,
+    "longitude": 21.661359,
+    "bounds": {
+      "south": 60.593962,
+      "north": 60.759291,
+      "west": 21.523898,
+      "east": 21.798821
+    }
+  },
+  {
+    "official_code": "921",
+    "name_fi": "Vesanto",
+    "name_sv": "Vesanto",
+    "name": "Vesanto",
+    "region": "Pohjois-Savo",
+    "country": "FI",
+    "population": 1787,
+    "latitude": 62.89125,
+    "longitude": 26.360592,
+    "bounds": {
+      "south": 62.74741,
+      "north": 63.03509,
+      "west": 26.039838,
+      "east": 26.681346
+    }
+  },
+  {
+    "official_code": "922",
+    "name_fi": "Vesilahti",
+    "name_sv": "Vesilahti",
+    "name": "Vesilahti",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 4532,
+    "latitude": 61.298436,
+    "longitude": 23.478941,
+    "bounds": {
+      "south": 61.200046,
+      "north": 61.396826,
+      "west": 23.220749,
+      "east": 23.737133
+    }
+  },
+  {
+    "official_code": "924",
+    "name_fi": "Veteli",
+    "name_sv": "Vetil",
+    "name": "Veteli",
+    "region": "Keski-Pohjanmaa",
+    "country": "FI",
+    "population": 2912,
+    "latitude": 63.394858,
+    "longitude": 23.911198,
+    "bounds": {
+      "south": 63.258145,
+      "north": 63.531571,
+      "west": 23.657768,
+      "east": 24.164629
+    }
+  },
+  {
+    "official_code": "925",
+    "name_fi": "Vieremä",
+    "name_sv": "Vieremä",
+    "name": "Vieremä",
+    "region": "Pohjois-Savo",
+    "country": "FI",
+    "population": 3295,
+    "latitude": 63.826726,
+    "longitude": 26.958487,
+    "bounds": {
+      "south": 63.616478,
+      "north": 64.036974,
+      "west": 26.559395,
+      "east": 27.357579
+    }
+  },
+  {
+    "official_code": "927",
+    "name_fi": "Vihti",
+    "name_sv": "Vichtis",
+    "name": "Vihti",
+    "region": "Uusimaa",
+    "country": "FI",
+    "population": 28852,
+    "latitude": 60.416,
+    "longitude": 24.3914,
+    "bounds": {
+      "south": 60.246198,
+      "north": 60.585801,
+      "west": 24.133963,
+      "east": 24.648836
+    }
+  },
+  {
+    "official_code": "931",
+    "name_fi": "Viitasaari",
+    "name_sv": "Viitasaari",
+    "name": "Viitasaari",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 5695,
+    "latitude": 63.083042,
+    "longitude": 25.821796,
+    "bounds": {
+      "south": 62.876253,
+      "north": 63.289831,
+      "west": 25.309318,
+      "east": 26.334274
+    }
+  },
+  {
+    "official_code": "934",
+    "name_fi": "Vimpeli",
+    "name_sv": "Vindala",
+    "name": "Vimpeli",
+    "region": "Etelä-Pohjanmaa",
+    "country": "FI",
+    "population": 2554,
+    "latitude": 63.176535,
+    "longitude": 23.966214,
+    "bounds": {
+      "south": 63.075485,
+      "north": 63.277584,
+      "west": 23.697946,
+      "east": 24.234481
+    }
+  },
+  {
+    "official_code": "935",
+    "name_fi": "Virolahti",
+    "name_sv": "Vederlax",
+    "name": "Virolahti",
+    "region": "Kymenlaakso",
+    "country": "FI",
+    "population": 2751,
+    "latitude": 60.563212,
+    "longitude": 27.622656,
+    "bounds": {
+      "south": 60.466238,
+      "north": 60.660187,
+      "west": 27.356569,
+      "east": 27.888742
+    }
+  },
+  {
+    "official_code": "936",
+    "name_fi": "Virrat",
+    "name_sv": "Virdois",
+    "name": "Virrat",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 6126,
+    "latitude": 62.289387,
+    "longitude": 23.714558,
+    "bounds": {
+      "south": 62.084437,
+      "north": 62.494336,
+      "west": 23.217823,
+      "east": 24.211292
+    }
+  },
+  {
+    "official_code": "941",
+    "name_fi": "Vårdö",
+    "name_sv": "Vårdö",
+    "name": "Vårdö",
+    "region": "Ahvenanmaa",
+    "country": "FI",
+    "population": 465,
+    "latitude": 60.282011,
+    "longitude": 20.372979,
+    "bounds": {
+      "south": 60.197386,
+      "north": 60.366636,
+      "west": 20.296771,
+      "east": 20.449187
+    }
+  },
+  {
+    "official_code": "946",
+    "name_fi": "Vöyri",
+    "name_sv": "Vörå",
+    "name": "Vöyri",
+    "region": "Pohjanmaa",
+    "country": "FI",
+    "population": 6185,
+    "latitude": 63.264626,
+    "longitude": 22.206335,
+    "bounds": {
+      "south": 63.063727,
+      "north": 63.465526,
+      "west": 21.762196,
+      "east": 22.650474
+    }
+  },
+  {
+    "official_code": "976",
+    "name_fi": "Ylitornio",
+    "name_sv": "Övertorneå",
+    "name": "Ylitornio",
+    "region": "Lappi",
+    "country": "FI",
+    "population": 3673,
+    "latitude": 66.466692,
+    "longitude": 24.346126,
+    "bounds": {
+      "south": 66.16767,
+      "north": 66.765713,
+      "west": 23.641841,
+      "east": 25.050411
+    }
+  },
+  {
+    "official_code": "977",
+    "name_fi": "Ylivieska",
+    "name_sv": "Ylivieska",
+    "name": "Ylivieska",
+    "region": "Pohjois-Pohjanmaa",
+    "country": "FI",
+    "population": 15274,
+    "latitude": 64.066608,
+    "longitude": 24.663942,
+    "bounds": {
+      "south": 63.946763,
+      "north": 64.186453,
+      "west": 24.306638,
+      "east": 25.021245
+    }
+  },
+  {
+    "official_code": "980",
+    "name_fi": "Ylöjärvi",
+    "name_sv": "Ylöjärvi",
+    "name": "Ylöjärvi",
+    "region": "Pirkanmaa",
+    "country": "FI",
+    "population": 33658,
+    "latitude": 61.844472,
+    "longitude": 23.53191,
+    "bounds": {
+      "south": 61.530833,
+      "north": 62.15811,
+      "west": 23.208301,
+      "east": 23.855518
+    }
+  },
+  {
+    "official_code": "981",
+    "name_fi": "Ypäjä",
+    "name_sv": "Ypäjä",
+    "name": "Ypäjä",
+    "region": "Kanta-Häme",
+    "country": "FI",
+    "population": 2186,
+    "latitude": 60.800092,
+    "longitude": 23.272131,
+    "bounds": {
+      "south": 60.711075,
+      "north": 60.88911,
+      "west": 23.135638,
+      "east": 23.408624
+    }
+  },
+  {
+    "official_code": "989",
+    "name_fi": "Ähtäri",
+    "name_sv": "Etseri",
+    "name": "Ähtäri",
+    "region": "Etelä-Pohjanmaa",
+    "country": "FI",
+    "population": 5121,
+    "latitude": 62.55907,
+    "longitude": 24.208699,
+    "bounds": {
+      "south": 62.363326,
+      "north": 62.754814,
+      "west": 23.83523,
+      "east": 24.582169
+    }
+  },
+  {
+    "official_code": "992",
+    "name_fi": "Äänekoski",
+    "name_sv": "Äänekoski",
+    "name": "Äänekoski",
+    "region": "Keski-Suomi",
+    "country": "FI",
+    "population": 17492,
+    "latitude": 62.706123,
+    "longitude": 25.858814,
+    "bounds": {
+      "south": 62.491504,
+      "north": 62.920743,
+      "west": 25.483863,
+      "east": 26.233764
+    }
+  }
+]

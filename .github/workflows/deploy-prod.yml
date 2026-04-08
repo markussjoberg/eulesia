@@ -168,19 +168,45 @@ jobs:
           )
 
           EXPECTED_MIGRATIONS="$(find crates/db/src/migration -maxdepth 1 -name 'm[0-9]*.rs' | wc -l | tr -d ' ')"
+          EXPECTED_FI_MUNICIPALITIES="$(jq length crates/db/data/fi_municipalities_2026.json)"
 
           ssh "${SSH_OPTS[@]}" root@"$EULESIA_PROD_TARGET_HOST" \
-            "EXPECTED_MIGRATIONS=$EXPECTED_MIGRATIONS bash -se" <<'REMOTE'
+            "EXPECTED_MIGRATIONS=$EXPECTED_MIGRATIONS EXPECTED_FI_MUNICIPALITIES=$EXPECTED_FI_MUNICIPALITIES bash -se" <<'REMOTE'
           set -euo pipefail
 
           PSQL="sudo -u postgres psql -X -A -t -v ON_ERROR_STOP=1"
+          psql_tsv() {
+            sudo -u postgres psql -X -A -t -F $'\t' -v ON_ERROR_STOP=1 "$@"
+          }
+
+          if ! systemctl is-active --quiet eulesia-jobs.service; then
+            echo "::error::eulesia-jobs.service is not active after deploy"
+            systemctl --no-pager --full status eulesia-jobs.service || true
+            exit 1
+          fi
+
           actual_migrations="$($PSQL -d eulesia_v2 -c 'SELECT COUNT(*) FROM seaql_migrations;')"
+          fi_municipalities="$($PSQL -d eulesia_v2 -c "SELECT COUNT(*) FROM municipalities WHERE official_code IS NOT NULL;")"
+          fi_municipalities_missing_coords="$($PSQL -d eulesia_v2 -c "SELECT COUNT(*) FROM municipalities WHERE official_code IS NOT NULL AND (latitude IS NULL OR longitude IS NULL);")"
 
           echo "Expected migrations: $EXPECTED_MIGRATIONS"
           echo "Applied migrations: $actual_migrations"
+          echo "Expected FI municipalities: $EXPECTED_FI_MUNICIPALITIES"
+          echo "Seeded FI municipalities: $fi_municipalities"
+          echo "FI municipalities missing coords: $fi_municipalities_missing_coords"
 
           if [ "$actual_migrations" -ne "$EXPECTED_MIGRATIONS" ]; then
             echo "::error::Migration count mismatch on production host"
+            exit 1
+          fi
+
+          if [ "$fi_municipalities" -ne "$EXPECTED_FI_MUNICIPALITIES" ]; then
+            echo "::error::Finnish municipality seed is incomplete on production host"
+            exit 1
+          fi
+
+          if [ "$fi_municipalities_missing_coords" -ne 0 ]; then
+            echo "::error::Finnish municipalities are missing usable coordinates on production host"
             exit 1
           fi
 
@@ -224,6 +250,135 @@ jobs:
           if [ -n "$missing_club_slugs" ]; then
             echo "::error::Legacy club slugs missing from eulesia_v2"
             printf '%s\n' "$missing_club_slugs"
+            exit 1
+          fi
+
+          legacy_public_members="$(mktemp)"
+          v2_public_members="$(mktemp)"
+          legacy_room_ids="$(mktemp)"
+          v2_private_room_ids="$(mktemp)"
+          legacy_room_members="$(mktemp)"
+          v2_private_room_members="$(mktemp)"
+          legacy_thread_ids="$(mktemp)"
+          v2_thread_ids="$(mktemp)"
+          legacy_comment_ids="$(mktemp)"
+          v2_comment_ids="$(mktemp)"
+          trap 'rm -f "$old_users" "$new_users" "$old_clubs" "$new_clubs" "$legacy_public_members" "$v2_public_members" "$legacy_room_ids" "$v2_private_room_ids" "$legacy_room_members" "$v2_private_room_members" "$legacy_thread_ids" "$v2_thread_ids" "$legacy_comment_ids" "$v2_comment_ids"' EXIT
+
+          LC_ALL=C psql_tsv -d eulesia -c '
+            SELECT c.slug, COUNT(cm.user_id)
+            FROM clubs c
+            LEFT JOIN club_members cm ON cm.club_id = c.id
+            GROUP BY c.slug
+            ORDER BY c.slug COLLATE "C"
+          ' > "$legacy_public_members"
+          LC_ALL=C psql_tsv -d eulesia_v2 -c '
+            SELECT c.slug, COUNT(cm.user_id)
+            FROM clubs c
+            LEFT JOIN club_members cm ON cm.club_id = c.id
+            WHERE c.is_public = TRUE
+            GROUP BY c.slug
+            ORDER BY c.slug COLLATE "C"
+          ' > "$v2_public_members"
+          if ! awk -F $'\t' '
+            NR==FNR { v2[$1]=$2; next }
+            {
+              if (!($1 in v2) || v2[$1] < $2) {
+                printf "%s\tlegacy=%s\tv2=%s\n", $1, $2, ($1 in v2 ? v2[$1] : "missing")
+                failed=1
+              }
+            }
+            END { exit failed ? 1 : 0 }
+          ' "$v2_public_members" "$legacy_public_members"; then
+            echo "::error::Legacy public club membership counts not satisfied in eulesia_v2"
+            exit 1
+          fi
+
+          LC_ALL=C $PSQL -d eulesia -c 'SELECT id::text FROM rooms ORDER BY id::text COLLATE "C"' > "$legacy_room_ids"
+          LC_ALL=C $PSQL -d eulesia_v2 -c 'SELECT id::text FROM clubs WHERE is_public = FALSE ORDER BY id::text COLLATE "C"' > "$v2_private_room_ids"
+          missing_room_ids="$(comm -23 "$legacy_room_ids" "$v2_private_room_ids" || true)"
+          if [ -n "$missing_room_ids" ]; then
+            echo "::error::Legacy room ids missing from private clubs in eulesia_v2"
+            printf '%s\n' "$missing_room_ids"
+            exit 1
+          fi
+
+          LC_ALL=C psql_tsv -d eulesia -c '
+            SELECT r.id::text, (1 + COUNT(rm.user_id))
+            FROM rooms r
+            LEFT JOIN room_members rm ON rm.room_id = r.id
+            GROUP BY r.id
+            ORDER BY r.id::text COLLATE "C"
+          ' > "$legacy_room_members"
+          LC_ALL=C psql_tsv -d eulesia_v2 -c '
+            SELECT c.id::text, COUNT(cm.user_id)
+            FROM clubs c
+            LEFT JOIN club_members cm ON cm.club_id = c.id
+            WHERE c.is_public = FALSE
+            GROUP BY c.id
+            ORDER BY c.id::text COLLATE "C"
+          ' > "$v2_private_room_members"
+          if ! awk -F $'\t' '
+            NR==FNR { v2[$1]=$2; next }
+            {
+              if (!($1 in v2) || v2[$1] < $2) {
+                printf "%s\tlegacy=%s\tv2=%s\n", $1, $2, ($1 in v2 ? v2[$1] : "missing")
+                failed=1
+              }
+            }
+            END { exit failed ? 1 : 0 }
+          ' "$v2_private_room_members" "$legacy_room_members"; then
+            echo "::error::Legacy room membership counts not satisfied in eulesia_v2"
+            exit 1
+          fi
+
+          LC_ALL=C $PSQL -d eulesia -c '
+            SELECT id
+            FROM (
+              SELECT id::text AS id FROM threads
+              UNION
+              SELECT id::text AS id FROM club_threads
+              UNION
+              SELECT id::text AS id FROM room_threads
+            ) AS legacy_threads
+            ORDER BY id COLLATE "C"
+          ' > "$legacy_thread_ids"
+          LC_ALL=C $PSQL -d eulesia_v2 -c '
+            SELECT id
+            FROM (
+              SELECT id::text AS id FROM threads
+            ) AS v2_threads
+            ORDER BY id COLLATE "C"
+          ' > "$v2_thread_ids"
+          missing_thread_ids="$(comm -23 "$legacy_thread_ids" "$v2_thread_ids" || true)"
+          if [ -n "$missing_thread_ids" ]; then
+            echo "::error::Legacy thread ids missing from eulesia_v2"
+            printf '%s\n' "$missing_thread_ids"
+            exit 1
+          fi
+
+          LC_ALL=C $PSQL -d eulesia -c '
+            SELECT id
+            FROM (
+              SELECT id::text AS id FROM comments
+              UNION
+              SELECT id::text AS id FROM club_comments
+              UNION
+              SELECT id::text AS id FROM room_comments
+            ) AS legacy_comments
+            ORDER BY id COLLATE "C"
+          ' > "$legacy_comment_ids"
+          LC_ALL=C $PSQL -d eulesia_v2 -c '
+            SELECT id
+            FROM (
+              SELECT id::text AS id FROM comments
+            ) AS v2_comments
+            ORDER BY id COLLATE "C"
+          ' > "$v2_comment_ids"
+          missing_comment_ids="$(comm -23 "$legacy_comment_ids" "$v2_comment_ids" || true)"
+          if [ -n "$missing_comment_ids" ]; then
+            echo "::error::Legacy comment ids missing from eulesia_v2"
+            printf '%s\n' "$missing_comment_ids"
             exit 1
           fi
 

@@ -220,7 +220,10 @@ export function EulesiaMap({
           {points.map((point) => (
             <Marker
               key={`${point.pointType}-${point.id}`}
-              position={[point.latitude, point.longitude]}
+              position={[
+                point.coordinates.latitude,
+                point.coordinates.longitude,
+              ]}
               icon={icons[point.pointType as keyof typeof icons]}
               // Store point type for cluster icon calculation
               {...({

@@ -9,7 +9,12 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useSubscribe, useMunicipalities, useTags } from "../../hooks/useApi";
+import {
+  useSubscribe,
+  useMunicipalities,
+  useTags,
+  useUpdateProfile,
+} from "../../hooks/useApi";
 import type { Municipality, TagWithCategory } from "../../lib/api";
 
 interface FeedOnboardingProps {
@@ -34,6 +39,9 @@ export function FeedOnboarding({
   compact = false,
 }: FeedOnboardingProps) {
   const { t } = useTranslation(["agora", "common"]);
+  const [homeMunicipalityId, setHomeMunicipalityId] = useState<string | null>(
+    null,
+  );
   const [selectedMunicipalities, setSelectedMunicipalities] = useState<
     string[]
   >([]);
@@ -43,6 +51,7 @@ export function FeedOnboarding({
   const { data: municipalitiesData } = useMunicipalities();
   const { data: tagsData } = useTags();
   const subscribeMutation = useSubscribe();
+  const updateProfileMutation = useUpdateProfile();
 
   const topMunicipalities = (municipalitiesData || []).slice(0, 8);
 
@@ -68,6 +77,13 @@ export function FeedOnboarding({
     );
   };
 
+  const toggleHomeMunicipality = (id: string) => {
+    setHomeMunicipalityId((prev) => (prev === id ? null : id));
+    setSelectedMunicipalities((prev) =>
+      prev.filter((municipality) => municipality !== id),
+    );
+  };
+
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) =>
       prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
@@ -78,7 +94,14 @@ export function FeedOnboarding({
     setIsSubmitting(true);
 
     try {
-      // Subscribe to selected municipalities
+      if (homeMunicipalityId) {
+        await updateProfileMutation.mutateAsync({
+          municipalityId: homeMunicipalityId,
+        });
+      }
+
+      // Subscribe to selected municipalities except the home municipality,
+      // which the backend auto-follows when set.
       for (const municipalityId of selectedMunicipalities) {
         await subscribeMutation.mutateAsync({
           entityType: "municipality",
@@ -103,7 +126,9 @@ export function FeedOnboarding({
   };
 
   const hasSelections =
-    selectedMunicipalities.length > 0 || selectedTags.length > 0;
+    homeMunicipalityId !== null ||
+    selectedMunicipalities.length > 0 ||
+    selectedTags.length > 0;
 
   // Compact inline banner mode for Tutustu tab
   if (compact) {
@@ -123,14 +148,14 @@ export function FeedOnboarding({
               {topMunicipalities.slice(0, 4).map((m: Municipality) => (
                 <button
                   key={m.id}
-                  onClick={() => toggleMunicipality(m.id)}
+                  onClick={() => toggleHomeMunicipality(m.id)}
                   className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
-                    selectedMunicipalities.includes(m.id)
+                    homeMunicipalityId === m.id
                       ? "bg-blue-600 text-white"
                       : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100"
                   }`}
                 >
-                  {selectedMunicipalities.includes(m.id) && "✓ "}
+                  {homeMunicipalityId === m.id && "✓ "}
                   {m.name}
                 </button>
               ))}
@@ -206,26 +231,62 @@ export function FeedOnboarding({
         <div className="flex items-center gap-2 mb-3">
           <MapPin className="w-5 h-5 text-blue-600" />
           <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-            {t("agora:onboarding.municipalities")}
+            {t("agora:onboarding.municipalities", {
+              defaultValue: "Kotikunta",
+            })}
           </h3>
         </div>
         <div className="flex flex-wrap gap-2">
           {topMunicipalities.map((m: Municipality) => (
             <button
               key={m.id}
-              onClick={() => toggleMunicipality(m.id)}
+              onClick={() => toggleHomeMunicipality(m.id)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                selectedMunicipalities.includes(m.id)
+                homeMunicipalityId === m.id
                   ? "bg-blue-600 text-white"
                   : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
               }`}
             >
-              {selectedMunicipalities.includes(m.id) && (
+              {homeMunicipalityId === m.id && (
                 <CheckCircle2 className="w-4 h-4" />
               )}
               {m.name}
             </button>
           ))}
+        </div>
+      </div>
+
+      <div className="mb-6">
+        <div className="flex items-center gap-2 mb-3">
+          <Building2 className="w-5 h-5 text-blue-600" />
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+            {t("agora:onboarding.followMoreMunicipalities", {
+              defaultValue: "Seuraa myös muita kuntia",
+            })}
+          </h3>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {topMunicipalities
+            .filter(
+              (municipality: Municipality) =>
+                municipality.id !== homeMunicipalityId,
+            )
+            .map((m: Municipality) => (
+              <button
+                key={m.id}
+                onClick={() => toggleMunicipality(m.id)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                  selectedMunicipalities.includes(m.id)
+                    ? "bg-sky-600 text-white"
+                    : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                }`}
+              >
+                {selectedMunicipalities.includes(m.id) && (
+                  <CheckCircle2 className="w-4 h-4" />
+                )}
+                {m.name}
+              </button>
+            ))}
         </div>
       </div>
 

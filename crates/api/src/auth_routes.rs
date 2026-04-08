@@ -35,6 +35,7 @@ struct UserProfile {
     identity_provider: Option<String>,
     verified_name: Option<String>,
     municipality_id: Option<Id>,
+    municipality: Option<crate::map::MunicipalityResponse>,
     locale: String,
     notification_replies: bool,
     notification_mentions: bool,
@@ -43,39 +44,45 @@ struct UserProfile {
     created_at: String,
 }
 
-impl From<eulesia_db::entities::users::Model> for UserProfile {
-    fn from(u: eulesia_db::entities::users::Model) -> Self {
-        Self {
-            id: u.id,
-            username: u.username,
-            email: u.email,
-            name: u.name,
-            avatar_url: u.avatar_url,
-            bio: u.bio,
-            role: u.role,
-            institution_type: u.institution_type,
-            institution_name: u.institution_name,
-            identity_verified: u.identity_verified,
-            identity_level: u.identity_level,
-            identity_provider: u.identity_provider,
-            verified_name: u.verified_name,
-            municipality_id: u.municipality_id,
-            locale: u.locale,
-            notification_replies: u.notification_replies,
-            notification_mentions: u.notification_mentions,
-            notification_official: u.notification_official,
-            onboarding_completed_at: u.onboarding_completed_at.map(|t| t.to_rfc3339()),
-            created_at: u.created_at.to_rfc3339(),
-        }
-    }
+async fn user_profile(
+    db: &sea_orm::DatabaseConnection,
+    user: eulesia_db::entities::users::Model,
+) -> Result<UserProfile, ApiError> {
+    let municipality = crate::map::municipality_response_by_id(db, user.municipality_id).await?;
+
+    Ok(UserProfile {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        name: user.name,
+        avatar_url: user.avatar_url,
+        bio: user.bio,
+        role: user.role,
+        institution_type: user.institution_type,
+        institution_name: user.institution_name,
+        identity_verified: user.identity_verified,
+        identity_level: user.identity_level,
+        identity_provider: user.identity_provider,
+        verified_name: user.verified_name,
+        municipality_id: user.municipality_id,
+        municipality,
+        locale: user.locale,
+        notification_replies: user.notification_replies,
+        notification_mentions: user.notification_mentions,
+        notification_official: user.notification_official,
+        onboarding_completed_at: user.onboarding_completed_at.map(|t| t.to_rfc3339()),
+        created_at: user.created_at.to_rfc3339(),
+    })
 }
 
-fn auth_response(
+async fn auth_response(
     user: eulesia_db::entities::users::Model,
     token: &eulesia_auth::token::SessionToken,
     config: &AppConfig,
     jar: CookieJar,
-) -> (CookieJar, Json<UserProfile>) {
+    db: &sea_orm::DatabaseConnection,
+) -> Result<(CookieJar, Json<UserProfile>), ApiError> {
+    let profile = user_profile(db, user).await?;
     // Clear any stale session cookies that may have been set with different
     // domain/path attributes (e.g. by the old v1 Node API). We clear both
     // with and without domain to cover all variants the browser may hold.
@@ -90,7 +97,7 @@ fn auth_response(
     let cookie = build_session_cookie(token.as_str(), config);
     let jar = jar.add(cookie);
 
-    (jar, Json(UserProfile::from(user)))
+    Ok((jar, Json(profile)))
 }
 
 async fn register(
@@ -123,7 +130,7 @@ async fn register(
     .await
     .map_err(ApiError::from)?;
 
-    Ok(auth_response(user, &token, &state.config, jar))
+    auth_response(user, &token, &state.config, jar, &state.db).await
 }
 
 async fn login(
@@ -141,7 +148,7 @@ async fn login(
     .await
     .map_err(ApiError::from)?;
 
-    Ok(auth_response(user, &token, &state.config, jar))
+    auth_response(user, &token, &state.config, jar, &state.db).await
 }
 
 async fn logout(
@@ -164,7 +171,7 @@ async fn me(State(state): State<AppState>, auth: AuthUser) -> Result<Json<UserPr
         .map_err(|e| ApiError::Database(e.to_string()))?
         .ok_or_else(|| ApiError::NotFound("user not found".into()))?;
 
-    Ok(Json(UserProfile::from(user)))
+    Ok(Json(user_profile(&state.db, user).await?))
 }
 
 fn build_session_cookie(token: &str, config: &crate::AppConfig) -> Cookie<'static> {

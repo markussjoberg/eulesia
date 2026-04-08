@@ -1392,6 +1392,7 @@ pub async fn create_club_thread(
         is_pinned: thread.is_pinned,
         is_locked: thread.is_locked,
         municipality_id: thread.municipality_id,
+        municipality_name: None,
         institutional_context: thread.institutional_context,
         source: thread.source.parse().unwrap_or_else(|_| {
             tracing::warn!(thread_id = %thread.id, source = %thread.source, "unknown source");
@@ -1581,6 +1582,7 @@ pub async fn get_club_thread(
         is_pinned: thread.is_pinned,
         is_locked: thread.is_locked,
         municipality_id: thread.municipality_id,
+        municipality_name: None,
         institutional_context: thread.institutional_context,
         source: thread.source.parse().unwrap_or_else(|_| {
             tracing::warn!(thread_id = %thread.id, source = %thread.source, "unknown source");
@@ -2336,6 +2338,7 @@ mod tests {
             },
             tags: vec![],
             municipality_id: None,
+            municipality_name: None,
             institutional_context: None,
             reply_count: 0,
             score: 0,

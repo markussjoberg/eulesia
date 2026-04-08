@@ -49,7 +49,7 @@ _: {
         XDG_CACHE_HOME="$HOME/.cache"
         export XDG_CACHE_HOME
         mkdir -p "$XDG_CACHE_HOME"
-        treefmt
+        ${config.treefmt.build.wrapper}/bin/treefmt
       '';
     };
 

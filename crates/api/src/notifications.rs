@@ -101,7 +101,7 @@ fn normalize_notification_pagination(params: &PaginationParams) -> (u64, u64, i6
     (offset, limit, page)
 }
 
-fn notification_has_more(total: u64, offset: u64, limit: u64) -> bool {
+const fn notification_has_more(total: u64, offset: u64, limit: u64) -> bool {
     offset.saturating_add(limit) < total
 }
 

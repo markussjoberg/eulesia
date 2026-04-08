@@ -14,6 +14,7 @@ vi.mock("../lib/api", () => ({
     logout: vi.fn(),
     updateProfile: vi.fn().mockResolvedValue({}),
   },
+  setUnauthorizedHandler: vi.fn(),
 }));
 
 const mockUser: User = {

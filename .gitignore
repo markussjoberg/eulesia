@@ -67,6 +67,7 @@ lerna-debug.log*
 
 # Build artifacts
 target/
+crates/api/bindings/
 node_modules
 apps/*/node_modules
 dist

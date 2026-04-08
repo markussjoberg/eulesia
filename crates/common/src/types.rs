@@ -1,4 +1,6 @@
 use chrono::{DateTime, Utc};
+use sea_orm::DeriveActiveEnum;
+use sea_orm::entity::prelude::{EnumIter, StringLen};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -798,6 +800,251 @@ impl std::str::FromStr for MapPointType {
 }
 
 // ---------------------------------------------------------------------------
+// Geo types
+// ---------------------------------------------------------------------------
+
+/// Geographic coordinates.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "ts", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts", ts(export))]
+pub struct Coordinates {
+    pub latitude: f64,
+    pub longitude: f64,
+}
+
+impl Coordinates {
+    pub fn from_options(lat: Option<f64>, lon: Option<f64>) -> Option<Self> {
+        Some(Self {
+            latitude: lat?,
+            longitude: lon?,
+        })
+    }
+}
+
+/// Geographic bounding box.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "ts", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts", ts(export))]
+#[serde(rename_all = "camelCase")]
+pub struct Bounds {
+    pub south: f64,
+    pub north: f64,
+    pub west: f64,
+    pub east: f64,
+}
+
+// ---------------------------------------------------------------------------
+// JobStatus enum
+// ---------------------------------------------------------------------------
+
+/// Execution status of a background job.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, EnumIter, DeriveActiveEnum)]
+#[sea_orm(rs_type = "String", db_type = "String(StringLen::None)")]
+#[cfg_attr(feature = "ts", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts", ts(export))]
+#[serde(rename_all = "lowercase")]
+pub enum JobStatus {
+    #[sea_orm(string_value = "running")]
+    Running,
+    #[sea_orm(string_value = "skipped")]
+    Skipped,
+    #[sea_orm(string_value = "succeeded")]
+    Succeeded,
+    #[sea_orm(string_value = "failed")]
+    Failed,
+}
+
+impl JobStatus {
+    pub const fn as_str(&self) -> &'static str {
+        match self {
+            Self::Running => "running",
+            Self::Skipped => "skipped",
+            Self::Succeeded => "succeeded",
+            Self::Failed => "failed",
+        }
+    }
+}
+
+impl std::fmt::Display for JobStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl std::str::FromStr for JobStatus {
+    type Err = String;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "running" => Ok(Self::Running),
+            "skipped" => Ok(Self::Skipped),
+            "succeeded" => Ok(Self::Succeeded),
+            "failed" => Ok(Self::Failed),
+            other => Err(format!("invalid job status: {other}")),
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Location enums
+// ---------------------------------------------------------------------------
+
+/// Type of location (OSM-inspired).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, EnumIter, DeriveActiveEnum)]
+#[sea_orm(rs_type = "String", db_type = "String(StringLen::None)")]
+#[cfg_attr(feature = "ts", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts", ts(export))]
+#[serde(rename_all = "lowercase")]
+pub enum LocationType {
+    #[sea_orm(string_value = "municipality")]
+    Municipality,
+    #[sea_orm(string_value = "place")]
+    Place,
+    #[sea_orm(string_value = "region")]
+    Region,
+    #[sea_orm(string_value = "country")]
+    Country,
+    #[sea_orm(string_value = "district")]
+    District,
+    #[sea_orm(string_value = "locality")]
+    Locality,
+    #[sea_orm(string_value = "neighborhood")]
+    Neighborhood,
+    #[sea_orm(string_value = "other")]
+    Other,
+}
+
+impl LocationType {
+    pub const fn as_str(&self) -> &'static str {
+        match self {
+            Self::Municipality => "municipality",
+            Self::Place => "place",
+            Self::Region => "region",
+            Self::Country => "country",
+            Self::District => "district",
+            Self::Locality => "locality",
+            Self::Neighborhood => "neighborhood",
+            Self::Other => "other",
+        }
+    }
+}
+
+impl std::fmt::Display for LocationType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl std::str::FromStr for LocationType {
+    type Err = std::convert::Infallible;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "municipality" => Ok(Self::Municipality),
+            "place" => Ok(Self::Place),
+            "region" => Ok(Self::Region),
+            "country" => Ok(Self::Country),
+            "district" => Ok(Self::District),
+            "locality" => Ok(Self::Locality),
+            "neighborhood" => Ok(Self::Neighborhood),
+            _ => Ok(Self::Other),
+        }
+    }
+}
+
+/// Operational status of a location.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, EnumIter, DeriveActiveEnum)]
+#[sea_orm(rs_type = "String", db_type = "String(StringLen::None)")]
+#[cfg_attr(feature = "ts", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts", ts(export))]
+#[serde(rename_all = "lowercase")]
+pub enum LocationStatus {
+    #[sea_orm(string_value = "active")]
+    Active,
+    #[sea_orm(string_value = "inactive")]
+    Inactive,
+    #[sea_orm(string_value = "archived")]
+    Archived,
+}
+
+impl LocationStatus {
+    pub const fn as_str(&self) -> &'static str {
+        match self {
+            Self::Active => "active",
+            Self::Inactive => "inactive",
+            Self::Archived => "archived",
+        }
+    }
+}
+
+impl std::fmt::Display for LocationStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl std::str::FromStr for LocationStatus {
+    type Err = String;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "active" => Ok(Self::Active),
+            "inactive" => Ok(Self::Inactive),
+            "archived" => Ok(Self::Archived),
+            other => Err(format!("invalid location status: {other}")),
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// SyncStatus enum
+// ---------------------------------------------------------------------------
+
+/// Synchronization status for external data sources.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, EnumIter, DeriveActiveEnum)]
+#[sea_orm(rs_type = "String", db_type = "String(StringLen::None)")]
+#[cfg_attr(feature = "ts", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts", ts(export))]
+#[serde(rename_all = "lowercase")]
+pub enum SyncStatus {
+    #[sea_orm(string_value = "pending")]
+    Pending,
+    #[sea_orm(string_value = "synced")]
+    Synced,
+    #[sea_orm(string_value = "failed")]
+    Failed,
+    #[sea_orm(string_value = "manual")]
+    Manual,
+}
+
+impl SyncStatus {
+    pub const fn as_str(&self) -> &'static str {
+        match self {
+            Self::Pending => "pending",
+            Self::Synced => "synced",
+            Self::Failed => "failed",
+            Self::Manual => "manual",
+        }
+    }
+}
+
+impl std::fmt::Display for SyncStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl std::str::FromStr for SyncStatus {
+    type Err = String;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "pending" => Ok(Self::Pending),
+            "synced" => Ok(Self::Synced),
+            "failed" => Ok(Self::Failed),
+            "manual" => Ok(Self::Manual),
+            other => Err(format!("invalid sync status: {other}")),
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
 // InvitationStatus enum
 // ---------------------------------------------------------------------------
 
@@ -916,6 +1163,59 @@ mod tests {
         assert!(ClubRole::Moderator.is_at_least_moderator());
         assert!(ClubRole::Owner.is_at_least_moderator());
         assert!(!ClubRole::Member.is_at_least_moderator());
+    }
+
+    // ---- JobStatus ----------------------------------------------------------
+
+    #[test]
+    fn job_status_roundtrip() {
+        roundtrip(JobStatus::Running, "running");
+        roundtrip(JobStatus::Skipped, "skipped");
+        roundtrip(JobStatus::Succeeded, "succeeded");
+        roundtrip(JobStatus::Failed, "failed");
+    }
+
+    // ---- LocationType -------------------------------------------------------
+
+    #[test]
+    fn location_type_roundtrip() {
+        roundtrip(LocationType::Municipality, "municipality");
+        roundtrip(LocationType::Place, "place");
+        roundtrip(LocationType::Region, "region");
+        roundtrip(LocationType::Country, "country");
+        roundtrip(LocationType::District, "district");
+        roundtrip(LocationType::Locality, "locality");
+        roundtrip(LocationType::Neighborhood, "neighborhood");
+        roundtrip(LocationType::Other, "other");
+    }
+
+    #[test]
+    fn location_type_fallback_to_other() {
+        // Any unknown string should parse as Other
+        assert_eq!(LocationType::from_str("city").unwrap(), LocationType::Other);
+        assert_eq!(
+            LocationType::from_str("something_else").unwrap(),
+            LocationType::Other
+        );
+    }
+
+    // ---- LocationStatus -----------------------------------------------------
+
+    #[test]
+    fn location_status_roundtrip() {
+        roundtrip(LocationStatus::Active, "active");
+        roundtrip(LocationStatus::Inactive, "inactive");
+        roundtrip(LocationStatus::Archived, "archived");
+    }
+
+    // ---- SyncStatus ---------------------------------------------------------
+
+    #[test]
+    fn sync_status_roundtrip() {
+        roundtrip(SyncStatus::Pending, "pending");
+        roundtrip(SyncStatus::Synced, "synced");
+        roundtrip(SyncStatus::Failed, "failed");
+        roundtrip(SyncStatus::Manual, "manual");
     }
 
     #[test]

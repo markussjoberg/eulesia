@@ -17,6 +17,8 @@ pub struct CreateThreadRequest {
     pub language: Option<String>,
     pub country: Option<String>,
     pub location_id: Option<Uuid>,
+    pub location_osm_id: Option<i64>,
+    pub location_osm_type: Option<String>,
     pub institutional_context: Option<serde_json::Value>,
 }
 
@@ -85,6 +87,7 @@ pub struct ThreadResponse {
     pub author: AuthorSummary,
     pub tags: Vec<String>,
     pub municipality_id: Option<Uuid>,
+    pub municipality_name: Option<String>,
     pub institutional_context: Option<serde_json::Value>,
     pub reply_count: i32,
     pub score: i32,
@@ -209,6 +212,7 @@ mod tests {
             author: sample_author(),
             tags: vec!["politics".into()],
             municipality_id: None,
+            municipality_name: None,
             institutional_context: None,
             reply_count: 3,
             score: 12,

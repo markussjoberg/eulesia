@@ -161,8 +161,8 @@ export function ClubViewPage() {
         category: editCategory.trim() || undefined,
         coverImageUrl: editCoverImage || undefined,
         isPublic: editIsPublic,
-        latitude: editLocation ? editLocation.latitude : undefined,
-        longitude: editLocation ? editLocation.longitude : undefined,
+        latitude: editLocation?.coordinates?.latitude ?? undefined,
+        longitude: editLocation?.coordinates?.longitude ?? undefined,
         address: editLocation
           ? editLocation.displayName || editLocation.name
           : editAddress || undefined,

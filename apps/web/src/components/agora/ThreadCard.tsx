@@ -145,7 +145,7 @@ export function ThreadCard({
             <ScopeBadge
               scope={thread.scope}
               municipalityId={thread.municipalityId}
-              municipalityName={thread.municipalityName}
+              municipalityName={thread.municipalityName ?? undefined}
             />
             <div className="flex items-center gap-2 flex-shrink-0 ml-auto">
               <span className="flex items-center gap-1">

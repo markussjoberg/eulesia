@@ -158,7 +158,7 @@ fn pagination_sql_value(value: u64) -> i64 {
     i64::try_from(value).expect("pagination values are clamped to i64::MAX")
 }
 
-fn has_more(total: u64, offset: u64, limit: u64) -> bool {
+const fn has_more(total: u64, offset: u64, limit: u64) -> bool {
     offset.saturating_add(limit) < total
 }
 
@@ -193,7 +193,7 @@ fn parse_api_datetime(
         .map_err(|_| ApiError::BadRequest(format!("invalid {field_name} format")))
 }
 
-fn should_sync_thread_search(thread: &threads::Model) -> bool {
+const fn should_sync_thread_search(thread: &threads::Model) -> bool {
     thread.club_id.is_none() && !thread.is_hidden
 }
 
@@ -1442,7 +1442,9 @@ async fn admin_list_reports(
         .await
         .map_err(db_err)?
         .and_then(|r| r.try_get_by_index::<i64>(0).ok())
-        .unwrap_or(0) as u64;
+        .unwrap_or(0)
+        .try_into()
+        .unwrap_or(0);
 
     let data_sql = r"SELECT cr.id, cr.content_type, cr.content_id, cr.reason, cr.description,
                  cr.status, cr.created_at, cr.resolved_at, cr.reporter_id,
@@ -1677,7 +1679,9 @@ async fn admin_list_appeals(
         .await
         .map_err(db_err)?
         .and_then(|r| r.try_get_by_index::<i64>(0).ok())
-        .unwrap_or(0) as u64;
+        .unwrap_or(0)
+        .try_into()
+        .unwrap_or(0);
 
     let data_sql = r"SELECT ma.id, ma.reason, ma.status, ma.admin_response, ma.created_at,
                  ma.responded_at, ma.sanction_id, ma.report_id, ma.action_id,
@@ -2053,7 +2057,9 @@ async fn admin_modlog(
         .await
         .map_err(db_err)?
         .and_then(|r| r.try_get_by_index::<i64>(0).ok())
-        .unwrap_or(0) as u64;
+        .unwrap_or(0)
+        .try_into()
+        .unwrap_or(0);
 
     let data_sql = r"SELECT ma.id, ma.admin_id, COALESCE(u.name, aa.name, 'system') AS admin_name,
                  ma.action_type, ma.target_type, ma.target_id, ma.reason, ma.created_at
@@ -2226,7 +2232,7 @@ async fn admin_transparency(
               WHERE created_at >= $1 AND created_at <= $2
               GROUP BY status
               ORDER BY COUNT(*) DESC, status ASC",
-            [from.clone().into(), to.clone().into()],
+            [from.into(), to.into()],
         ))
         .await
         .map_err(db_err)?;
@@ -2240,7 +2246,7 @@ async fn admin_transparency(
               WHERE created_at >= $1 AND created_at <= $2
               GROUP BY reason
               ORDER BY COUNT(*) DESC, reason ASC",
-            [from.clone().into(), to.clone().into()],
+            [from.into(), to.into()],
         ))
         .await
         .map_err(db_err)?;
@@ -2254,7 +2260,7 @@ async fn admin_transparency(
               WHERE created_at >= $1 AND created_at <= $2
               GROUP BY content_type
               ORDER BY COUNT(*) DESC, content_type ASC",
-            [from.clone().into(), to.clone().into()],
+            [from.into(), to.into()],
         ))
         .await
         .map_err(db_err)?;
@@ -2267,7 +2273,7 @@ async fn admin_transparency(
               FROM content_reports
               WHERE created_at >= $1 AND created_at <= $2
                 AND resolved_at IS NOT NULL",
-            [from.clone().into(), to.clone().into()],
+            [from.into(), to.into()],
         ))
         .await
         .map_err(db_err)?
@@ -2284,7 +2290,7 @@ async fn admin_transparency(
               WHERE created_at >= $1 AND created_at <= $2
               GROUP BY action_type
               ORDER BY cnt DESC, action_type ASC",
-            [from.clone().into(), to.clone().into()],
+            [from.into(), to.into()],
         ))
         .await
         .map_err(db_err)?;
@@ -2298,7 +2304,7 @@ async fn admin_transparency(
               WHERE issued_at >= $1 AND issued_at <= $2
               GROUP BY sanction_type
               ORDER BY COUNT(*) DESC, sanction_type ASC",
-            [from.clone().into(), to.clone().into()],
+            [from.into(), to.into()],
         ))
         .await
         .map_err(db_err)?;
@@ -2312,7 +2318,7 @@ async fn admin_transparency(
               WHERE created_at >= $1 AND created_at <= $2
               GROUP BY status
               ORDER BY COUNT(*) DESC, status ASC",
-            [from.clone().into(), to.clone().into()],
+            [from.into(), to.into()],
         ))
         .await
         .map_err(db_err)?;

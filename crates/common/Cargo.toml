@@ -16,6 +16,7 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 thiserror = { workspace = true }
 uuid = { workspace = true }
+sea-orm = { workspace = true }
 ts-rs = { workspace = true, optional = true }
 
 [dev-dependencies]

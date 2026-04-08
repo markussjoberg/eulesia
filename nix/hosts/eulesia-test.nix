@@ -9,6 +9,7 @@
     ./lib/hetzner-cloud-hardware.nix
     ./eulesia-test-disks.nix
     ../modules/eulesia.nix
+    ../modules/eulesia-jobs.nix
     ../modules/eulesia-server.nix
   ];
 
@@ -239,6 +240,16 @@
       extraEnvironment = {
         APP_URL = "https://test.eulesia.org";
         API_URL = "https://test.eulesia.org";
+      };
+    };
+
+    eulesia-jobs = {
+      enable = true;
+      package = eulesiaPackages.jobs;
+      database.url = "postgresql:///eulesia_v2";
+      extraEnvironment = {
+        EULESIA_JOBS_LIPAS_ENABLED = "true";
+        EULESIA_JOBS_OSM_ENABLED = "true";
       };
     };
   };

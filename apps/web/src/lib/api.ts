@@ -42,6 +42,7 @@ import type {
   AppealResponse,
   MySanction,
 } from "../types/frontend";
+import type { UserProfileResponse } from "../types/generated/UserProfileResponse";
 import type {
   AdminDashboard,
   AdminUser,
@@ -111,6 +112,44 @@ export interface RegisterRequest {
   password: string;
   name: string;
   ftnToken?: string;
+}
+
+interface ApiMunicipality {
+  id: string;
+  name: string;
+  nameFi?: string | null;
+  nameSv?: string | null;
+  region?: string | null;
+  country?: string | null;
+  population?: number | null;
+  coordinates?: {
+    latitude: number;
+    longitude: number;
+  } | null;
+}
+
+interface ApiCurrentUserProfile {
+  id: string;
+  username?: string;
+  email?: string | null;
+  name: string;
+  avatarUrl?: string | null;
+  bio?: string | null;
+  role: "citizen" | "institution" | "moderator";
+  institutionType?: string | null;
+  institutionName?: string | null;
+  identityVerified?: boolean;
+  identityLevel?: "basic" | "substantial" | "high";
+  identityProvider?: string | null;
+  verifiedName?: string | null;
+  municipalityId?: string | null;
+  municipality?: ApiMunicipality | null;
+  locale?: string;
+  notificationReplies?: boolean;
+  notificationMentions?: boolean;
+  notificationOfficial?: boolean;
+  onboardingCompletedAt?: string | null;
+  createdAt?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -327,6 +366,51 @@ interface InstitutionClaimWithUser {
   user: { id: string; name: string; email: string };
 }
 
+function toMunicipality(
+  municipality?: ApiMunicipality | null,
+): Municipality | undefined {
+  if (!municipality) return undefined;
+  return {
+    id: municipality.id,
+    name: municipality.name,
+    nameFi: municipality.nameFi ?? undefined,
+    nameSv: municipality.nameSv ?? undefined,
+    region: municipality.region ?? undefined,
+    country: municipality.country ?? undefined,
+    population: municipality.population ?? undefined,
+    latitude: municipality.coordinates?.latitude ?? undefined,
+    longitude: municipality.coordinates?.longitude ?? undefined,
+  };
+}
+
+function toUser(apiUser: ApiCurrentUserProfile): User {
+  const municipality = toMunicipality(apiUser.municipality);
+  return {
+    id: apiUser.id,
+    email: apiUser.email ?? undefined,
+    name: apiUser.name,
+    username: apiUser.username,
+    verifiedName: apiUser.verifiedName ?? undefined,
+    avatarUrl: apiUser.avatarUrl ?? undefined,
+    bio: apiUser.bio ?? undefined,
+    role: apiUser.role,
+    institutionType: apiUser.institutionType ?? undefined,
+    institutionName: apiUser.institutionName ?? undefined,
+    municipalityId: apiUser.municipalityId ?? municipality?.id ?? null,
+    municipality: municipality ?? null,
+    identityVerified: apiUser.identityVerified,
+    identityLevel: apiUser.identityLevel,
+    settings: {
+      notificationReplies: apiUser.notificationReplies ?? true,
+      notificationMentions: apiUser.notificationMentions ?? true,
+      notificationOfficial: apiUser.notificationOfficial ?? true,
+      locale: apiUser.locale ?? "en",
+    },
+    onboardingCompletedAt: apiUser.onboardingCompletedAt ?? undefined,
+    createdAt: apiUser.createdAt,
+  };
+}
+
 interface ContentReportResponse {
   id: string;
   status: string;
@@ -385,10 +469,11 @@ class ApiClient {
   }
 
   async login(username: string, password: string): Promise<User> {
-    return this.request("/auth/login", {
+    const response = await this.request<ApiCurrentUserProfile>("/auth/login", {
       method: "POST",
       body: JSON.stringify({ username, password }),
     });
+    return toUser(response);
   }
 
   async getAuthConfig(): Promise<AuthConfig> {
@@ -396,10 +481,14 @@ class ApiClient {
   }
 
   async register(data: RegisterRequest): Promise<User> {
-    return this.request("/auth/register", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
+    const response = await this.request<ApiCurrentUserProfile>(
+      "/auth/register",
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+      },
+    );
+    return toUser(response);
   }
 
   async logout(): Promise<void> {
@@ -407,7 +496,8 @@ class ApiClient {
   }
 
   async getCurrentUser(): Promise<User> {
-    return this.request("/auth/me");
+    const response = await this.request<ApiCurrentUserProfile>("/auth/me");
+    return toUser(response);
   }
 
   /** Fetch sanction info from /auth/me when a 403 is expected (banned/suspended). */
@@ -481,15 +571,51 @@ class ApiClient {
   }
 
   // Users
-  async getUser(id: string): Promise<User> {
-    return this.request(`/users/${id}`);
+  // Public profile endpoint returns the raw /users/:id payload, including threads.
+  async getUser(id: string): Promise<UserProfileResponse> {
+    return this.request<UserProfileResponse>(`/users/${id}`);
   }
 
   async updateProfile(data: Partial<User>): Promise<User> {
-    return this.request("/users/me", {
-      method: "PATCH",
-      body: JSON.stringify(data),
-    });
+    const profilePayload: Record<string, unknown> = {};
+    const settingsPayload: Record<string, unknown> = {};
+
+    if (data.name !== undefined) profilePayload.name = data.name;
+    if (data.bio !== undefined) profilePayload.bio = data.bio;
+    if (data.avatarUrl !== undefined) profilePayload.avatarUrl = data.avatarUrl;
+    if (data.municipalityId !== undefined)
+      profilePayload.municipalityId = data.municipalityId;
+    else if (data.municipality === null) profilePayload.municipalityId = null;
+    else if (data.municipality?.id)
+      profilePayload.municipalityId = data.municipality.id;
+
+    if (data.settings?.locale !== undefined)
+      profilePayload.locale = data.settings.locale;
+    if (data.settings?.locale !== undefined)
+      settingsPayload.locale = data.settings.locale;
+    if (data.settings?.notificationReplies !== undefined)
+      settingsPayload.notificationReplies = data.settings.notificationReplies;
+    if (data.settings?.notificationMentions !== undefined)
+      settingsPayload.notificationMentions = data.settings.notificationMentions;
+    if (data.settings?.notificationOfficial !== undefined)
+      settingsPayload.notificationOfficial = data.settings.notificationOfficial;
+
+    if (Object.keys(settingsPayload).length > 0) {
+      await this.request("/users/settings", {
+        method: "PATCH",
+        body: JSON.stringify(settingsPayload),
+      });
+    }
+
+    if (Object.keys(profilePayload).length > 0) {
+      const response = await this.request<ApiCurrentUserProfile>("/users/me", {
+        method: "PATCH",
+        body: JSON.stringify(profilePayload),
+      });
+      return toUser(response);
+    }
+
+    return this.getCurrentUser();
   }
 
   async changePassword(data: {

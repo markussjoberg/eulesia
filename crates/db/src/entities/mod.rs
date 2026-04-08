@@ -74,6 +74,8 @@ pub mod system_announcements;
 
 // Events
 pub mod domain_events;
+pub mod job_cursors;
+pub mod job_runs;
 pub mod outbox;
 
 #[cfg(test)]

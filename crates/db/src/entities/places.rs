@@ -1,3 +1,4 @@
+use eulesia_common::types::SyncStatus;
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -24,7 +25,10 @@ pub struct Model {
     pub address: Option<String>,
     pub source: String,
     pub source_id: Option<String>,
+    pub source_url: Option<String>,
     pub osm_id: Option<String>,
+    pub last_synced: Option<DateTimeWithTimeZone>,
+    pub sync_status: SyncStatus,
     pub metadata: Option<Json>,
     pub created_by: Option<Uuid>,
     pub created_at: DateTimeWithTimeZone,

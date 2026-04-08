@@ -6,6 +6,7 @@
 }: {
   imports = [
     ../modules/eulesia.nix
+    ../modules/eulesia-jobs.nix
     ../modules/eulesia-server.nix
   ];
 
@@ -163,6 +164,16 @@
       extraEnvironment = {
         APP_URL = "http://localhost:18080";
         API_URL = "http://localhost:18080";
+      };
+    };
+
+    eulesia-jobs = {
+      enable = true;
+      package = eulesiaPackages.jobs;
+      database.url = "postgresql:///eulesia_v2";
+      extraEnvironment = {
+        EULESIA_JOBS_LIPAS_ENABLED = "true";
+        EULESIA_JOBS_OSM_ENABLED = "true";
       };
     };
   };

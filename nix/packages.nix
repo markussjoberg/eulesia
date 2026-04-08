@@ -36,9 +36,10 @@
       src = repoSrc;
     };
     server = rustBuilds.package;
+    inherit (rustBuilds) jobs;
   in {
     packages = {
-      inherit frontend frontendTest server pnpmDeps;
+      inherit frontend frontendTest server jobs pnpmDeps;
       build = fullBuild;
       generate-idura-jwks = generateIduraJwks;
       default = fullBuild;
@@ -52,6 +53,11 @@
         type = "app";
         program = "${server}/bin/eulesia-server";
         meta.description = "Run the Eulesia Rust API server";
+      };
+      jobs = {
+        type = "app";
+        program = "${jobs}/bin/eulesia-jobs";
+        meta.description = "Run the Eulesia scheduled jobs service";
       };
       generate-idura-jwks = {
         type = "app";

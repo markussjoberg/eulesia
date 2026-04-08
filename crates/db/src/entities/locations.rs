@@ -1,3 +1,4 @@
+use eulesia_common::types::{LocationStatus, LocationType};
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -14,14 +15,14 @@ pub struct Model {
     pub name_sv: Option<String>,
     pub name_en: Option<String>,
     pub admin_level: Option<i32>,
-    pub r#type: Option<String>,
+    pub r#type: Option<LocationType>,
     pub parent_id: Option<Uuid>,
     pub country: Option<String>,
     pub latitude: Option<Decimal>,
     pub longitude: Option<Decimal>,
     pub bounds: Option<Json>,
     pub population: Option<i64>,
-    pub status: String,
+    pub status: LocationStatus,
     pub content_count: i32,
     pub created_at: DateTimeWithTimeZone,
 }

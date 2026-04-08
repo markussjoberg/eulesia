@@ -11,10 +11,12 @@ export interface User {
   username?: string;
   verifiedName?: string;
   avatarUrl?: string | null;
+  bio?: string | null;
   role: "citizen" | "institution" | "moderator";
   institutionType?: string;
   institutionName?: string;
-  municipality?: Municipality;
+  municipalityId?: string | null;
+  municipality?: Municipality | null;
   identityVerified?: boolean;
   identityLevel?: "basic" | "substantial" | "high";
   settings?: {
@@ -38,6 +40,10 @@ export interface Municipality {
   nameFi?: string;
   nameSv?: string;
   region?: string;
+  country?: string;
+  population?: number | null;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface Thread {
@@ -51,7 +57,7 @@ export interface Thread {
   authorId?: string | null;
   municipality?: Municipality;
   municipalityId?: string;
-  municipalityName?: string;
+  municipalityName?: string | null;
   institutionalContext?: InstitutionalContext;
   replyCount: number;
   score?: number;
@@ -333,22 +339,20 @@ export interface Place {
   nameFi?: string;
   nameSv?: string;
   description?: string;
-  latitude?: string;
-  longitude?: string;
-  radiusKm?: string;
+  latitude?: number;
+  longitude?: number;
+  radiusKm?: number;
   geojson?: unknown;
   type: "poi" | "area" | "route" | "landmark";
   category?: string;
   municipalityId?: string;
-  municipality?: Municipality;
   createdAt: string;
 }
 
 export interface LocationDetails {
   id: string;
   name: string;
-  latitude?: string;
-  longitude?: string;
+  coordinates?: { latitude: number; longitude: number };
   threads?: Thread[];
   clubs?: Club[];
   municipality?: Municipality;
@@ -361,8 +365,8 @@ export type LocationStatus = "active" | "available";
 
 export interface LocationResult {
   id: string | null; // DB ID (null if from Nominatim only)
-  osmId: number;
-  osmType: OsmType;
+  osmId: number | null;
+  osmType: OsmType | null;
   name: string;
   nameFi: string | null;
   nameSv: string | null;
@@ -370,9 +374,8 @@ export interface LocationResult {
   displayName: string;
   type: string; // 'municipality', 'village', 'region', etc.
   adminLevel: number | null;
-  country: string;
-  latitude: number;
-  longitude: number;
+  country: string | null;
+  coordinates: { latitude: number; longitude: number } | null;
   bounds: { south: number; north: number; west: number; east: number } | null;
   population: number | null;
   status: LocationStatus; // 'active' = in DB, 'available' = from Nominatim
@@ -454,6 +457,7 @@ export interface SearchLocationResult {
   displayName: string;
   type: string;
   country: string;
+  coordinates?: { latitude: number; longitude: number };
   contentCount: number;
   parentName?: string;
 }

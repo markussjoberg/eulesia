@@ -10,6 +10,7 @@ use crate::AppState;
 use eulesia_auth::session::{AuthUser, OptionalAuth};
 use eulesia_common::error::ApiError;
 use eulesia_db::repo::sessions::SessionRepo;
+use eulesia_db::repo::subscriptions::SubscriptionRepo;
 use eulesia_db::repo::users::UserRepo;
 
 // ---------------------------------------------------------------------------
@@ -30,6 +31,8 @@ pub struct UserProfileResponse {
     pub institution_type: Option<String>,
     pub institution_name: Option<String>,
     pub identity_verified: bool,
+    pub municipality_id: Option<Uuid>,
+    pub municipality: Option<crate::map::MunicipalityResponse>,
     pub created_at: String,
     pub threads: Vec<serde_json::Value>,
 }
@@ -41,26 +44,52 @@ pub struct UpdateProfileRequest {
     pub bio: Option<String>,
     pub avatar_url: Option<String>,
     pub locale: Option<String>,
+    pub municipality_id: Option<Option<Uuid>>,
 }
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-fn user_to_profile(u: eulesia_db::entities::users::Model) -> UserProfileResponse {
-    UserProfileResponse {
-        id: u.id,
-        username: u.username,
-        name: u.name,
-        avatar_url: u.avatar_url,
-        bio: u.bio,
-        role: u.role,
-        institution_type: u.institution_type,
-        institution_name: u.institution_name,
-        identity_verified: u.identity_verified,
-        created_at: u.created_at.to_rfc3339(),
+async fn user_to_profile(
+    db: &sea_orm::DatabaseConnection,
+    user: eulesia_db::entities::users::Model,
+) -> Result<UserProfileResponse, ApiError> {
+    let municipality = crate::map::municipality_response_by_id(db, user.municipality_id).await?;
+
+    Ok(UserProfileResponse {
+        id: user.id,
+        username: user.username,
+        name: user.name,
+        avatar_url: user.avatar_url,
+        bio: user.bio,
+        role: user.role,
+        institution_type: user.institution_type,
+        institution_name: user.institution_name,
+        identity_verified: user.identity_verified,
+        municipality_id: user.municipality_id,
+        municipality,
+        created_at: user.created_at.to_rfc3339(),
         threads: vec![],
-    }
+    })
+}
+
+async fn export_rows(
+    db: &impl ConnectionTrait,
+    sql: &str,
+    user_id: Uuid,
+    label: &str,
+    mapper: impl Fn(&sea_orm::QueryResult) -> Option<serde_json::Value>,
+) -> Result<Vec<serde_json::Value>, ApiError> {
+    let rows = db
+        .query_all(Statement::from_sql_and_values(
+            DatabaseBackend::Postgres,
+            sql,
+            [user_id.into()],
+        ))
+        .await
+        .map_err(|e| ApiError::Database(format!("export {label}: {e}")))?;
+    Ok(rows.iter().filter_map(mapper).collect())
 }
 
 // ---------------------------------------------------------------------------
@@ -121,7 +150,7 @@ pub async fn get_user_profile(
         })
         .collect();
 
-    let mut profile = user_to_profile(user);
+    let mut profile = user_to_profile(&state.db, user).await?;
     profile.threads = thread_values;
     Ok(Json(profile))
 }
@@ -165,11 +194,34 @@ async fn update_my_profile(
     if let Some(locale) = req.locale {
         am.locale = Set(locale);
     }
+    if let Some(municipality_id) = req.municipality_id {
+        if let Some(municipality_id) = municipality_id {
+            let municipality =
+                crate::map::municipality_response_by_id(state.db.as_ref(), Some(municipality_id))
+                    .await?;
+
+            if municipality.is_none() {
+                return Err(ApiError::BadRequest("municipalityId does not exist".into()));
+            }
+        }
+        am.municipality_id = Set(municipality_id);
+    }
 
     let updated = UserRepo::update(&state.db, am)
         .await
         .map_err(|e| ApiError::Database(format!("update user profile: {e}")))?;
-    Ok(Json(user_to_profile(updated)))
+    if let Some(Some(municipality_id)) = req.municipality_id {
+        SubscriptionRepo::upsert(
+            &state.db,
+            auth.user_id.0,
+            "municipality",
+            &municipality_id.to_string(),
+            "all",
+        )
+        .await
+        .map_err(|e| ApiError::Database(format!("auto-follow municipality: {e}")))?;
+    }
+    Ok(Json(user_to_profile(&state.db, updated).await?))
 }
 
 // ---------------------------------------------------------------------------
@@ -330,365 +382,175 @@ async fn onboarding_complete(
 // ---------------------------------------------------------------------------
 
 /// GET /users/me/data -- export all user data for GDPR compliance.
-#[allow(clippy::too_many_lines)]
 async fn export_my_data(
     auth: AuthUser,
     State(state): State<AppState>,
 ) -> Result<Json<serde_json::Value>, ApiError> {
     let user_id = auth.user_id.0;
+    let db = state.db.as_ref();
 
-    // Fetch user profile.
-    let user = UserRepo::find_by_id(&state.db, user_id)
+    let user = UserRepo::find_by_id(db, user_id)
         .await
         .map_err(|e| ApiError::Database(format!("find user: {e}")))?
         .ok_or(ApiError::Unauthorized)?;
 
     let profile = serde_json::json!({
-        "id": user.id,
-        "username": user.username,
-        "email": user.email,
-        "name": user.name,
-        "bio": user.bio,
-        "role": user.role,
-        "locale": user.locale,
-        "createdAt": user.created_at.to_rfc3339(),
+        "id": user.id, "username": user.username, "email": user.email,
+        "name": user.name, "bio": user.bio, "role": user.role,
+        "locale": user.locale, "createdAt": user.created_at.to_rfc3339(),
     });
 
-    // Fetch threads.
-    let thread_rows = state
-        .query_all(Statement::from_sql_and_values(
-            DatabaseBackend::Postgres,
-            r"SELECT id, title, content, scope, created_at
-              FROM threads WHERE author_id = $1 AND deleted_at IS NULL
-              ORDER BY created_at DESC",
-            [user_id.into()],
-        ))
-        .await
-        .map_err(|e| ApiError::Database(format!("export threads: {e}")))?;
+    type DT = chrono::DateTime<chrono::FixedOffset>;
 
-    let threads: Vec<serde_json::Value> = thread_rows
-        .iter()
-        .filter_map(|r| {
-            Some(serde_json::json!({
-                "id": r.try_get_by_index::<Uuid>(0).ok()?,
-                "title": r.try_get_by_index::<String>(1).ok()?,
-                "content": r.try_get_by_index::<String>(2).ok()?,
-                "scope": r.try_get_by_index::<String>(3).ok()?,
-                "createdAt": r.try_get_by_index::<chrono::DateTime<chrono::FixedOffset>>(4).ok()?.to_rfc3339(),
-            }))
-        })
-        .collect();
+    let threads = export_rows(db,
+        r"SELECT id, title, content, scope, created_at FROM threads WHERE author_id = $1 AND deleted_at IS NULL ORDER BY created_at DESC",
+        user_id, "threads", |r| Some(serde_json::json!({
+            "id": r.try_get_by_index::<Uuid>(0).ok()?, "title": r.try_get_by_index::<String>(1).ok()?,
+            "content": r.try_get_by_index::<String>(2).ok()?, "scope": r.try_get_by_index::<String>(3).ok()?,
+            "createdAt": r.try_get_by_index::<DT>(4).ok()?.to_rfc3339(),
+        }))).await?;
 
-    // Fetch comments.
-    let comment_rows = state
-        .query_all(Statement::from_sql_and_values(
-            DatabaseBackend::Postgres,
-            r"SELECT id, thread_id, content, created_at
-              FROM comments WHERE author_id = $1 AND deleted_at IS NULL
-              ORDER BY created_at DESC",
-            [user_id.into()],
-        ))
-        .await
-        .map_err(|e| ApiError::Database(format!("export comments: {e}")))?;
+    let comments = export_rows(db,
+        r"SELECT id, thread_id, content, created_at FROM comments WHERE author_id = $1 AND deleted_at IS NULL ORDER BY created_at DESC",
+        user_id, "comments", |r| Some(serde_json::json!({
+            "id": r.try_get_by_index::<Uuid>(0).ok()?, "threadId": r.try_get_by_index::<Uuid>(1).ok()?,
+            "content": r.try_get_by_index::<String>(2).ok()?,
+            "createdAt": r.try_get_by_index::<DT>(3).ok()?.to_rfc3339(),
+        }))).await?;
 
-    let comments: Vec<serde_json::Value> = comment_rows
-        .iter()
-        .filter_map(|r| {
-            Some(serde_json::json!({
-                "id": r.try_get_by_index::<Uuid>(0).ok()?,
-                "threadId": r.try_get_by_index::<Uuid>(1).ok()?,
-                "content": r.try_get_by_index::<String>(2).ok()?,
-                "createdAt": r.try_get_by_index::<chrono::DateTime<chrono::FixedOffset>>(3).ok()?.to_rfc3339(),
-            }))
-        })
-        .collect();
+    let votes = export_rows(db,
+        r"SELECT thread_id, value, created_at FROM thread_votes WHERE user_id = $1 ORDER BY created_at DESC",
+        user_id, "votes", |r| Some(serde_json::json!({
+            "threadId": r.try_get_by_index::<Uuid>(0).ok()?, "value": r.try_get_by_index::<i16>(1).ok()?,
+            "createdAt": r.try_get_by_index::<DT>(2).ok()?.to_rfc3339(),
+        }))).await?;
 
-    // Fetch votes.
-    let vote_rows = state
-        .query_all(Statement::from_sql_and_values(
-            DatabaseBackend::Postgres,
-            r"SELECT thread_id, value, created_at
-              FROM thread_votes WHERE user_id = $1
-              ORDER BY created_at DESC",
-            [user_id.into()],
-        ))
-        .await
-        .map_err(|e| ApiError::Database(format!("export votes: {e}")))?;
+    let subscriptions = export_rows(db,
+        r"SELECT entity_type, entity_id, notify, created_at FROM user_subscriptions WHERE user_id = $1",
+        user_id, "subscriptions", |r| Some(serde_json::json!({
+            "entityType": r.try_get_by_index::<String>(0).ok()?, "entityId": r.try_get_by_index::<String>(1).ok()?,
+            "notify": r.try_get_by_index::<String>(2).ok()?,
+            "createdAt": r.try_get_by_index::<DT>(3).ok()?.to_rfc3339(),
+        }))).await?;
 
-    let votes: Vec<serde_json::Value> = vote_rows
-        .iter()
-        .filter_map(|r| {
+    let notifications = export_rows(db,
+        r"SELECT id, event_type, title, body, read, created_at FROM notifications WHERE user_id = $1 ORDER BY created_at DESC",
+        user_id, "notifications", |r| Some(serde_json::json!({
+            "id": r.try_get_by_index::<Uuid>(0).ok()?, "eventType": r.try_get_by_index::<String>(1).ok()?,
+            "title": r.try_get_by_index::<String>(2).ok()?, "body": r.try_get_by_index::<Option<String>>(3).ok()?,
+            "read": r.try_get_by_index::<bool>(4).ok()?,
+            "createdAt": r.try_get_by_index::<DT>(5).ok()?.to_rfc3339(),
+        }))).await?;
+
+    let messages = export_rows(db,
+        r"SELECT id, conversation_id, message_type, server_ts FROM messages WHERE sender_id = $1 ORDER BY server_ts DESC",
+        user_id, "messages", |r| Some(serde_json::json!({
+            "id": r.try_get_by_index::<Uuid>(0).ok()?, "conversationId": r.try_get_by_index::<Uuid>(1).ok()?,
+            "messageType": r.try_get_by_index::<String>(2).ok()?,
+            "serverTs": r.try_get_by_index::<DT>(3).ok()?.to_rfc3339(),
+        }))).await?;
+
+    let bookmarks = export_rows(
+        db,
+        r"SELECT thread_id, created_at FROM bookmarks WHERE user_id = $1",
+        user_id,
+        "bookmarks",
+        |r| {
             Some(serde_json::json!({
                 "threadId": r.try_get_by_index::<Uuid>(0).ok()?,
-                "value": r.try_get_by_index::<i16>(1).ok()?,
-                "createdAt": r.try_get_by_index::<chrono::DateTime<chrono::FixedOffset>>(2).ok()?.to_rfc3339(),
+                "createdAt": r.try_get_by_index::<DT>(1).ok()?.to_rfc3339(),
             }))
-        })
-        .collect();
+        },
+    )
+    .await?;
 
-    // Fetch subscriptions.
-    let sub_rows = state
-        .query_all(Statement::from_sql_and_values(
-            DatabaseBackend::Postgres,
-            r"SELECT entity_type, entity_id, notify, created_at
-              FROM user_subscriptions WHERE user_id = $1",
-            [user_id.into()],
-        ))
-        .await
-        .map_err(|e| ApiError::Database(format!("export subscriptions: {e}")))?;
-
-    let subscriptions: Vec<serde_json::Value> = sub_rows
-        .iter()
-        .filter_map(|r| {
-            Some(serde_json::json!({
-                "entityType": r.try_get_by_index::<String>(0).ok()?,
-                "entityId": r.try_get_by_index::<String>(1).ok()?,
-                "notify": r.try_get_by_index::<String>(2).ok()?,
-                "createdAt": r.try_get_by_index::<chrono::DateTime<chrono::FixedOffset>>(3).ok()?.to_rfc3339(),
-            }))
-        })
-        .collect();
-
-    // Fetch notifications.
-    let notif_rows = state
-        .query_all(Statement::from_sql_and_values(
-            DatabaseBackend::Postgres,
-            r"SELECT id, event_type, title, body, read, created_at
-              FROM notifications WHERE user_id = $1
-              ORDER BY created_at DESC",
-            [user_id.into()],
-        ))
-        .await
-        .map_err(|e| ApiError::Database(format!("export notifications: {e}")))?;
-
-    let notifications: Vec<serde_json::Value> = notif_rows
-        .iter()
-        .filter_map(|r| {
-            Some(serde_json::json!({
-                "id": r.try_get_by_index::<Uuid>(0).ok()?,
-                "eventType": r.try_get_by_index::<String>(1).ok()?,
-                "title": r.try_get_by_index::<String>(2).ok()?,
-                "body": r.try_get_by_index::<Option<String>>(3).ok()?,
-                "read": r.try_get_by_index::<bool>(4).ok()?,
-                "createdAt": r.try_get_by_index::<chrono::DateTime<chrono::FixedOffset>>(5).ok()?.to_rfc3339(),
-            }))
-        })
-        .collect();
-
-    // Fetch DMs (messages sent by user — ciphertext omitted, only metadata).
-    let msg_rows = state
-        .query_all(Statement::from_sql_and_values(
-            DatabaseBackend::Postgres,
-            r"SELECT id, conversation_id, message_type, server_ts
-              FROM messages WHERE sender_id = $1
-              ORDER BY server_ts DESC",
-            [user_id.into()],
-        ))
-        .await
-        .map_err(|e| ApiError::Database(format!("export messages: {e}")))?;
-
-    let messages: Vec<serde_json::Value> = msg_rows
-        .iter()
-        .filter_map(|r| {
-            Some(serde_json::json!({
-                "id": r.try_get_by_index::<Uuid>(0).ok()?,
-                "conversationId": r.try_get_by_index::<Uuid>(1).ok()?,
-                "messageType": r.try_get_by_index::<String>(2).ok()?,
-                "serverTs": r.try_get_by_index::<chrono::DateTime<chrono::FixedOffset>>(3).ok()?.to_rfc3339(),
-            }))
-        })
-        .collect();
-
-    // Fetch bookmarks.
-    let bm_rows = state
-        .query_all(Statement::from_sql_and_values(
-            DatabaseBackend::Postgres,
-            r"SELECT thread_id, created_at FROM bookmarks WHERE user_id = $1",
-            [user_id.into()],
-        ))
-        .await
-        .map_err(|e| ApiError::Database(format!("export bookmarks: {e}")))?;
-
-    let bookmarks: Vec<serde_json::Value> = bm_rows
-        .iter()
-        .filter_map(|r| {
-            Some(serde_json::json!({
-                "threadId": r.try_get_by_index::<Uuid>(0).ok()?,
-                "createdAt": r.try_get_by_index::<chrono::DateTime<chrono::FixedOffset>>(1).ok()?.to_rfc3339(),
-            }))
-        })
-        .collect();
-
-    // Fetch follows (both directions).
-    let following_rows = state
-        .query_all(Statement::from_sql_and_values(
-            DatabaseBackend::Postgres,
-            r"SELECT followed_id, created_at FROM follows WHERE follower_id = $1",
-            [user_id.into()],
-        ))
-        .await
-        .map_err(|e| ApiError::Database(format!("export following: {e}")))?;
-
-    let following: Vec<serde_json::Value> = following_rows
-        .iter()
-        .filter_map(|r| {
+    let following = export_rows(
+        db,
+        r"SELECT followed_id, created_at FROM follows WHERE follower_id = $1",
+        user_id,
+        "following",
+        |r| {
             Some(serde_json::json!({
                 "followedId": r.try_get_by_index::<Uuid>(0).ok()?,
-                "createdAt": r.try_get_by_index::<chrono::DateTime<chrono::FixedOffset>>(1).ok()?.to_rfc3339(),
+                "createdAt": r.try_get_by_index::<DT>(1).ok()?.to_rfc3339(),
             }))
-        })
-        .collect();
+        },
+    )
+    .await?;
 
-    let followers_rows = state
-        .query_all(Statement::from_sql_and_values(
-            DatabaseBackend::Postgres,
-            r"SELECT follower_id, created_at FROM follows WHERE followed_id = $1",
-            [user_id.into()],
-        ))
-        .await
-        .map_err(|e| ApiError::Database(format!("export followers: {e}")))?;
-
-    let followers: Vec<serde_json::Value> = followers_rows
-        .iter()
-        .filter_map(|r| {
+    let followers = export_rows(
+        db,
+        r"SELECT follower_id, created_at FROM follows WHERE followed_id = $1",
+        user_id,
+        "followers",
+        |r| {
             Some(serde_json::json!({
                 "followerId": r.try_get_by_index::<Uuid>(0).ok()?,
-                "createdAt": r.try_get_by_index::<chrono::DateTime<chrono::FixedOffset>>(1).ok()?.to_rfc3339(),
+                "createdAt": r.try_get_by_index::<DT>(1).ok()?.to_rfc3339(),
             }))
-        })
-        .collect();
+        },
+    )
+    .await?;
 
-    // Fetch blocks.
-    let block_rows = state
-        .query_all(Statement::from_sql_and_values(
-            DatabaseBackend::Postgres,
-            r"SELECT blocked_id, created_at FROM blocks WHERE blocker_id = $1",
-            [user_id.into()],
-        ))
-        .await
-        .map_err(|e| ApiError::Database(format!("export blocks: {e}")))?;
-
-    let blocks: Vec<serde_json::Value> = block_rows
-        .iter()
-        .filter_map(|r| {
+    let blocks = export_rows(
+        db,
+        r"SELECT blocked_id, created_at FROM blocks WHERE blocker_id = $1",
+        user_id,
+        "blocks",
+        |r| {
             Some(serde_json::json!({
                 "blockedId": r.try_get_by_index::<Uuid>(0).ok()?,
-                "createdAt": r.try_get_by_index::<chrono::DateTime<chrono::FixedOffset>>(1).ok()?.to_rfc3339(),
+                "createdAt": r.try_get_by_index::<DT>(1).ok()?.to_rfc3339(),
             }))
-        })
-        .collect();
+        },
+    )
+    .await?;
 
-    // Fetch mutes.
-    let mute_rows = state
-        .query_all(Statement::from_sql_and_values(
-            DatabaseBackend::Postgres,
-            r"SELECT muted_id, created_at FROM mutes WHERE user_id = $1",
-            [user_id.into()],
-        ))
-        .await
-        .map_err(|e| ApiError::Database(format!("export mutes: {e}")))?;
-
-    let mutes: Vec<serde_json::Value> = mute_rows
-        .iter()
-        .filter_map(|r| {
+    let mutes = export_rows(
+        db,
+        r"SELECT muted_id, created_at FROM mutes WHERE user_id = $1",
+        user_id,
+        "mutes",
+        |r| {
             Some(serde_json::json!({
                 "mutedId": r.try_get_by_index::<Uuid>(0).ok()?,
-                "createdAt": r.try_get_by_index::<chrono::DateTime<chrono::FixedOffset>>(1).ok()?.to_rfc3339(),
+                "createdAt": r.try_get_by_index::<DT>(1).ok()?.to_rfc3339(),
             }))
-        })
-        .collect();
+        },
+    )
+    .await?;
 
-    // Fetch club memberships.
-    let club_rows = state
-        .query_all(Statement::from_sql_and_values(
-            DatabaseBackend::Postgres,
-            r"SELECT cm.club_id, c.name, cm.role, cm.joined_at
-              FROM club_members cm
-              JOIN clubs c ON c.id = cm.club_id
-              WHERE cm.user_id = $1",
-            [user_id.into()],
-        ))
-        .await
-        .map_err(|e| ApiError::Database(format!("export clubs: {e}")))?;
+    let club_memberships = export_rows(db,
+        r"SELECT cm.club_id, c.name, cm.role, cm.joined_at FROM club_members cm JOIN clubs c ON c.id = cm.club_id WHERE cm.user_id = $1",
+        user_id, "clubs", |r| Some(serde_json::json!({
+            "clubId": r.try_get_by_index::<Uuid>(0).ok()?, "clubName": r.try_get_by_index::<String>(1).ok()?,
+            "role": r.try_get_by_index::<String>(2).ok()?,
+            "joinedAt": r.try_get_by_index::<DT>(3).ok()?.to_rfc3339(),
+        }))).await?;
 
-    let club_memberships: Vec<serde_json::Value> = club_rows
-        .iter()
-        .filter_map(|r| {
-            Some(serde_json::json!({
-                "clubId": r.try_get_by_index::<Uuid>(0).ok()?,
-                "clubName": r.try_get_by_index::<String>(1).ok()?,
-                "role": r.try_get_by_index::<String>(2).ok()?,
-                "joinedAt": r.try_get_by_index::<chrono::DateTime<chrono::FixedOffset>>(3).ok()?.to_rfc3339(),
-            }))
-        })
-        .collect();
+    let devices = export_rows(db,
+        r"SELECT id, display_name, platform, created_at FROM devices WHERE user_id = $1 AND revoked_at IS NULL",
+        user_id, "devices", |r| Some(serde_json::json!({
+            "id": r.try_get_by_index::<Uuid>(0).ok()?, "displayName": r.try_get_by_index::<Option<String>>(1).ok()?,
+            "platform": r.try_get_by_index::<String>(2).ok()?,
+            "createdAt": r.try_get_by_index::<DT>(3).ok()?.to_rfc3339(),
+        }))).await?;
 
-    // Fetch devices (metadata only — no identity keys).
-    let device_rows = state
-        .query_all(Statement::from_sql_and_values(
-            DatabaseBackend::Postgres,
-            r"SELECT id, display_name, platform, created_at
-              FROM devices WHERE user_id = $1 AND revoked_at IS NULL",
-            [user_id.into()],
-        ))
-        .await
-        .map_err(|e| ApiError::Database(format!("export devices: {e}")))?;
-
-    let devices: Vec<serde_json::Value> = device_rows
-        .iter()
-        .filter_map(|r| {
-            Some(serde_json::json!({
-                "id": r.try_get_by_index::<Uuid>(0).ok()?,
-                "displayName": r.try_get_by_index::<Option<String>>(1).ok()?,
-                "platform": r.try_get_by_index::<String>(2).ok()?,
-                "createdAt": r.try_get_by_index::<chrono::DateTime<chrono::FixedOffset>>(3).ok()?.to_rfc3339(),
-            }))
-        })
-        .collect();
-
-    // Fetch content reports filed by the user.
-    let report_rows = state
-        .query_all(Statement::from_sql_and_values(
-            DatabaseBackend::Postgres,
-            r"SELECT id, content_type, content_id, reason, status, created_at
-              FROM content_reports WHERE reporter_id = $1
-              ORDER BY created_at DESC",
-            [user_id.into()],
-        ))
-        .await
-        .map_err(|e| ApiError::Database(format!("export reports: {e}")))?;
-
-    let reports: Vec<serde_json::Value> = report_rows
-        .iter()
-        .filter_map(|r| {
-            Some(serde_json::json!({
-                "id": r.try_get_by_index::<Uuid>(0).ok()?,
-                "contentType": r.try_get_by_index::<String>(1).ok()?,
-                "contentId": r.try_get_by_index::<Uuid>(2).ok()?,
-                "reason": r.try_get_by_index::<String>(3).ok()?,
-                "status": r.try_get_by_index::<String>(4).ok()?,
-                "createdAt": r.try_get_by_index::<chrono::DateTime<chrono::FixedOffset>>(5).ok()?.to_rfc3339(),
-            }))
-        })
-        .collect();
+    let reports = export_rows(db,
+        r"SELECT id, content_type, content_id, reason, status, created_at FROM content_reports WHERE reporter_id = $1 ORDER BY created_at DESC",
+        user_id, "reports", |r| Some(serde_json::json!({
+            "id": r.try_get_by_index::<Uuid>(0).ok()?, "contentType": r.try_get_by_index::<String>(1).ok()?,
+            "contentId": r.try_get_by_index::<Uuid>(2).ok()?, "reason": r.try_get_by_index::<String>(3).ok()?,
+            "status": r.try_get_by_index::<String>(4).ok()?,
+            "createdAt": r.try_get_by_index::<DT>(5).ok()?.to_rfc3339(),
+        }))).await?;
 
     Ok(Json(serde_json::json!({
-        "profile": profile,
-        "threads": threads,
-        "comments": comments,
-        "votes": votes,
-        "subscriptions": subscriptions,
-        "notifications": notifications,
-        "messages": messages,
-        "bookmarks": bookmarks,
-        "following": following,
-        "followers": followers,
-        "blocks": blocks,
-        "mutes": mutes,
-        "clubMemberships": club_memberships,
-        "devices": devices,
-        "reports": reports,
-        "exportedAt": chrono::Utc::now().to_rfc3339(),
+        "profile": profile, "threads": threads, "comments": comments, "votes": votes,
+        "subscriptions": subscriptions, "notifications": notifications, "messages": messages,
+        "bookmarks": bookmarks, "following": following, "followers": followers,
+        "blocks": blocks, "mutes": mutes, "clubMemberships": club_memberships,
+        "devices": devices, "reports": reports, "exportedAt": chrono::Utc::now().to_rfc3339(),
     })))
 }
 

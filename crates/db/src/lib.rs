@@ -1,6 +1,8 @@
 pub mod entities;
+pub mod legacy_import;
 pub mod migration;
 pub mod repo;
+pub mod seed;
 
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use std::time::Duration;
@@ -23,7 +25,12 @@ pub async fn connect(database_url: &str) -> Result<DatabaseConnection, sea_orm::
     Ok(db)
 }
 
-/// Run all pending migrations.
+/// Run all pending schema migrations.
+///
+/// Does NOT seed reference data — callers that need it (e.g. `eulesia-server`)
+/// should call `seed::sync_reference_data` explicitly after this returns.
+/// Running the seed from every binary causes concurrent INSERT races when
+/// multiple services start simultaneously.
 pub async fn migrate(db: &DatabaseConnection) -> Result<(), sea_orm::DbErr> {
     use sea_orm_migration::MigratorTrait;
     migration::Migrator::up(db, None).await?;

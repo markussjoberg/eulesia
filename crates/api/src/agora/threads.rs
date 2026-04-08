@@ -3,6 +3,7 @@ use std::collections::{HashMap, HashSet};
 use axum::Json;
 use axum::extract::{Path, Query, State};
 use sea_orm::ActiveValue::Set;
+use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 use uuid::Uuid;
 
 use tracing::warn;
@@ -10,7 +11,7 @@ use tracing::warn;
 use crate::AppState;
 use eulesia_auth::session::{AuthUser, OptionalAuth};
 use eulesia_common::error::ApiError;
-use eulesia_common::types::{ThreadScope, ThreadSource, UserRole, new_id};
+use eulesia_common::types::{Coordinates, ThreadScope, ThreadSource, UserRole, new_id};
 use eulesia_db::repo::blocks::BlockRepo;
 use eulesia_db::repo::bookmarks::BookmarkRepo;
 use eulesia_db::repo::comments::CommentRepo;
@@ -42,6 +43,45 @@ fn validate_scope(scope: &str) -> Result<(), ApiError> {
 
 fn clamp_limit(limit: Option<u64>) -> u64 {
     limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT)
+}
+
+async fn resolve_municipality_id(
+    db: &sea_orm::DatabaseConnection,
+    scope: ThreadScope,
+    req_municipality_id: Option<Uuid>,
+    resolved_location: Option<&eulesia_db::entities::locations::Model>,
+) -> Result<Option<Uuid>, ApiError> {
+    if scope != ThreadScope::Local {
+        return Ok(req_municipality_id);
+    }
+
+    if let Some(id) = req_municipality_id {
+        return Ok(Some(id));
+    }
+
+    let Some(location) = resolved_location else {
+        return Err(ApiError::BadRequest(
+            "municipalityId is required for local scope".into(),
+        ));
+    };
+
+    let coords = Coordinates::from_options(
+        location.latitude.and_then(crate::locations::decimal_to_f64),
+        location
+            .longitude
+            .and_then(crate::locations::decimal_to_f64),
+    )
+    .ok_or_else(|| {
+        ApiError::BadRequest(
+            "local threads require municipalityId or a location with coordinates".into(),
+        )
+    })?;
+
+    let municipality = crate::locations::nearest_municipality(db, coords).await?;
+    municipality
+        .map(|m| m.id)
+        .ok_or_else(|| ApiError::BadRequest("municipalityId is required for local scope".into()))
+        .map(Some)
 }
 
 fn author_map(users: Vec<eulesia_db::entities::users::Model>) -> HashMap<Uuid, AuthorSummary> {
@@ -106,6 +146,36 @@ async fn blocked_ids(
 // Enrichment helpers (reused by tags module)
 // ---------------------------------------------------------------------------
 
+/// Batch-fetch municipality names by id, returning a map.
+async fn fetch_municipality_names(
+    db: &sea_orm::DatabaseConnection,
+    ids: &[Uuid],
+) -> Result<HashMap<Uuid, String>, ApiError> {
+    use eulesia_db::entities::municipalities;
+
+    if ids.is_empty() {
+        return Ok(HashMap::new());
+    }
+
+    let rows = municipalities::Entity::find()
+        .filter(municipalities::Column::Id.is_in(ids.to_vec()))
+        .all(db)
+        .await
+        .map_err(db_err)?;
+
+    Ok(rows.into_iter().map(|m| (m.id, m.name)).collect())
+}
+
+/// Fetch a single municipality name, returning `None` if id is `None` or not found.
+async fn fetch_municipality_name(
+    db: &sea_orm::DatabaseConnection,
+    id: Option<Uuid>,
+) -> Result<Option<String>, ApiError> {
+    let Some(id) = id else { return Ok(None) };
+    let map = fetch_municipality_names(db, &[id]).await?;
+    Ok(map.into_values().next())
+}
+
 /// Enrich a list of thread models into full `ThreadResponse`s.
 pub async fn enrich_threads(
     db: &sea_orm::DatabaseConnection,
@@ -140,6 +210,15 @@ pub async fn enrich_threads(
         tags_map.entry(t.thread_id).or_default().push(t.tag);
     }
 
+    // Batch-fetch municipality names for threads that have one.
+    let municipality_ids: Vec<Uuid> = threads
+        .iter()
+        .filter_map(|t| t.municipality_id)
+        .collect::<HashSet<_>>()
+        .into_iter()
+        .collect();
+    let municipality_name_map = fetch_municipality_names(db, &municipality_ids).await?;
+
     // Per-user enrichment (votes, bookmarks).
     let (vote_map, bookmark_set): (HashMap<Uuid, i16>, HashSet<Uuid>) = if let Some(uid) =
         auth_user_id
@@ -165,6 +244,9 @@ pub async fn enrich_threads(
                 .get(&t.author_id)
                 .cloned()
                 .unwrap_or_else(deleted_author);
+            let municipality_name = t
+                .municipality_id
+                .and_then(|id| municipality_name_map.get(&id).cloned());
             ThreadResponse {
                 id: t.id,
                 title: t.title,
@@ -177,6 +259,7 @@ pub async fn enrich_threads(
                 author,
                 tags: tags_map.remove(&t.id).unwrap_or_default(),
                 municipality_id: t.municipality_id,
+                municipality_name,
                 institutional_context: t.institutional_context,
                 reply_count: t.reply_count,
                 score: t.score,
@@ -393,6 +476,8 @@ pub async fn get_thread(
         .cloned()
         .unwrap_or_else(deleted_author);
 
+    let municipality_name = fetch_municipality_name(&state.db, thread.municipality_id).await?;
+
     let thread_resp = ThreadResponse {
         id: thread.id,
         title: thread.title,
@@ -419,6 +504,7 @@ pub async fn get_thread(
         source_institution_id: thread.source_institution_id,
         ai_generated: thread.ai_generated,
         municipality_id: thread.municipality_id,
+        municipality_name,
         institutional_context: thread.institutional_context,
         created_at: thread.created_at.to_rfc3339(),
         updated_at: thread.updated_at.to_rfc3339(),
@@ -470,17 +556,44 @@ pub async fn create_thread(
         ));
     }
 
-    if scope == ThreadScope::Local && req.municipality_id.is_none() {
-        return Err(ApiError::BadRequest(
-            "municipality_id is required for local scope".into(),
-        ));
-    }
     if req.title.trim().is_empty() {
         return Err(ApiError::BadRequest("title must not be empty".into()));
     }
     if req.content.trim().is_empty() {
         return Err(ApiError::BadRequest("content must not be empty".into()));
     }
+
+    let resolved_location = match (
+        req.location_id,
+        req.location_osm_id,
+        req.location_osm_type.as_deref(),
+    ) {
+        (Some(location_id), _, _) => Some(
+            eulesia_db::entities::locations::Entity::find_by_id(location_id)
+                .one(&*state.db)
+                .await
+                .map_err(db_err)?
+                .ok_or_else(|| ApiError::BadRequest("location_id does not exist".into()))?,
+        ),
+        (None, Some(location_osm_id), Some(location_osm_type)) => Some(
+            crate::locations::ensure_location_by_osm(&state.db, location_osm_type, location_osm_id)
+                .await?,
+        ),
+        (None, Some(_), None) | (None, None, Some(_)) => {
+            return Err(ApiError::BadRequest(
+                "location_osm_id and location_osm_type must be provided together".into(),
+            ));
+        }
+        (None, None, None) => None,
+    };
+
+    let municipality_id = resolve_municipality_id(
+        &state.db,
+        scope,
+        req.municipality_id,
+        resolved_location.as_ref(),
+    )
+    .await?;
 
     let scope_str = scope.to_string();
     let thread_id = new_id();
@@ -494,10 +607,10 @@ pub async fn create_thread(
             content: Set(req.content),
             author_id: Set(auth.user_id.0),
             scope: Set(scope_str),
-            municipality_id: Set(req.municipality_id),
+            municipality_id: Set(municipality_id),
             language: Set(req.language),
             country: Set(req.country),
-            location_id: Set(req.location_id),
+            location_id: Set(resolved_location.as_ref().map(|location| location.id)),
             institutional_context: Set(req.institutional_context),
             created_at: Set(now),
             updated_at: Set(now),
@@ -534,6 +647,10 @@ pub async fn create_thread(
         warn!("failed to emit thread_created event: {e}");
     }
 
+    if let Some(location) = resolved_location {
+        crate::locations::increment_location_content_count(&state.db, location.id, 1).await?;
+    }
+
     // Fetch author for response.
     let user = UserRepo::find_by_id(&state.db, auth.user_id.0)
         .await
@@ -550,6 +667,8 @@ pub async fn create_thread(
         institution_name: user.institution_name,
         identity_verified: user.identity_verified,
     };
+
+    let municipality_name = fetch_municipality_name(&state.db, thread.municipality_id).await?;
 
     Ok(Json(ThreadResponse {
         id: thread.id,
@@ -577,6 +696,7 @@ pub async fn create_thread(
         source_institution_id: thread.source_institution_id,
         ai_generated: thread.ai_generated,
         municipality_id: thread.municipality_id,
+        municipality_name,
         institutional_context: thread.institutional_context,
         created_at: thread.created_at.to_rfc3339(),
         updated_at: thread.updated_at.to_rfc3339(),
@@ -692,6 +812,8 @@ pub async fn update_thread(
         identity_verified: user.identity_verified,
     };
 
+    let municipality_name = fetch_municipality_name(&state.db, updated.municipality_id).await?;
+
     Ok(Json(ThreadResponse {
         id: updated.id,
         title: updated.title,
@@ -711,6 +833,7 @@ pub async fn update_thread(
         is_pinned: updated.is_pinned,
         is_locked: updated.is_locked,
         municipality_id: updated.municipality_id,
+        municipality_name,
         institutional_context: updated.institutional_context,
         source: updated.source.parse().unwrap_or_else(|_| {
             warn!(thread_id = %updated.id, source = %updated.source, "unknown thread source");
@@ -752,6 +875,12 @@ pub async fn delete_thread(
     ThreadRepo::soft_delete(&state.db, id)
         .await
         .map_err(db_err)?;
+
+    if thread.deleted_at.is_none() {
+        if let Some(location_id) = thread.location_id {
+            crate::locations::increment_location_content_count(&state.db, location_id, -1).await?;
+        }
+    }
 
     // Best-effort search index event
     if let Err(e) = emit_event(

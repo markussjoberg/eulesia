@@ -4,6 +4,16 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createElement } from "react";
 import { useThreads, useTags, useClubs } from "./useApi";
 
+// Helper: create a mock Response with Content-Type: application/json
+const jsonResponse = (body: unknown, ok = true) => ({
+  ok,
+  status: ok ? 200 : 400,
+  headers: {
+    get: (key: string) => (key === "content-type" ? "application/json" : null),
+  },
+  json: () => Promise.resolve(body),
+});
+
 // Create a fresh query client for each test
 const createTestQueryClient = () =>
   new QueryClient({
@@ -53,10 +63,11 @@ describe("useApi hooks", () => {
         hasMore: false,
       };
 
-      globalThis.fetch = vi.fn().mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve({ success: true, data: mockThreads }),
-      });
+      globalThis.fetch = vi
+        .fn()
+        .mockResolvedValueOnce(
+          jsonResponse({ success: true, data: mockThreads }),
+        );
 
       const { result } = renderHook(() => useThreads(), {
         wrapper: createWrapper(),
@@ -70,10 +81,11 @@ describe("useApi hooks", () => {
     });
 
     it("should handle API errors", async () => {
-      globalThis.fetch = vi.fn().mockResolvedValueOnce({
-        ok: false,
-        json: () => Promise.resolve({ success: false, error: "Server error" }),
-      });
+      globalThis.fetch = vi
+        .fn()
+        .mockResolvedValueOnce(
+          jsonResponse({ success: false, error: "Server error" }, false),
+        );
 
       const { result } = renderHook(() => useThreads(), {
         wrapper: createWrapper(),
@@ -85,14 +97,12 @@ describe("useApi hooks", () => {
     });
 
     it("should pass filters to API", async () => {
-      globalThis.fetch = vi.fn().mockResolvedValueOnce({
-        ok: true,
-        json: () =>
-          Promise.resolve({
-            success: true,
-            data: { items: [], total: 0, page: 1, limit: 20, hasMore: false },
-          }),
-      });
+      globalThis.fetch = vi.fn().mockResolvedValueOnce(
+        jsonResponse({
+          success: true,
+          data: { items: [], total: 0, page: 1, limit: 20, hasMore: false },
+        }),
+      );
 
       renderHook(() => useThreads({ scope: "national", tags: ["climate"] }), {
         wrapper: createWrapper(),
@@ -114,10 +124,9 @@ describe("useApi hooks", () => {
         { tag: "urban-planning", count: 5 },
       ];
 
-      globalThis.fetch = vi.fn().mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve({ success: true, data: mockTags }),
-      });
+      globalThis.fetch = vi
+        .fn()
+        .mockResolvedValueOnce(jsonResponse({ success: true, data: mockTags }));
 
       const { result } = renderHook(() => useTags(), {
         wrapper: createWrapper(),
@@ -152,10 +161,11 @@ describe("useApi hooks", () => {
         hasMore: false,
       };
 
-      globalThis.fetch = vi.fn().mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve({ success: true, data: mockClubs }),
-      });
+      globalThis.fetch = vi
+        .fn()
+        .mockResolvedValueOnce(
+          jsonResponse({ success: true, data: mockClubs }),
+        );
 
       const { result } = renderHook(() => useClubs(), {
         wrapper: createWrapper(),
@@ -169,14 +179,12 @@ describe("useApi hooks", () => {
     });
 
     it("should filter clubs by category", async () => {
-      globalThis.fetch = vi.fn().mockResolvedValueOnce({
-        ok: true,
-        json: () =>
-          Promise.resolve({
-            success: true,
-            data: { items: [], total: 0, page: 1, limit: 20, hasMore: false },
-          }),
-      });
+      globalThis.fetch = vi.fn().mockResolvedValueOnce(
+        jsonResponse({
+          success: true,
+          data: { items: [], total: 0, page: 1, limit: 20, hasMore: false },
+        }),
+      );
 
       renderHook(() => useClubs({ category: "Sports" }), {
         wrapper: createWrapper(),

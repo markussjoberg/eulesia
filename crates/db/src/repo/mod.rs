@@ -6,6 +6,7 @@ pub mod conversations;
 pub mod devices;
 pub mod epochs;
 pub mod follows;
+pub mod jobs;
 pub mod memberships;
 pub mod messages;
 pub mod moderation_actions_repo;
