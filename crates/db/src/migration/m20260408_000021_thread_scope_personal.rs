@@ -15,16 +15,15 @@ impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         let db = manager.get_connection();
 
-        // The `scope` column currently uses a PostgreSQL enum type that only
-        // contains {local, national, european}.  ALTER TYPE ... ADD VALUE
-        // cannot run inside a transaction (which sea-orm uses for migrations),
-        // so we convert the column to TEXT instead.  The CHECK constraint
-        // already enforces valid values.
+        // The `scope` column uses a PostgreSQL enum type that only contains
+        // {local, national, european}.  ALTER TYPE ... ADD VALUE cannot run
+        // inside a transaction (which sea-orm uses for migrations), so we
+        // convert both tables that use the enum to TEXT and drop the type.
+        // The CHECK constraint on threads enforces valid values.
         db.execute_unprepared(
             "
-            ALTER TABLE threads
-                ALTER COLUMN scope TYPE TEXT USING scope::TEXT;
-
+            ALTER TABLE threads ALTER COLUMN scope TYPE TEXT USING scope::TEXT;
+            ALTER TABLE tag_categories ALTER COLUMN scope TYPE TEXT USING scope::TEXT;
             DROP TYPE IF EXISTS scope;
 
             ALTER TABLE threads DROP CONSTRAINT IF EXISTS chk_threads_scope;

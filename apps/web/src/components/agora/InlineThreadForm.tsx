@@ -82,7 +82,9 @@ export function InlineThreadForm({
 
   // Form state
   const [isExpanded, setIsExpanded] = useState(false);
-  const initialScope: Scope = isPrefilled ? "local" : (defaultScope ?? "national");
+  const initialScope: Scope = isPrefilled
+    ? "local"
+    : (defaultScope ?? "national");
   const [scope, setScope] = useState<Scope>(initialScope);
   const [selectedLocation, setSelectedLocation] =
     useState<LocationResult | null>(null);

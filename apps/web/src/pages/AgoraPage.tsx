@@ -395,8 +395,14 @@ export function AgoraPage() {
           <div data-guide="agora-newthread">
             <InlineThreadForm
               defaultScope={
-                ["local", "national", "european", "personal"].includes(feedScope)
-                  ? (feedScope as "local" | "national" | "european" | "personal")
+                ["local", "national", "european", "personal"].includes(
+                  feedScope,
+                )
+                  ? (feedScope as
+                      | "local"
+                      | "national"
+                      | "european"
+                      | "personal")
                   : undefined
               }
               onSuccess={handleThreadCreated}
