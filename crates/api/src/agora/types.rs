@@ -9,7 +9,7 @@ use uuid::Uuid;
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CreateThreadRequest {
-    pub title: String,
+    pub title: Option<String>,
     pub content: String,
     pub scope: Option<ThreadScope>,
     pub municipality_id: Option<Uuid>,
@@ -410,7 +410,16 @@ mod tests {
         let json = r#"{"title":"Hello","content":"World"}"#;
         let req: CreateThreadRequest = serde_json::from_str(json).unwrap();
         assert!(req.scope.is_none());
-        assert_eq!(req.title, "Hello");
+        assert_eq!(req.title, Some("Hello".into()));
+    }
+
+    /// Verify CreateThreadRequest works without title (title-less post).
+    #[test]
+    fn create_thread_request_title_optional() {
+        let json = r#"{"content":"Just some content without a title"}"#;
+        let req: CreateThreadRequest = serde_json::from_str(json).unwrap();
+        assert!(req.title.is_none());
+        assert_eq!(req.content, "Just some content without a title");
     }
 
     /// Verify CreateThreadRequest still accepts explicit scope.

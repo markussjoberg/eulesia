@@ -129,13 +129,24 @@ export function ThreadCard({
             </span>
           </div>
 
-          {/* Title */}
-          <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1 leading-snug">
-            {thread.title}
-          </h3>
+          {/* Title — hide if auto-generated (starts with same text as content) */}
+          {(() => {
+            const contentStart = thread.content
+              .trim()
+              .substring(0, 80)
+              .replace(/\.\.\.$/, "");
+            const isAutoTitle =
+              thread.title.startsWith(contentStart) ||
+              contentStart.startsWith(thread.title.replace(/\.\.\.$/, ""));
+            return isAutoTitle ? null : (
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1 leading-snug">
+                {thread.title}
+              </h3>
+            );
+          })()}
 
           {/* Preview content */}
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-3">
             {thread.content.split("\n")[0].replace(/[*#]/g, "")}
           </p>
 

@@ -179,7 +179,7 @@ export function NewThreadModal({
   };
 
   const handleSubmit = async () => {
-    if (!title.trim() || !content.trim()) {
+    if (!content.trim()) {
       setError(t("threadForm.validationRequired"));
       return;
     }
@@ -209,7 +209,7 @@ export function NewThreadModal({
       }
 
       const result = await createThreadMutation.mutateAsync({
-        title: title.trim(),
+        title: title.trim() || undefined,
         content: content.trim(),
         scope,
         country,
@@ -435,22 +435,18 @@ export function NewThreadModal({
             </div>
           )}
 
-          {/* Title */}
+          {/* Title (optional) */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              {t("threadForm.title")}
-            </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder={t("threadForm.collapsed")}
-              className="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-800 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder={t("threadForm.titleOptional", {
+                defaultValue: "Otsikko (valinnainen)",
+              })}
+              className="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-800 rounded-lg text-base font-medium focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               maxLength={500}
             />
-            <div className="mt-1 text-xs text-gray-400 dark:text-gray-500 text-right">
-              {title.length}/500
-            </div>
           </div>
 
           {/* Content */}
@@ -555,7 +551,7 @@ export function NewThreadModal({
           </button>
           <button
             onClick={handleSubmit}
-            disabled={!title.trim() || !content.trim() || isSubmitting}
+            disabled={!content.trim() || isSubmitting}
             className="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}

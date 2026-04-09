@@ -186,21 +186,10 @@ export function InlineThreadForm({
   };
 
   const handleSubmit = async () => {
-    const trimmedTitle = title.trim();
     const trimmedContent = content.trim();
 
-    if (!trimmedTitle || !trimmedContent) {
+    if (!trimmedContent) {
       setError(t("threadForm.validationRequired"));
-      return;
-    }
-
-    if (trimmedTitle.length < 5) {
-      setError(t("threadForm.validationTitleMin"));
-      return;
-    }
-
-    if (trimmedContent.length < 10) {
-      setError(t("threadForm.validationContentMin"));
       return;
     }
 
@@ -236,7 +225,7 @@ export function InlineThreadForm({
       }
 
       const result = await createThreadMutation.mutateAsync({
-        title: title.trim(),
+        title: title.trim() || undefined,
         content: finalContent,
         scope,
         country: "FI",
@@ -356,25 +345,29 @@ export function InlineThreadForm({
             </div>
           )}
 
-          {/* Title */}
-          <input
-            ref={titleInputRef}
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder={t("threadForm.title")}
-            className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-800 rounded-lg text-base font-medium placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white dark:focus:bg-gray-900 dark:text-gray-100 transition-colors"
-            maxLength={500}
-          />
-
-          {/* Content */}
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder={t("threadForm.contentPlaceholder")}
-            rows={4}
-            className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-800 rounded-lg text-sm text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white dark:focus:bg-gray-900 resize-none transition-colors"
-          />
+          {/* WordPress-style composer: optional title + content */}
+          <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden bg-gray-50 dark:bg-gray-800/50 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent focus-within:bg-white dark:focus-within:bg-gray-900 transition-colors">
+            {/* Optional title */}
+            <input
+              ref={titleInputRef}
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder={t("threadForm.titleOptional", {
+                defaultValue: "Otsikko (valinnainen)",
+              })}
+              className="w-full px-3 py-2 bg-transparent border-0 border-b border-gray-200 dark:border-gray-800 text-base font-medium placeholder-gray-400 dark:placeholder-gray-500 dark:text-gray-100 focus:ring-0 focus:outline-none"
+              maxLength={500}
+            />
+            {/* Content */}
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder={t("threadForm.contentPlaceholder")}
+              rows={4}
+              className="w-full px-3 py-2.5 bg-transparent border-0 text-sm text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-0 focus:outline-none resize-none"
+            />
+          </div>
 
           {/* Image upload */}
           <div className="space-y-2">
@@ -496,7 +489,7 @@ export function InlineThreadForm({
             </button>
             <button
               onClick={handleSubmit}
-              disabled={!title.trim() || !content.trim() || isSubmitting}
+              disabled={!content.trim() || isSubmitting}
               className="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}

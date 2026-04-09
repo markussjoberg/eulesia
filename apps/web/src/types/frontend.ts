@@ -278,7 +278,7 @@ export interface ClubFilters {
 }
 
 export interface CreateThreadData {
-  title: string;
+  title?: string;
   content: string;
   scope: "local" | "national" | "european" | "personal";
   country?: string;

@@ -579,12 +579,24 @@ pub async fn create_thread(
         ));
     }
 
-    if req.title.trim().is_empty() {
-        return Err(ApiError::BadRequest("title must not be empty".into()));
-    }
     if req.content.trim().is_empty() {
         return Err(ApiError::BadRequest("content must not be empty".into()));
     }
+
+    // Title is optional — auto-generate from content if not provided.
+    let title = match req.title {
+        Some(ref t) if !t.trim().is_empty() => t.clone(),
+        _ => {
+            let preview = req.content.trim();
+            let truncated = if preview.len() > 80 {
+                let boundary = preview[..80].rfind(' ').unwrap_or(80);
+                format!("{}...", &preview[..boundary])
+            } else {
+                preview.to_string()
+            };
+            truncated
+        }
+    };
 
     let resolved_location = match (
         req.location_id,
@@ -626,7 +638,7 @@ pub async fn create_thread(
         &state.db,
         eulesia_db::entities::threads::ActiveModel {
             id: Set(thread_id),
-            title: Set(req.title),
+            title: Set(title),
             content: Set(req.content),
             author_id: Set(auth.user_id.0),
             scope: Set(scope_str),
