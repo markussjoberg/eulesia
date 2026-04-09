@@ -906,8 +906,8 @@ async fn admin_passkey_register_finish(
         Ok((
             jar,
             Json(serde_json::json!({
-                "profile": null::<()>,
-                "recoveryCodes": null::<()>,
+                "profile": null,
+                "recoveryCodes": null,
             })),
         ))
     } else {
