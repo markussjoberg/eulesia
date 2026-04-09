@@ -978,6 +978,15 @@ class ApiClient {
     return this.request(`/map/points?${searchParams.toString()}`);
   }
 
+  async reverseGeocodeMunicipality(
+    lat: number,
+    lon: number,
+  ): Promise<Municipality> {
+    return this.request(
+      `/map/reverse-geocode?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`,
+    );
+  }
+
   async getLocationDetails(type: string, id: string): Promise<LocationDetails> {
     return this.request(`/map/location/${type}/${id}`);
   }

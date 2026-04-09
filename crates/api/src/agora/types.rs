@@ -19,6 +19,8 @@ pub struct CreateThreadRequest {
     pub location_id: Option<Uuid>,
     pub location_osm_id: Option<i64>,
     pub location_osm_type: Option<String>,
+    pub latitude: Option<f64>,
+    pub longitude: Option<f64>,
     pub institutional_context: Option<serde_json::Value>,
 }
 

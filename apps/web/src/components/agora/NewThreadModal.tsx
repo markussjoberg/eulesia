@@ -8,11 +8,14 @@ import {
   Hash,
   Plus,
   ChevronDown,
+  Map as MapIcon,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useCreateThread } from "../../hooks/useApi";
 import { useAuth } from "../../hooks/useAuth";
 import { LocationSearch } from "../common/LocationSearch";
+import { CoordinatePicker, type PickedCoordinate } from "./CoordinatePicker";
+import { api } from "../../lib/api";
 // Public thread scopes (excludes "club" which is internal to club endpoints)
 type Scope = "local" | "national" | "european";
 import type { LocationResult } from "../../lib/api";
@@ -120,6 +123,13 @@ export function NewThreadModal({
     useState<LocationResult | null>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [customTag, setCustomTag] = useState("");
+  const [pickedCoords, setPickedCoords] = useState<PickedCoordinate | null>(
+    null,
+  );
+  const [pickedMunicipalityName, setPickedMunicipalityName] = useState<
+    string | null
+  >(null);
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -178,6 +188,19 @@ export function NewThreadModal({
     }
   };
 
+  const handleCoordinateSelect = async (coords: PickedCoordinate) => {
+    setPickedCoords(coords);
+    try {
+      const muni = await api.reverseGeocodeMunicipality(
+        coords.latitude,
+        coords.longitude,
+      );
+      setPickedMunicipalityName(muni.name);
+    } catch {
+      setPickedMunicipalityName(null);
+    }
+  };
+
   const handleSubmit = async () => {
     if (!title.trim() || !content.trim()) {
       setError(t("threadForm.validationRequired"));
@@ -214,6 +237,12 @@ export function NewThreadModal({
         scope,
         country,
         ...locationData,
+        ...(pickedCoords
+          ? {
+              latitude: pickedCoords.latitude,
+              longitude: pickedCoords.longitude,
+            }
+          : {}),
         tags: selectedTags.length > 0 ? selectedTags : undefined,
       });
 
@@ -234,6 +263,8 @@ export function NewThreadModal({
     setCountryDropdownOpen(false);
     setSelectedTags([]);
     setCustomTag("");
+    setPickedCoords(null);
+    setPickedMunicipalityName(null);
     setError(null);
     if (!prefilledMunicipalityId && !prefilledLocation) {
       setSelectedLocation(null);
@@ -435,6 +466,22 @@ export function NewThreadModal({
             </div>
           )}
 
+          {/* Coordinate picker button */}
+          {!isPrefilled && scope === "local" && (
+            <div>
+              <button
+                type="button"
+                onClick={() => setIsPickerOpen(true)}
+                className="inline-flex items-center gap-2 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              >
+                <MapIcon className="w-4 h-4" />
+                {pickedCoords
+                  ? `${pickedCoords.latitude.toFixed(4)}, ${pickedCoords.longitude.toFixed(4)}${pickedMunicipalityName ? ` (${pickedMunicipalityName})` : ""}`
+                  : t("threadForm.pickOnMap", "Or pick a location on the map")}
+              </button>
+            </div>
+          )}
+
           {/* Title */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -565,6 +612,13 @@ export function NewThreadModal({
           </button>
         </div>
       </div>
+
+      {/* Coordinate picker overlay */}
+      <CoordinatePicker
+        isOpen={isPickerOpen}
+        onClose={() => setIsPickerOpen(false)}
+        onSelect={handleCoordinateSelect}
+      />
     </div>
   );
 }

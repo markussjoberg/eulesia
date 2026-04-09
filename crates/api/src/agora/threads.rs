@@ -610,13 +610,41 @@ pub async fn create_thread(
         (None, None, None) => None,
     };
 
-    let municipality_id = resolve_municipality_id(
-        &state.db,
-        scope,
-        req.municipality_id,
-        resolved_location.as_ref(),
-    )
-    .await?;
+    // Resolve municipality: explicit coordinates take priority, then
+    // fall back to resolved_location or explicit municipality_id.
+    let municipality_id = if let (Some(lat), Some(lon)) = (req.latitude, req.longitude) {
+        let coords = Coordinates {
+            latitude: lat,
+            longitude: lon,
+        };
+        let m = crate::locations::nearest_municipality(&state.db, coords).await?;
+        m.map(|m| m.id).or(req.municipality_id)
+    } else {
+        resolve_municipality_id(
+            &state.db,
+            scope,
+            req.municipality_id,
+            resolved_location.as_ref(),
+        )
+        .await?
+    };
+
+    // Extract coordinates: prefer explicit req values, then fall back to
+    // resolved location coordinates.
+    let (latitude, longitude) = match (req.latitude, req.longitude) {
+        (Some(lat), Some(lon)) => (Some(lat), Some(lon)),
+        _ => {
+            let loc_lat = resolved_location
+                .as_ref()
+                .and_then(|l| l.latitude)
+                .and_then(crate::locations::decimal_to_f64);
+            let loc_lon = resolved_location
+                .as_ref()
+                .and_then(|l| l.longitude)
+                .and_then(crate::locations::decimal_to_f64);
+            (loc_lat, loc_lon)
+        }
+    };
 
     let scope_str = scope.to_string();
     let thread_id = new_id();
@@ -631,6 +659,8 @@ pub async fn create_thread(
             author_id: Set(auth.user_id.0),
             scope: Set(scope_str),
             municipality_id: Set(municipality_id),
+            latitude: Set(crate::locations::decimal_from_f64(latitude)),
+            longitude: Set(crate::locations::decimal_from_f64(longitude)),
             language: Set(req.language),
             country: Set(req.country),
             location_id: Set(resolved_location.as_ref().map(|location| location.id)),
@@ -1131,5 +1161,29 @@ mod tests {
         assert_eq!(bob.username, "bob");
         assert_eq!(bob.role, UserRole::Moderator);
         assert!(bob.avatar_url.is_none());
+    }
+
+    /// CreateThreadRequest accepts optional latitude/longitude coordinates.
+    #[test]
+    fn create_thread_request_accepts_coordinates() {
+        let json = r#"{
+            "title": "Test",
+            "content": "Body",
+            "scope": "local",
+            "latitude": 60.1699,
+            "longitude": 24.9384
+        }"#;
+        let req: super::super::types::CreateThreadRequest = serde_json::from_str(json).unwrap();
+        assert_eq!(req.latitude, Some(60.1699));
+        assert_eq!(req.longitude, Some(24.9384));
+    }
+
+    /// CreateThreadRequest still works without coordinates.
+    #[test]
+    fn create_thread_request_without_coordinates() {
+        let json = r#"{"title":"Hello","content":"World","scope":"national"}"#;
+        let req: super::super::types::CreateThreadRequest = serde_json::from_str(json).unwrap();
+        assert!(req.latitude.is_none());
+        assert!(req.longitude.is_none());
     }
 }

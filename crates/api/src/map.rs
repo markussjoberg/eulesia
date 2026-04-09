@@ -409,19 +409,20 @@ async fn query_thread_points(
         SELECT
           t.id,
           t.title AS name,
-          t.latitude::float8 AS lat,
-          t.longitude::float8 AS lon,
+          COALESCE(t.latitude, m.latitude)::float8 AS lat,
+          COALESCE(t.longitude, m.longitude)::float8 AS lon,
           t.scope,
           t.language,
           t.reply_count,
           t.score
         FROM threads t
-        WHERE t.latitude IS NOT NULL
-          AND t.longitude IS NOT NULL
+        LEFT JOIN municipalities m ON m.id = t.municipality_id
+        WHERE COALESCE(t.latitude, m.latitude) IS NOT NULL
+          AND COALESCE(t.longitude, m.longitude) IS NOT NULL
           AND t.deleted_at IS NULL
           AND t.is_hidden = false
-          AND t.latitude BETWEEN $1 AND $2
-          AND t.longitude BETWEEN $3 AND $4
+          AND COALESCE(t.latitude, m.latitude) BETWEEN $1 AND $2
+          AND COALESCE(t.longitude, m.longitude) BETWEEN $3 AND $4
         ",
     );
 
@@ -542,6 +543,7 @@ async fn query_municipality_points(
           m.name,
           m.latitude::float8 AS lat,
           m.longitude::float8 AS lon,
+          m.population,
           (
         ",
     );
@@ -572,6 +574,7 @@ async fn query_municipality_points(
         .map(|row| {
             let meta = serde_json::json!({
                 "threadCount": row.try_get::<i64>("", "thread_count").ok(),
+                "population": row.try_get::<Option<i32>>("", "population").ok().flatten(),
             });
             parse_map_point_fields(&row, MapPointType::Municipality, "municipality", meta)
         })
@@ -632,9 +635,9 @@ async fn get_map_points(
     if contains_type(&type_filters, MapPointType::Place) {
         points.extend(query_place_points(&state.db, &params).await?);
     }
-    if contains_type(&type_filters, MapPointType::Municipality) {
-        points.extend(query_municipality_points(&state.db, &params).await?);
-    }
+    // Always return municipalities regardless of type filter — they serve
+    // as labels on the map and are needed for navigation.
+    points.extend(query_municipality_points(&state.db, &params).await?);
 
     Ok(Json(MapPointsResponse { points }))
 }
@@ -896,12 +899,40 @@ async fn map_location_detail(
 }
 
 // ---------------------------------------------------------------------------
+// Reverse geocode
+// ---------------------------------------------------------------------------
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct ReverseGeocodeParams {
+    lat: f64,
+    lon: f64,
+}
+
+async fn reverse_geocode(
+    State(state): State<AppState>,
+    Query(params): Query<ReverseGeocodeParams>,
+) -> Result<Json<MunicipalityResponse>, ApiError> {
+    let coords = Coordinates {
+        latitude: params.lat,
+        longitude: params.lon,
+    };
+
+    let municipality = crate::locations::nearest_municipality(&state.db, coords)
+        .await?
+        .ok_or_else(|| ApiError::NotFound(String::from("no municipality found near coordinates")))?;
+
+    Ok(Json(municipality_to_response(municipality)))
+}
+
+// ---------------------------------------------------------------------------
 // Routes
 // ---------------------------------------------------------------------------
 
 pub fn routes() -> Router<AppState> {
     Router::new()
         .route("/map/points", get(get_map_points))
+        .route("/map/reverse-geocode", get(reverse_geocode))
         .route("/map/location/{type}/{id}", get(map_location_detail))
         .route("/map/places/categories", get(place_categories))
         .route("/map/places", get(list_places).post(create_place))
@@ -991,6 +1022,80 @@ mod tests {
         assert!(sql.contains("tt.thread_id = t.id"));
         assert!(sql.contains("tt.tag IN ($4,$5)"));
         assert_eq!(values.len(), 5);
+    }
+
+    #[test]
+    fn reverse_geocode_params_deserialize() {
+        let json = r#"{"lat": 60.17, "lon": 24.94}"#;
+        let params: ReverseGeocodeParams = serde_json::from_str(json).unwrap();
+        assert!((params.lat - 60.17).abs() < f64::EPSILON);
+        assert!((params.lon - 24.94).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn municipality_meta_includes_population() {
+        let meta = serde_json::json!({
+            "threadCount": 5_i64,
+            "population": 674_500_i32,
+        });
+        let obj = meta.as_object().unwrap();
+        assert!(obj.contains_key("population"), "meta must include population");
+        assert_eq!(obj["population"], 674_500);
+    }
+
+    /// The thread points SQL uses COALESCE + LEFT JOIN to inherit
+    /// municipality coordinates when the thread has none.
+    #[test]
+    fn thread_query_uses_coalesce_for_coordinates() {
+        let params = BoundsParams {
+            north: 61.0,
+            south: 60.0,
+            east: 26.0,
+            west: 24.0,
+            types: None,
+            categories: None,
+            time_preset: None,
+            date_from: None,
+            date_to: None,
+            scope: None,
+            language: None,
+            tags: None,
+        };
+
+        let mut sql = String::from(
+            r"
+            SELECT
+              t.id,
+              t.title AS name,
+              COALESCE(t.latitude, m.latitude)::float8 AS lat,
+              COALESCE(t.longitude, m.longitude)::float8 AS lon,
+              t.scope,
+              t.language,
+              t.reply_count,
+              t.score
+            FROM threads t
+            LEFT JOIN municipalities m ON m.id = t.municipality_id
+            WHERE COALESCE(t.latitude, m.latitude) IS NOT NULL
+              AND COALESCE(t.longitude, m.longitude) IS NOT NULL
+              AND t.deleted_at IS NULL
+              AND t.is_hidden = false
+              AND COALESCE(t.latitude, m.latitude) BETWEEN $1 AND $2
+              AND COALESCE(t.longitude, m.longitude) BETWEEN $3 AND $4
+            ",
+        );
+
+        let mut values = vec![
+            params.south.into(),
+            params.north.into(),
+            params.west.into(),
+            params.east.into(),
+        ];
+
+        append_thread_filters(&mut sql, &mut values, &params, "t", false);
+
+        assert!(sql.contains("LEFT JOIN municipalities m"));
+        assert!(sql.contains("COALESCE(t.latitude, m.latitude)"));
+        assert!(sql.contains("COALESCE(t.longitude, m.longitude)"));
     }
 
     #[test]

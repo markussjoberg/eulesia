@@ -19,27 +19,63 @@ const TYPE_COLORS: Record<string, string> = {
   place: "#ea580c",
 };
 
-function toGeoJSON(points: MapPoint[]): GeoJSON.FeatureCollection {
+/**
+ * Build GeoJSON for content points (threads, clubs, places) — excludes
+ * municipalities which get their own label layer.
+ */
+export function toContentGeoJSON(
+  points: MapPoint[],
+): GeoJSON.FeatureCollection {
   return {
     type: "FeatureCollection",
-    features: points.map((p) => ({
-      type: "Feature" as const,
-      geometry: {
-        type: "Point" as const,
-        coordinates: [p.coordinates.longitude, p.coordinates.latitude],
-      },
-      properties: {
-        id: p.id,
-        pointType: p.pointType,
-        name: p.name,
-        meta: JSON.stringify(p.meta ?? {}),
-      },
-    })),
+    features: points
+      .filter((p) => p.pointType !== "municipality")
+      .map((p) => ({
+        type: "Feature" as const,
+        geometry: {
+          type: "Point" as const,
+          coordinates: [p.coordinates.longitude, p.coordinates.latitude],
+        },
+        properties: {
+          id: p.id,
+          pointType: p.pointType,
+          name: p.name,
+          meta: JSON.stringify(p.meta ?? {}),
+        },
+      })),
+  };
+}
+
+/**
+ * Build GeoJSON for municipality label points — rendered as text labels,
+ * not clustered.
+ */
+export function toMunicipalityGeoJSON(
+  points: MapPoint[],
+): GeoJSON.FeatureCollection {
+  return {
+    type: "FeatureCollection",
+    features: points
+      .filter((p) => p.pointType === "municipality")
+      .map((p) => ({
+        type: "Feature" as const,
+        geometry: {
+          type: "Point" as const,
+          coordinates: [p.coordinates.longitude, p.coordinates.latitude],
+        },
+        properties: {
+          id: p.id,
+          name: p.name,
+          population: (p.meta as Record<string, unknown>)?.population ?? 0,
+          threadCount: (p.meta as Record<string, unknown>)?.threadCount ?? 0,
+          meta: JSON.stringify(p.meta ?? {}),
+        },
+      })),
   };
 }
 
 function addPointLayers(map: maplibregl.Map) {
-  // GeoJSON source with clustering
+  // ── Content source (clustered) ──────────────────────────────────────
   map.addSource("points", {
     type: "geojson",
     data: { type: "FeatureCollection", features: [] },
@@ -47,10 +83,6 @@ function addPointLayers(map: maplibregl.Map) {
     clusterMaxZoom: 15,
     clusterRadius: 60,
     clusterProperties: {
-      sum_municipality: [
-        "+",
-        ["case", ["==", ["get", "pointType"], "municipality"], 1, 0],
-      ],
       sum_thread: ["+", ["case", ["==", ["get", "pointType"], "thread"], 1, 0]],
       sum_club: ["+", ["case", ["==", ["get", "pointType"], "club"], 1, 0]],
       sum_place: ["+", ["case", ["==", ["get", "pointType"], "place"], 1, 0]],
@@ -66,13 +98,6 @@ function addPointLayers(map: maplibregl.Map) {
     paint: {
       "circle-color": [
         "case",
-        [
-          "all",
-          [">=", ["get", "sum_municipality"], ["get", "sum_thread"]],
-          [">=", ["get", "sum_municipality"], ["get", "sum_club"]],
-          [">=", ["get", "sum_municipality"], ["get", "sum_place"]],
-        ],
-        TYPE_COLORS.municipality,
         [
           "all",
           [">=", ["get", "sum_thread"], ["get", "sum_club"]],
@@ -116,8 +141,6 @@ function addPointLayers(map: maplibregl.Map) {
       "circle-color": [
         "match",
         ["get", "pointType"],
-        "municipality",
-        TYPE_COLORS.municipality,
         "thread",
         TYPE_COLORS.thread,
         "club",
@@ -129,6 +152,76 @@ function addPointLayers(map: maplibregl.Map) {
       "circle-radius": 8,
       "circle-stroke-width": 2,
       "circle-stroke-color": "#ffffff",
+    },
+  });
+
+  // ── Municipality label source (not clustered) ──────────────────────
+  map.addSource("municipalities", {
+    type: "geojson",
+    data: { type: "FeatureCollection", features: [] },
+  });
+
+  // Municipality text labels — zoom-dependent by population
+  map.addLayer({
+    id: "municipality-labels",
+    type: "symbol",
+    source: "municipalities",
+    layout: {
+      "text-field": ["get", "name"],
+      "text-size": [
+        "interpolate",
+        ["linear"],
+        ["zoom"],
+        5,
+        [
+          "case",
+          [">=", ["get", "population"], 100000],
+          14,
+          [">=", ["get", "population"], 30000],
+          12,
+          0,
+        ],
+        8,
+        [
+          "case",
+          [">=", ["get", "population"], 100000],
+          16,
+          [">=", ["get", "population"], 30000],
+          14,
+          [">=", ["get", "population"], 10000],
+          12,
+          10,
+        ],
+        12,
+        [
+          "case",
+          [">=", ["get", "population"], 100000],
+          18,
+          [">=", ["get", "population"], 30000],
+          16,
+          14,
+        ],
+      ],
+      "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
+      "text-anchor": "center",
+      "text-allow-overlap": false,
+      "text-optional": true,
+    },
+    paint: {
+      "text-color": TYPE_COLORS.municipality,
+      "text-halo-color": "#ffffff",
+      "text-halo-width": 2,
+      "text-opacity": [
+        "interpolate",
+        ["linear"],
+        ["zoom"],
+        5,
+        ["case", [">=", ["get", "population"], 100000], 1, 0],
+        7,
+        ["case", [">=", ["get", "population"], 30000], 1, 0],
+        9,
+        1,
+      ],
     },
   });
 }
@@ -152,7 +245,11 @@ export function EulesiaMap({
   const mapRef = useRef<maplibregl.Map | null>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
   const boundsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const pointsDataRef = useRef<GeoJSON.FeatureCollection>({
+  const contentDataRef = useRef<GeoJSON.FeatureCollection>({
+    type: "FeatureCollection",
+    features: [],
+  });
+  const municipalityDataRef = useRef<GeoJSON.FeatureCollection>({
     type: "FeatureCollection",
     features: [],
   });
@@ -200,8 +297,13 @@ export function EulesiaMap({
     map.on("load", () => {
       addPointLayers(map);
 
-      const source = map.getSource("points") as maplibregl.GeoJSONSource;
-      if (source) source.setData(pointsDataRef.current);
+      const contentSource = map.getSource("points") as maplibregl.GeoJSONSource;
+      if (contentSource) contentSource.setData(contentDataRef.current);
+
+      const muniSource = map.getSource(
+        "municipalities",
+      ) as maplibregl.GeoJSONSource;
+      if (muniSource) muniSource.setData(municipalityDataRef.current);
 
       emitBounds(map);
     });
@@ -267,8 +369,53 @@ export function EulesiaMap({
         .addTo(map);
     });
 
+    // Municipality label click — navigate to local feed
+    map.on("click", "municipality-labels", (e) => {
+      const feature = e.features?.[0];
+      if (!feature) return;
+      const coords = (
+        feature.geometry as GeoJSON.Point
+      ).coordinates.slice() as [number, number];
+      const props = feature.properties;
+
+      const point: MapPoint = {
+        id: props.id,
+        pointType: "municipality",
+        name: props.name,
+        coordinates: {
+          latitude: coords[1],
+          longitude: coords[0],
+        },
+        meta: JSON.parse(props.meta || "{}"),
+      };
+
+      onPointClick?.(point);
+
+      popupRef.current?.remove();
+
+      const container = document.createElement("div");
+      const root = createRoot(container);
+      root.render(
+        <MemoryRouter>
+          <MapPopup point={point} />
+        </MemoryRouter>,
+      );
+
+      popupRef.current = new maplibregl.Popup({
+        closeButton: true,
+        maxWidth: "320px",
+      })
+        .setLngLat(coords)
+        .setDOMContent(container)
+        .addTo(map);
+    });
+
     // Cursor styles
-    for (const layer of ["clusters", "unclustered-point"]) {
+    for (const layer of [
+      "clusters",
+      "unclustered-point",
+      "municipality-labels",
+    ]) {
       map.on("mouseenter", layer, () => {
         map.getCanvas().style.cursor = "pointer";
       });
@@ -314,21 +461,32 @@ export function EulesiaMap({
 
     map.once("style.load", () => {
       addPointLayers(map);
-      const source = map.getSource("points") as maplibregl.GeoJSONSource;
-      if (source) source.setData(pointsDataRef.current);
+      const contentSource = map.getSource("points") as maplibregl.GeoJSONSource;
+      if (contentSource) contentSource.setData(contentDataRef.current);
+      const muniSource = map.getSource(
+        "municipalities",
+      ) as maplibregl.GeoJSONSource;
+      if (muniSource) muniSource.setData(municipalityDataRef.current);
     });
   }, [resolvedTheme]);
 
-  // Sync points data
+  // Sync points data — split into content + municipality layers
   useEffect(() => {
-    const geojson = toGeoJSON(points);
-    pointsDataRef.current = geojson;
+    const contentGeo = toContentGeoJSON(points);
+    const muniGeo = toMunicipalityGeoJSON(points);
+    contentDataRef.current = contentGeo;
+    municipalityDataRef.current = muniGeo;
 
     const map = mapRef.current;
     if (!map || !map.isStyleLoaded()) return;
 
-    const source = map.getSource("points") as maplibregl.GeoJSONSource;
-    if (source) source.setData(geojson);
+    const contentSource = map.getSource("points") as maplibregl.GeoJSONSource;
+    if (contentSource) contentSource.setData(contentGeo);
+
+    const muniSource = map.getSource(
+      "municipalities",
+    ) as maplibregl.GeoJSONSource;
+    if (muniSource) muniSource.setData(muniGeo);
   }, [points]);
 
   return (

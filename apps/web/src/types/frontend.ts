@@ -287,6 +287,8 @@ export interface CreateThreadData {
   locationId?: string;
   locationOsmId?: number;
   locationOsmType?: OsmType;
+  latitude?: number;
+  longitude?: number;
   tags?: string[];
   language?: string;
   institutionalContext?: InstitutionalContext;

@@ -125,7 +125,7 @@ pub(crate) fn decimal_to_f64(d: sea_orm::prelude::Decimal) -> Option<f64> {
     d.to_string().parse::<f64>().ok()
 }
 
-fn decimal_from_f64(value: Option<f64>) -> Option<sea_orm::prelude::Decimal> {
+pub(crate) fn decimal_from_f64(value: Option<f64>) -> Option<sea_orm::prelude::Decimal> {
     value.and_then(sea_orm::prelude::Decimal::from_f64_retain)
 }
 
