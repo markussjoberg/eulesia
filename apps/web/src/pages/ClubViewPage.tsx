@@ -298,7 +298,7 @@ export function ClubViewPage() {
           description={
             club.description
               ? club.description.substring(0, 160)
-              : `${club.name} – klubi Eulesia-alustalla`
+              : `${club.name} – kerho Eulesia-alustalla`
           }
           path={`/clubs/${clubId}`}
           image={club.coverImageUrl || undefined}

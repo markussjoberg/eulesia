@@ -24,7 +24,7 @@
     },
     "bottomnav": {
       "title": "Navigointi",
-      "description": "Viisi pääosiota: Agora (keskustelut), Klubit, Viestit, Kartta ja Koti. Siirry osiosta toiseen tästä."
+      "description": "Viisi pääosiota: Agora (keskustelut), Kerhot, Viestit, Kartta ja Koti. Siirry osiosta toiseen tästä."
     }
   },
   "agora": {
@@ -51,22 +51,22 @@
     }
   },
   "clubs": {
-    "title": "Klubit-opas",
+    "title": "Kerhot-opas",
     "header": {
-      "title": "Mikä ovat Klubit?",
-      "description": "Klubit ovat ryhmäkeskusteluja tietyn aiheen tai yhteisön ympärillä. Voit liittyä avoimiin klubeihin tai perustaa oman."
+      "title": "Mikä ovat Kerhot?",
+      "description": "Kerhot ovat ryhmäkeskusteluja tietyn aiheen tai yhteisön ympärillä. Voit liittyä avoimiin kerhoihin tai perustaa oman."
     },
     "search": {
-      "title": "Hae klubeja",
-      "description": "Etsi klubeja nimellä tai suodata kategorioittain."
+      "title": "Hae kerhoja",
+      "description": "Etsi kerhoja nimellä tai suodata kategorioittain."
     },
     "create": {
-      "title": "Luo klubi",
-      "description": "Perusta oma klubi painamalla tätä. Valitse nimi, kuvaus, kategoria ja näkyvyys."
+      "title": "Luo kerho",
+      "description": "Perusta oma kerho painamalla tätä. Valitse nimi, kuvaus, kategoria ja näkyvyys."
     },
     "clubcard": {
-      "title": "Klubikortti",
-      "description": "Jokaisessa kortissa näet klubin nimen, kuvauksen, jäsenmäärän ja kategorian. Klikkaa liittyäksesi tai katsoaksesi."
+      "title": "Kerhokortti",
+      "description": "Jokaisessa kortissa näet kerhon nimen, kuvauksen, jäsenmäärän ja kategorian. Klikkaa liittyäksesi tai katsoaksesi."
     }
   },
   "messages": {
@@ -84,7 +84,7 @@
     "title": "Kartta-opas",
     "header": {
       "title": "Eulesian kartta",
-      "description": "Karttanäkymä näyttää keskustelut, klubit ja paikat maantieteellisesti. Zoomaa ja liiku kartalla löytääksesi lähiympäristön sisältöä."
+      "description": "Karttanäkymä näyttää keskustelut, kerhot ja paikat maantieteellisesti. Zoomaa ja liiku kartalla löytääksesi lähiympäristön sisältöä."
     },
     "filters": {
       "title": "Suodattimet",
@@ -92,7 +92,7 @@
     },
     "point": {
       "title": "Karttapisteet",
-      "description": "Klikkaa karttapistettä nähdäksesi tarkemmat tiedot. Voit siirtyä suoraan keskusteluun tai klubiin."
+      "description": "Klikkaa karttapistettä nähdäksesi tarkemmat tiedot. Voit siirtyä suoraan keskusteluun tai kerhoon."
     }
   },
   "home": {
@@ -111,7 +111,7 @@
     },
     "activity": {
       "title": "Viimeaikainen toiminta",
-      "description": "Nopea katsaus viimeisimpiin keskusteluihisi ja klubeihisi."
+      "description": "Nopea katsaus viimeisimpiin keskusteluihisi ja kerhoihisi."
     }
   }
 }

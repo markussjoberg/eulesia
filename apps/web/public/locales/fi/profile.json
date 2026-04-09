@@ -66,7 +66,7 @@
     "dataList": {
       "profile": "Profiilitiedot (nimi, kunta)",
       "posts": "Julkaisusi ja kommenttisi",
-      "clubs": "Klubijäsenyydet",
+      "clubs": "Kerhojäsenyydet",
       "notifications": "Ilmoitusasetukset"
     },
     "exporting": "Viedään...",
@@ -86,7 +86,7 @@
     "comments": "Kommentit",
     "votes": "Äänet",
     "directMessages": "Yksityisviestit",
-    "clubMemberships": "Klubijäsenyydet",
+    "clubMemberships": "Kerhojäsenyydet",
     "rooms": "Huoneet ja jäsenyydet",
     "roomMessages": "Huoneviestit",
     "notifications": "Ilmoitukset",

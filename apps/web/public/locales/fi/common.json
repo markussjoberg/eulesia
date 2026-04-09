@@ -1,7 +1,7 @@
 {
   "nav": {
     "agora": "Agora",
-    "clubs": "Klubit",
+    "clubs": "Kerhot",
     "messages": "Viestit",
     "map": "Kartta"
   },
@@ -111,7 +111,7 @@
     "agency": "Virasto",
     "discussions_one": "{{count}} keskustelu",
     "discussions_other": "{{count}} keskustelua",
-    "clubs": "Klubit",
+    "clubs": "Kerhot",
     "members_one": "{{count}} jäsen",
     "members_other": "{{count}} jäsentä"
   },
