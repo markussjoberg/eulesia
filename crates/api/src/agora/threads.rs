@@ -739,8 +739,9 @@ pub async fn update_thread(
         .ok_or_else(|| ApiError::NotFound("thread not found".into()))?;
 
     // Allow community editing for AI-generated / bot threads (e.g. Eulesia Summary).
-    let is_bot_thread = thread.ai_generated || thread.source == "minutes_import";
-    if thread.author_id != auth.user_id.0 && !is_bot_thread {
+    let is_community_editable =
+        thread.ai_generated || matches!(thread.source.as_str(), "minutes_import" | "summary");
+    if thread.author_id != auth.user_id.0 && !is_community_editable {
         return Err(ApiError::Forbidden);
     }
 

@@ -37,8 +37,12 @@ export function ThreadCard({
   const { t } = useTranslation("agora");
   const isInstitutional = author.role === "institution";
   const isAiGenerated =
-    thread.aiGenerated || thread.source === "minutes_import";
-  const isBotSummary = isAiGenerated && thread.source === "rss_import";
+    thread.aiGenerated ||
+    thread.source === "minutes_import" ||
+    thread.source === "summary";
+  const isSummary = thread.source === "summary";
+  const isBotSummary =
+    isAiGenerated && (thread.source === "rss_import" || isSummary);
   const isMinutesSummary = isAiGenerated && thread.source === "minutes_import";
   const showVoting = typeof thread.score === "number";
 

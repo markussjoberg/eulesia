@@ -2,12 +2,20 @@ use std::collections::HashMap;
 use std::sync::OnceLock;
 
 use sea_orm::{
-    ActiveModelTrait, ActiveValue::Set, DatabaseConnection, DbErr, EntityTrait, prelude::Decimal,
+    ActiveModelTrait, ActiveValue::Set, ColumnTrait, DatabaseConnection, DbErr, EntityTrait,
+    QueryFilter, prelude::Decimal,
 };
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
-use crate::entities::municipalities;
+use crate::entities::{municipalities, users};
 use eulesia_common::types::new_id;
+
+/// Well-known UUID for the Eulesia Summary system user.
+/// This is stable so that external services (import pipeline) can reference it.
+pub const EULESIA_SUMMARY_USER_ID: Uuid = Uuid::from_bytes([
+    0x01, 0x96, 0x00, 0x00, 0x00, 0x00, 0x70, 0x00, 0x80, 0x00, 0xe0, 0x1e, 0x51, 0xa0, 0x00, 0x01,
+]);
 
 const FINLAND_DATASET_VERSION: &str = "statfi-2026";
 const FINNISH_MUNICIPALITIES_JSON: &str = include_str!("../data/fi_municipalities_2026.json");
@@ -24,6 +32,7 @@ struct MunicipalitySeedRecord {
     latitude: Option<f64>,
     longitude: Option<f64>,
     bounds: Option<serde_json::Value>,
+    designation: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -46,7 +55,43 @@ pub async fn sync_reference_data(
     db: &DatabaseConnection,
 ) -> Result<ReferenceDataSyncReport, DbErr> {
     let municipalities = sync_finnish_municipalities(db).await?;
+    ensure_summary_user(db).await?;
     Ok(ReferenceDataSyncReport { municipalities })
+}
+
+/// Ensure the "Eulesia Summary" system user exists. This is the author of all
+/// AI-generated summary threads. It is NOT affiliated with any institution —
+/// summaries post to local scope with a municipality_id instead.
+pub async fn ensure_summary_user(db: &DatabaseConnection) -> Result<(), DbErr> {
+    let existing = users::Entity::find_by_id(EULESIA_SUMMARY_USER_ID)
+        .one(db)
+        .await?;
+
+    if existing.is_some() {
+        return Ok(());
+    }
+
+    let now = chrono::Utc::now().fixed_offset();
+    users::ActiveModel {
+        id: Set(EULESIA_SUMMARY_USER_ID),
+        username: Set("eulesia-summary".into()),
+        name: Set("Eulesia Summary".into()),
+        email: Set(Some("summary@eulesia.eu".into())),
+        role: Set("institution".into()),
+        institution_type: Set(Some("service".into())),
+        institution_name: Set(Some("Eulesia Summary".into())),
+        identity_verified: Set(true),
+        identity_provider: Set(Some("system".into())),
+        identity_level: Set("high".into()),
+        locale: Set("fi".into()),
+        created_at: Set(now),
+        updated_at: Set(now),
+        ..Default::default()
+    }
+    .insert(db)
+    .await?;
+
+    Ok(())
 }
 
 pub async fn sync_finnish_municipalities(
@@ -108,6 +153,7 @@ pub async fn sync_finnish_municipalities(
             active.latitude = Set(decimal_from_f64(record.latitude));
             active.longitude = Set(decimal_from_f64(record.longitude));
             active.bounds = Set(record.bounds.clone());
+            active.designation = Set(record.designation.clone());
             active.update(db).await?;
             updated += 1;
         } else {
@@ -123,6 +169,7 @@ pub async fn sync_finnish_municipalities(
                 latitude: Set(decimal_from_f64(record.latitude)),
                 longitude: Set(decimal_from_f64(record.longitude)),
                 bounds: Set(record.bounds.clone()),
+                designation: Set(record.designation.clone()),
                 ..Default::default()
             }
             .insert(db)

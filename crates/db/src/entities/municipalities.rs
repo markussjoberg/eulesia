@@ -16,6 +16,8 @@ pub struct Model {
     pub latitude: Option<Decimal>,
     pub longitude: Option<Decimal>,
     pub bounds: Option<Json>,
+    /// "kaupunki" or "kunta"
+    pub designation: Option<String>,
     pub created_at: DateTimeWithTimeZone,
 }
 

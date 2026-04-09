@@ -14,7 +14,8 @@
       "north": 63.147998,
       "west": 23.490325,
       "east": 24.359008
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "009",
@@ -31,7 +32,8 @@
       "north": 64.300094,
       "west": 24.137082,
       "east": 24.582054
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "010",
@@ -48,7 +50,8 @@
       "north": 62.762606,
       "west": 23.161226,
       "east": 23.993574
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "016",
@@ -65,7 +68,8 @@
       "north": 61.364628,
       "west": 25.202824,
       "east": 25.927328
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "018",
@@ -82,7 +86,8 @@
       "north": 60.613875,
       "west": 25.415492,
       "east": 25.823227
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "019",
@@ -99,7 +104,8 @@
       "north": 60.737294,
       "west": 22.415004,
       "east": 22.682117
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "020",
@@ -116,7 +122,8 @@
       "north": 61.258979,
       "west": 23.494139,
       "east": 23.959014
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "035",
@@ -133,7 +140,8 @@
       "north": 60.557353,
       "west": 20.902314,
       "east": 21.128692
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "043",
@@ -150,7 +158,8 @@
       "north": 60.297961,
       "west": 19.472754,
       "east": 19.678294
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "046",
@@ -167,7 +176,8 @@
       "north": 62.28676,
       "west": 28.597476,
       "east": 29.125848
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "047",
@@ -184,7 +194,8 @@
       "north": 69.311884,
       "west": 20.552328,
       "east": 25.027196
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "049",
@@ -201,7 +212,8 @@
       "north": 60.359241,
       "west": 24.503201,
       "east": 24.834638
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "050",
@@ -218,7 +230,8 @@
       "north": 61.296704,
       "west": 21.84411,
       "east": 22.263632
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "051",
@@ -235,7 +248,8 @@
       "north": 61.442676,
       "west": 21.442738,
       "east": 21.94595
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "052",
@@ -252,7 +266,8 @@
       "north": 63.498047,
       "west": 23.20704,
       "east": 23.702698
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "060",
@@ -269,7 +284,8 @@
       "north": 60.376325,
       "west": 19.785722,
       "east": 20.025052
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "061",
@@ -286,7 +302,8 @@
       "north": 61.009034,
       "west": 23.474091,
       "east": 23.83937
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "062",
@@ -303,7 +320,8 @@
       "north": 60.11743,
       "west": 20.318741,
       "east": 20.590731
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "065",
@@ -320,7 +338,8 @@
       "north": 60.423293,
       "west": 19.764591,
       "east": 19.967868
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "069",
@@ -337,7 +356,8 @@
       "north": 63.932261,
       "west": 24.955615,
       "east": 25.661958
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "071",
@@ -354,7 +374,8 @@
       "north": 64.362578,
       "west": 24.906374,
       "east": 25.777301
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "072",
@@ -371,7 +392,8 @@
       "north": 65.100968,
       "west": 24.569733,
       "east": 25.080723
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "074",
@@ -388,7 +410,8 @@
       "north": 63.577055,
       "west": 24.040818,
       "east": 24.554594
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "075",
@@ -405,7 +428,8 @@
       "north": 60.84264,
       "west": 26.922136,
       "east": 27.454679
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "076",
@@ -422,7 +446,8 @@
       "north": 60.325906,
       "west": 19.619351,
       "east": 19.841181
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "077",
@@ -439,7 +464,8 @@
       "north": 62.578154,
       "west": 26.213726,
       "east": 26.776125
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "078",
@@ -456,7 +482,8 @@
       "north": 59.932307,
       "west": 22.88595,
       "east": 23.295167
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "079",
@@ -473,7 +500,8 @@
       "north": 61.407398,
       "west": 22.021195,
       "east": 22.272024
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "081",
@@ -490,7 +518,8 @@
       "north": 61.801408,
       "west": 25.771179,
       "east": 26.315039
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "082",
@@ -507,7 +536,8 @@
       "north": 61.233216,
       "west": 24.0326,
       "east": 24.624397
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "086",
@@ -524,7 +554,8 @@
       "north": 60.927816,
       "west": 24.714608,
       "east": 25.154876
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "090",
@@ -541,7 +572,8 @@
       "north": 62.657022,
       "west": 28.244772,
       "east": 29.16824
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "091",
@@ -558,7 +590,8 @@
       "north": 60.29808,
       "west": 24.831403,
       "east": 25.271647
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "092",
@@ -575,7 +608,8 @@
       "north": 60.401255,
       "west": 24.749283,
       "east": 25.19025
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "097",
@@ -592,7 +626,8 @@
       "north": 61.858541,
       "west": 26.367181,
       "east": 27.019442
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "098",
@@ -609,7 +644,8 @@
       "north": 61.150707,
       "west": 25.027676,
       "east": 25.822195
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "102",
@@ -626,7 +662,8 @@
       "north": 61.30198,
       "west": 22.480341,
       "east": 22.993958
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "103",
@@ -643,7 +680,8 @@
       "north": 61.018554,
       "west": 23.195366,
       "east": 23.500747
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "105",
@@ -660,7 +698,8 @@
       "north": 64.898375,
       "west": 28.056014,
       "east": 29.459456
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "106",
@@ -677,7 +716,8 @@
       "north": 60.684992,
       "west": 24.566911,
       "east": 25.112462
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "108",
@@ -694,7 +734,8 @@
       "north": 61.734404,
       "west": 22.824069,
       "east": 23.500477
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "109",
@@ -711,7 +752,8 @@
       "north": 61.324881,
       "west": 23.756757,
       "east": 25.259867
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "111",
@@ -728,7 +770,8 @@
       "north": 61.425831,
       "west": 25.804915,
       "east": 26.513663
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "139",
@@ -745,7 +788,8 @@
       "north": 65.822335,
       "west": 25.09261,
       "east": 26.160111
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "140",
@@ -762,7 +806,8 @@
       "north": 63.688839,
       "west": 26.803005,
       "east": 27.625181
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "142",
@@ -779,7 +824,8 @@
       "north": 61.155485,
       "west": 26.042201,
       "east": 26.544968
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "143",
@@ -796,7 +842,8 @@
       "north": 61.971585,
       "west": 22.691009,
       "east": 23.593875
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "145",
@@ -813,7 +860,8 @@
       "north": 62.871303,
       "west": 22.150152,
       "east": 22.87752
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "146",
@@ -830,7 +878,8 @@
       "north": 63.195133,
       "west": 30.361387,
       "east": 31.586703
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "148",
@@ -847,7 +896,8 @@
       "north": 69.849193,
       "west": 24.903166,
       "east": 29.336497
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "149",
@@ -864,7 +914,8 @@
       "north": 60.150117,
       "west": 23.759067,
       "east": 24.276088
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "151",
@@ -881,7 +932,8 @@
       "north": 62.284391,
       "west": 21.6417,
       "east": 22.198722
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "152",
@@ -898,7 +950,8 @@
       "north": 63.101918,
       "west": 22.143973,
       "east": 22.67623
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "153",
@@ -915,7 +968,8 @@
       "north": 61.277635,
       "west": 28.70168,
       "east": 29.021966
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "165",
@@ -932,7 +986,8 @@
       "north": 61.025433,
       "west": 24.398698,
       "east": 24.980394
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "167",
@@ -949,7 +1004,8 @@
       "north": 63.045761,
       "west": 29.637208,
       "east": 31.093522
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "169",
@@ -966,7 +1022,8 @@
       "north": 60.947618,
       "west": 23.276335,
       "east": 23.550465
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "170",
@@ -983,7 +1040,8 @@
       "north": 60.210859,
       "west": 19.747954,
       "east": 20.05184
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "171",
@@ -1000,7 +1058,8 @@
       "north": 62.37476,
       "west": 27.531605,
       "east": 28.080088
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "172",
@@ -1017,7 +1076,8 @@
       "north": 62.03848,
       "west": 25.844956,
       "east": 26.527087
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "176",
@@ -1034,7 +1094,8 @@
       "north": 63.449716,
       "west": 28.610804,
       "east": 29.787164
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "177",
@@ -1051,7 +1112,8 @@
       "north": 61.910566,
       "west": 24.227415,
       "east": 24.666651
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "178",
@@ -1068,7 +1130,8 @@
       "north": 62.034861,
       "west": 27.392462,
       "east": 28.227785
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "179",
@@ -1085,7 +1148,8 @@
       "north": 62.428746,
       "west": 25.26078,
       "east": 26.050995
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "181",
@@ -1102,7 +1166,8 @@
       "north": 61.952108,
       "west": 22.51637,
       "east": 22.828422
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "182",
@@ -1119,7 +1184,8 @@
       "north": 62.210801,
       "west": 24.524644,
       "east": 25.59641
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "186",
@@ -1136,7 +1202,8 @@
       "north": 60.528529,
       "west": 25.03099,
       "east": 25.180709
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "202",
@@ -1153,7 +1220,8 @@
       "north": 60.495074,
       "west": 22.274216,
       "east": 22.60748
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "204",
@@ -1170,7 +1238,8 @@
       "north": 63.136715,
       "west": 28.385947,
       "east": 29.097602
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "205",
@@ -1187,7 +1256,8 @@
       "north": 64.36517,
       "west": 26.7675,
       "east": 28.132839
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "208",
@@ -1204,7 +1274,8 @@
       "north": 64.377015,
       "west": 23.565497,
       "east": 24.346336
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "211",
@@ -1221,7 +1292,8 @@
       "north": 61.627191,
       "west": 23.890193,
       "east": 24.970481
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "213",
@@ -1238,7 +1310,8 @@
       "north": 62.307726,
       "west": 26.220723,
       "east": 27.126574
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "214",
@@ -1255,7 +1328,8 @@
       "north": 62.142448,
       "west": 21.974686,
       "east": 22.693702
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "216",
@@ -1272,7 +1346,8 @@
       "north": 63.099269,
       "west": 25.052487,
       "east": 25.70769
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "217",
@@ -1289,7 +1364,8 @@
       "north": 64.095266,
       "west": 23.710855,
       "east": 24.247452
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "218",
@@ -1306,7 +1382,8 @@
       "north": 62.424299,
       "west": 21.55413,
       "east": 21.938981
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "224",
@@ -1323,7 +1400,8 @@
       "north": 60.642325,
       "west": 23.971327,
       "east": 24.464904
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "226",
@@ -1340,7 +1418,8 @@
       "north": 63.046332,
       "west": 24.341976,
       "east": 25.300406
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "230",
@@ -1357,7 +1436,8 @@
       "north": 62.311126,
       "west": 22.373688,
       "east": 22.861626
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "231",
@@ -1374,7 +1454,8 @@
       "north": 62.4262,
       "west": 21.16581,
       "east": 21.341725
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "232",
@@ -1391,7 +1472,8 @@
       "north": 62.541445,
       "west": 21.875631,
       "east": 22.641897
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "233",
@@ -1408,7 +1490,8 @@
       "north": 63.398961,
       "west": 22.574635,
       "east": 23.454827
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "235",
@@ -1425,7 +1508,8 @@
       "north": 60.244674,
       "west": 24.661057,
       "east": 24.79177
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "236",
@@ -1442,7 +1526,8 @@
       "north": 63.675437,
       "west": 23.422407,
       "east": 24.098947
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "239",
@@ -1459,7 +1544,8 @@
       "north": 63.438862,
       "west": 26.070541,
       "east": 26.622741
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "240",
@@ -1476,7 +1562,8 @@
       "north": 65.789958,
       "west": 24.436193,
       "east": 24.747412
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "241",
@@ -1493,7 +1580,8 @@
       "north": 66.030443,
       "west": 24.436193,
       "east": 25.225675
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "244",
@@ -1510,7 +1598,8 @@
       "north": 64.94299,
       "west": 25.425698,
       "east": 25.728301
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "245",
@@ -1527,7 +1616,8 @@
       "north": 60.441086,
       "west": 25.051492,
       "east": 25.176826
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "249",
@@ -1544,7 +1634,8 @@
       "north": 62.528408,
       "west": 24.013003,
       "east": 25.071854
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "250",
@@ -1561,7 +1652,8 @@
       "north": 62.334167,
       "west": 22.994364,
       "east": 23.424002
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "256",
@@ -1578,7 +1670,8 @@
       "north": 63.467168,
       "west": 24.772921,
       "east": 25.333469
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "257",
@@ -1595,7 +1688,8 @@
       "north": 60.294141,
       "west": 24.292807,
       "east": 24.63656
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "260",
@@ -1612,7 +1706,8 @@
       "north": 62.244305,
       "west": 29.427146,
       "east": 30.483087
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "261",
@@ -1629,7 +1724,8 @@
       "north": 68.395289,
       "west": 24.100774,
       "east": 26.00784
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "263",
@@ -1646,7 +1742,8 @@
       "north": 63.963688,
       "west": 26.165383,
       "east": 26.894742
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "265",
@@ -1663,7 +1760,8 @@
       "north": 63.278654,
       "west": 24.754168,
       "east": 25.375095
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "271",
@@ -1680,7 +1778,8 @@
       "north": 61.488923,
       "west": 22.129939,
       "east": 22.599108
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "272",
@@ -1697,7 +1796,8 @@
       "north": 64.084168,
       "west": 22.808019,
       "east": 24.466864
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "273",
@@ -1714,7 +1814,8 @@
       "north": 67.635534,
       "west": 23.54049,
       "east": 24.870206
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "275",
@@ -1731,7 +1832,8 @@
       "north": 62.846841,
       "west": 26.024797,
       "east": 26.598386
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "276",
@@ -1748,7 +1850,8 @@
       "north": 63.065752,
       "west": 29.563227,
       "east": 30.288005
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "280",
@@ -1765,7 +1868,8 @@
       "north": 62.889516,
       "west": 21.032015,
       "east": 21.374407
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "284",
@@ -1782,7 +1886,8 @@
       "north": 60.774168,
       "west": 22.965244,
       "east": 23.257696
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "285",
@@ -1799,7 +1904,8 @@
       "north": 60.673503,
       "west": 26.741133,
       "east": 27.24893
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "286",
@@ -1816,7 +1922,8 @@
       "north": 61.287146,
       "west": 26.23445,
       "east": 27.42836
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "287",
@@ -1833,7 +1940,8 @@
       "north": 62.424299,
       "west": 21.277147,
       "east": 21.76751
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "288",
@@ -1850,7 +1958,8 @@
       "north": 63.79171,
       "west": 22.829677,
       "east": 23.744081
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "290",
@@ -1867,7 +1976,8 @@
       "north": 64.635364,
       "west": 28.751946,
       "east": 30.553402
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "291",
@@ -1884,7 +1994,8 @@
       "north": 61.779559,
       "west": 24.812034,
       "east": 25.535221
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "295",
@@ -1901,7 +2012,8 @@
       "north": 60.376364,
       "west": 20.648678,
       "east": 20.940732
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "297",
@@ -1918,7 +2030,8 @@
       "north": 63.403311,
       "west": 26.8955,
       "east": 28.762387
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "300",
@@ -1935,7 +2048,8 @@
       "north": 62.919628,
       "west": 23.271255,
       "east": 23.847049
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "301",
@@ -1952,7 +2066,8 @@
       "north": 62.863564,
       "west": 21.662245,
       "east": 23.144518
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "304",
@@ -1969,7 +2084,8 @@
       "north": 60.663309,
       "west": 21.226509,
       "east": 21.498368
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "305",
@@ -1986,7 +2102,8 @@
       "north": 66.485853,
       "west": 28.372171,
       "east": 30.138465
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "309",
@@ -2003,7 +2120,8 @@
       "north": 62.84559,
       "west": 28.632706,
       "east": 29.303957
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "312",
@@ -2020,7 +2138,8 @@
       "north": 63.157481,
       "west": 24.278017,
       "east": 24.881658
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "316",
@@ -2037,7 +2156,8 @@
       "north": 60.981677,
       "west": 25.108109,
       "east": 25.4333
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "317",
@@ -2054,7 +2174,8 @@
       "north": 64.110644,
       "west": 25.534042,
       "east": 26.250853
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "318",
@@ -2071,7 +2192,8 @@
       "north": 59.964256,
       "west": 20.849637,
       "east": 21.01176
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "320",
@@ -2088,7 +2210,8 @@
       "north": 67.013815,
       "west": 26.517974,
       "east": 28.19192
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "322",
@@ -2105,7 +2228,8 @@
       "north": 60.248155,
       "west": 22.332782,
       "east": 22.876629
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "398",
@@ -2122,7 +2246,8 @@
       "north": 61.102666,
       "west": 25.540308,
       "east": 26.139944
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "399",
@@ -2139,7 +2264,8 @@
       "north": 63.048765,
       "west": 21.772061,
       "east": 22.273866
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "400",
@@ -2156,7 +2282,8 @@
       "north": 61.034112,
       "west": 21.50555,
       "east": 22.128467
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "402",
@@ -2173,7 +2300,8 @@
       "north": 63.550117,
       "west": 27.119092,
       "east": 28.126744
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "403",
@@ -2190,7 +2318,8 @@
       "north": 63.380321,
       "west": 23.314614,
       "east": 23.862021
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "405",
@@ -2207,7 +2336,8 @@
       "north": 61.284687,
       "west": 27.713884,
       "east": 28.776649
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "407",
@@ -2224,7 +2354,8 @@
       "north": 60.757994,
       "west": 25.904959,
       "east": 26.380217
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "408",
@@ -2241,7 +2372,8 @@
       "north": 63.073514,
       "west": 22.784116,
       "east": 23.519471
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "410",
@@ -2258,7 +2390,8 @@
       "north": 62.583586,
       "west": 25.579133,
       "east": 26.324154
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "416",
@@ -2275,7 +2408,8 @@
       "north": 61.163676,
       "west": 27.572789,
       "east": 27.991111
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "417",
@@ -2292,7 +2426,8 @@
       "north": 60.103397,
       "west": 19.99957,
       "east": 20.236517
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "418",
@@ -2309,7 +2444,8 @@
       "north": 61.432162,
       "west": 23.548337,
       "east": 23.957771
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "420",
@@ -2326,7 +2462,8 @@
       "north": 62.705791,
       "west": 27.408509,
       "east": 28.520774
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "421",
@@ -2343,7 +2480,8 @@
       "north": 63.650888,
       "west": 24.408547,
       "east": 25.036316
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "422",
@@ -2360,7 +2498,8 @@
       "north": 63.757165,
       "west": 29.467287,
       "east": 31.239835
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "423",
@@ -2377,7 +2516,8 @@
       "north": 60.640907,
       "west": 22.365285,
       "east": 22.854684
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "425",
@@ -2394,7 +2534,8 @@
       "north": 64.892389,
       "west": 25.168236,
       "east": 26.291106
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "426",
@@ -2411,7 +2552,8 @@
       "north": 62.722347,
       "west": 28.944019,
       "east": 29.763221
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "430",
@@ -2428,7 +2570,8 @@
       "north": 61.101435,
       "west": 22.522466,
       "east": 23.293929
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "433",
@@ -2445,7 +2588,8 @@
       "north": 60.806565,
       "west": 24.046748,
       "east": 24.69095
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "434",
@@ -2462,7 +2606,8 @@
       "north": 60.661358,
       "west": 25.801002,
       "east": 26.544292
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "435",
@@ -2479,7 +2624,8 @@
       "north": 61.892323,
       "west": 25.501333,
       "east": 25.921275
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "436",
@@ -2496,7 +2642,8 @@
       "north": 64.918906,
       "west": 24.95344,
       "east": 25.303708
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "438",
@@ -2513,7 +2660,8 @@
       "north": 60.151888,
       "west": 20.213547,
       "east": 20.299054
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "440",
@@ -2530,7 +2678,8 @@
       "north": 63.890012,
       "west": 22.54786,
       "east": 22.921536
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "441",
@@ -2547,7 +2696,8 @@
       "north": 61.101393,
       "west": 27.13611,
       "east": 27.924332
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "444",
@@ -2564,7 +2714,8 @@
       "north": 60.649757,
       "west": 23.586322,
       "east": 24.305696
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "445",
@@ -2581,7 +2732,8 @@
       "north": 60.447205,
       "west": 21.178434,
       "east": 22.497188
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "475",
@@ -2598,7 +2750,8 @@
       "north": 63.017348,
       "west": 20.798827,
       "east": 21.785132
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "478",
@@ -2615,7 +2768,8 @@
       "north": 60.151925,
       "west": 19.870806,
       "east": 20.007874
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "480",
@@ -2632,7 +2786,8 @@
       "north": 60.715674,
       "west": 22.799214,
       "east": 23.100717
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "481",
@@ -2649,7 +2804,8 @@
       "north": 60.616105,
       "west": 21.793709,
       "east": 22.210045
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "483",
@@ -2666,7 +2822,8 @@
       "north": 64.385781,
       "west": 24.264593,
       "east": 24.79715
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "484",
@@ -2683,7 +2840,8 @@
       "north": 62.019585,
       "west": 21.332017,
       "east": 21.749405
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "489",
@@ -2700,7 +2858,8 @@
       "north": 60.84264,
       "west": 27.42836,
       "east": 27.991283
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "491",
@@ -2717,7 +2876,8 @@
       "north": 62.199156,
       "west": 26.831494,
       "east": 27.900382
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "494",
@@ -2734,7 +2894,8 @@
       "north": 64.977845,
       "west": 25.750454,
       "east": 26.461583
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "495",
@@ -2751,7 +2912,8 @@
       "north": 62.664786,
       "west": 24.528773,
       "east": 25.251913
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "498",
@@ -2768,7 +2930,8 @@
       "north": 68.187295,
       "west": 23.286698,
       "east": 24.272949
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "499",
@@ -2785,7 +2948,8 @@
       "north": 63.392161,
       "west": 21.07831,
       "east": 22.050677
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "500",
@@ -2802,7 +2966,8 @@
       "north": 62.242827,
       "west": 25.479357,
       "east": 25.795207
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "503",
@@ -2819,7 +2984,8 @@
       "north": 60.904205,
       "west": 21.783087,
       "east": 22.415004
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "504",
@@ -2836,7 +3002,8 @@
       "north": 60.735871,
       "west": 25.659647,
       "east": 26.000594
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "505",
@@ -2853,7 +3020,8 @@
       "north": 60.840851,
       "west": 25.045343,
       "east": 25.519284
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "507",
@@ -2870,7 +3038,8 @@
       "north": 61.657805,
       "west": 26.264849,
       "east": 27.378518
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "508",
@@ -2887,7 +3056,8 @@
       "north": 62.252326,
       "west": 24.03551,
       "east": 24.730913
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "529",
@@ -2904,7 +3074,8 @@
       "north": 60.555245,
       "west": 21.555158,
       "east": 22.107843
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "531",
@@ -2921,7 +3092,8 @@
       "north": 61.420751,
       "west": 21.713248,
       "east": 22.166126
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "535",
@@ -2938,7 +3110,8 @@
       "north": 64.067938,
       "west": 24.639093,
       "east": 25.366416
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "536",
@@ -2955,7 +3128,8 @@
       "north": 61.572228,
       "west": 23.171146,
       "east": 23.613138
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "538",
@@ -2972,7 +3146,8 @@
       "north": 60.737294,
       "west": 21.927374,
       "east": 22.415004
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "541",
@@ -2989,7 +3164,8 @@
       "north": 63.882415,
       "west": 28.35959,
       "east": 29.775689
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "543",
@@ -3006,7 +3182,8 @@
       "north": 60.588871,
       "west": 24.524839,
       "east": 24.974392
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "545",
@@ -3023,7 +3200,8 @@
       "north": 62.767665,
       "west": 21.040698,
       "east": 21.790968
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "560",
@@ -3040,7 +3218,8 @@
       "north": 60.93456,
       "west": 25.402218,
       "east": 26.214258
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "561",
@@ -3057,7 +3236,8 @@
       "north": 60.937057,
       "west": 22.552463,
       "east": 22.786353
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "562",
@@ -3074,7 +3254,8 @@
       "north": 61.86299,
       "west": 24.090788,
       "east": 24.828343
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "563",
@@ -3091,7 +3272,8 @@
       "north": 64.391785,
       "west": 24.538798,
       "east": 25.200173
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "564",
@@ -3108,7 +3290,8 @@
       "north": 65.555211,
       "west": 25.152822,
       "east": 26.768424
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "576",
@@ -3125,7 +3308,8 @@
       "north": 61.486906,
       "west": 24.859953,
       "east": 25.545159
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "577",
@@ -3142,7 +3326,8 @@
       "north": 60.545697,
       "west": 22.578785,
       "east": 22.875914
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "578",
@@ -3159,7 +3344,8 @@
       "north": 64.577304,
       "west": 27.185077,
       "east": 28.463041
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "580",
@@ -3176,7 +3362,8 @@
       "north": 61.853209,
       "west": 29.236423,
       "east": 30.143957
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "581",
@@ -3193,7 +3380,8 @@
       "north": 62.288904,
       "west": 22.522595,
       "east": 23.365385
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "583",
@@ -3210,7 +3398,8 @@
       "north": 67.4253,
       "west": 26.517974,
       "east": 28.359828
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "584",
@@ -3227,7 +3416,8 @@
       "north": 63.392233,
       "west": 24.052028,
       "east": 24.803603
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "592",
@@ -3244,7 +3434,8 @@
       "north": 62.427022,
       "west": 24.968808,
       "east": 25.469888
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "593",
@@ -3261,7 +3452,8 @@
       "north": 62.503886,
       "west": 26.669044,
       "east": 27.691911
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "595",
@@ -3278,7 +3470,8 @@
       "north": 63.516408,
       "west": 26.165383,
       "east": 27.136989
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "598",
@@ -3295,7 +3488,8 @@
       "north": 63.721037,
       "west": 22.49248,
       "east": 22.786238
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "599",
@@ -3312,7 +3506,8 @@
       "north": 63.735911,
       "west": 22.539403,
       "east": 23.392889
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "601",
@@ -3329,7 +3524,8 @@
       "north": 63.610276,
       "west": 25.081872,
       "east": 26.176712
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "604",
@@ -3346,7 +3542,8 @@
       "north": 61.484092,
       "west": 23.477621,
       "east": 23.741124
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "607",
@@ -3363,7 +3560,8 @@
       "north": 63.106987,
       "west": 28.971774,
       "east": 29.723255
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "608",
@@ -3380,7 +3578,8 @@
       "north": 61.782659,
       "west": 21.728052,
       "east": 22.382677
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "609",
@@ -3397,7 +3596,8 @@
       "north": 61.74792,
       "west": 21.388738,
       "east": 22.72493
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "611",
@@ -3414,7 +3614,8 @@
       "north": 60.551207,
       "west": 25.204087,
       "east": 25.510196
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "614",
@@ -3431,7 +3632,8 @@
       "north": 66.492254,
       "west": 27.249849,
       "east": 28.76424
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "615",
@@ -3448,7 +3650,8 @@
       "north": 65.96036,
       "west": 26.153319,
       "east": 28.16238
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "616",
@@ -3465,7 +3668,8 @@
       "north": 60.708061,
       "west": 25.425289,
       "east": 25.74675
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "619",
@@ -3482,7 +3686,8 @@
       "north": 61.221125,
       "west": 22.924181,
       "east": 23.38336
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "620",
@@ -3499,7 +3704,8 @@
       "north": 65.221197,
       "west": 27.148092,
       "east": 28.294301
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "623",
@@ -3516,7 +3722,8 @@
       "north": 61.716941,
       "west": 27.678792,
       "east": 28.811778
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "624",
@@ -3533,7 +3740,8 @@
       "north": 60.649294,
       "west": 26.44784,
       "east": 26.841894
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "625",
@@ -3550,7 +3758,8 @@
       "north": 64.541408,
       "west": 23.984469,
       "east": 24.877921
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "626",
@@ -3567,7 +3776,8 @@
       "north": 63.926376,
       "west": 25.348044,
       "east": 26.291804
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "630",
@@ -3584,7 +3794,8 @@
       "north": 64.228897,
       "west": 26.142274,
       "east": 26.870402
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "631",
@@ -3601,7 +3812,8 @@
       "north": 61.088944,
       "west": 21.304117,
       "east": 21.665592
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "635",
@@ -3618,7 +3830,8 @@
       "north": 61.491007,
       "west": 24.079139,
       "east": 24.913943
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "636",
@@ -3635,7 +3848,8 @@
       "north": 60.93879,
       "west": 22.160314,
       "east": 22.938445
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "638",
@@ -3652,7 +3866,8 @@
       "north": 60.550998,
       "west": 25.363441,
       "east": 25.964223
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "678",
@@ -3669,7 +3884,8 @@
       "north": 64.79171,
       "west": 24.296678,
       "east": 25.462927
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "680",
@@ -3686,7 +3902,8 @@
       "north": 60.529723,
       "west": 22.07476,
       "east": 22.245861
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "681",
@@ -3703,7 +3920,8 @@
       "north": 62.235293,
       "west": 27.866774,
       "east": 28.715594
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "683",
@@ -3720,7 +3938,8 @@
       "north": 66.301894,
       "west": 25.681004,
       "east": 27.469198
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "684",
@@ -3737,7 +3956,8 @@
       "north": 61.232497,
       "west": 21.3344,
       "east": 22.070715
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "686",
@@ -3754,7 +3974,8 @@
       "north": 62.849159,
       "west": 26.44656,
       "east": 26.950649
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "687",
@@ -3771,7 +3992,8 @@
       "north": 63.754753,
       "west": 28.041811,
       "east": 28.759526
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "689",
@@ -3788,7 +4010,8 @@
       "north": 61.520213,
       "west": 29.022962,
       "east": 29.444305
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "691",
@@ -3805,7 +4028,8 @@
       "north": 63.757489,
       "west": 24.618714,
       "east": 25.24518
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "694",
@@ -3822,7 +4046,8 @@
       "north": 60.796462,
       "west": 24.605616,
       "east": 24.836435
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "697",
@@ -3839,7 +4064,8 @@
       "north": 64.63678,
       "west": 27.87048,
       "east": 28.859837
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "698",
@@ -3856,7 +4082,8 @@
       "north": 67.177119,
       "west": 24.736799,
       "east": 27.261181
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "700",
@@ -3873,7 +4100,8 @@
       "north": 61.55777,
       "west": 28.252198,
       "east": 29.261568
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "702",
@@ -3890,7 +4118,8 @@
       "north": 62.170946,
       "west": 23.680622,
       "east": 24.438634
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "704",
@@ -3907,7 +4136,8 @@
       "north": 60.737294,
       "west": 22.143837,
       "east": 22.415004
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "707",
@@ -3924,7 +4154,8 @@
       "north": 62.407439,
       "west": 29.295965,
       "east": 30.015979
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "710",
@@ -3941,7 +4172,8 @@
       "north": 60.206001,
       "west": 22.854995,
       "east": 23.942378
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "729",
@@ -3958,7 +4190,8 @@
       "north": 62.908491,
       "west": 24.504239,
       "east": 25.696601
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "732",
@@ -3975,7 +4208,8 @@
       "north": 67.802959,
       "west": 27.881602,
       "east": 30.017043
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "734",
@@ -3992,7 +4226,8 @@
       "north": 60.595677,
       "west": 22.818932,
       "east": 23.790487
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "736",
@@ -4009,7 +4244,8 @@
       "north": 60.395532,
       "west": 19.946083,
       "east": 20.204077
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "738",
@@ -4026,7 +4262,8 @@
       "north": 60.381843,
       "west": 22.493107,
       "east": 22.880318
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "739",
@@ -4043,7 +4280,8 @@
       "north": 61.362078,
       "west": 27.20582,
       "east": 27.931155
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "740",
@@ -4060,7 +4298,8 @@
       "north": 62.417757,
       "west": 28.370692,
       "east": 29.696826
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "742",
@@ -4077,7 +4316,8 @@
       "north": 68.196303,
       "west": 27.221899,
       "east": 29.659405
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "743",
@@ -4094,7 +4334,8 @@
       "north": 63.08386,
       "west": 22.30262,
       "east": 23.337764
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "746",
@@ -4111,7 +4352,8 @@
       "north": 64.022121,
       "west": 24.127078,
       "east": 24.967384
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "747",
@@ -4128,7 +4370,8 @@
       "north": 62.015862,
       "west": 21.678973,
       "east": 22.175435
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "748",
@@ -4145,7 +4388,8 @@
       "north": 64.907747,
       "west": 24.557785,
       "east": 25.520269
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "749",
@@ -4162,7 +4406,8 @@
       "north": 63.250014,
       "west": 27.352463,
       "east": 27.94325
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "751",
@@ -4179,7 +4424,8 @@
       "north": 66.116239,
       "west": 24.665083,
       "east": 25.939191
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "753",
@@ -4196,7 +4442,8 @@
       "north": 60.506231,
       "west": 25.116819,
       "east": 25.514469
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "755",
@@ -4213,7 +4460,8 @@
       "north": 60.294645,
       "west": 24.008263,
       "east": 24.361534
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "758",
@@ -4230,7 +4478,8 @@
       "north": 68.466191,
       "west": 25.350017,
       "east": 28.646151
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "759",
@@ -4247,7 +4496,8 @@
       "north": 63.013274,
       "west": 23.991964,
       "east": 24.519592
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "761",
@@ -4264,7 +4514,8 @@
       "north": 60.774168,
       "west": 23.154615,
       "east": 23.920549
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "762",
@@ -4281,7 +4532,8 @@
       "north": 63.990779,
       "west": 27.119271,
       "east": 28.168816
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "765",
@@ -4298,7 +4550,8 @@
       "north": 64.375249,
       "west": 27.796786,
       "east": 29.211042
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "766",
@@ -4315,7 +4568,8 @@
       "north": 60.169289,
       "west": 20.60443,
       "east": 20.741091
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "768",
@@ -4332,7 +4586,8 @@
       "north": 61.937574,
       "west": 28.088783,
       "east": 28.95605
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "771",
@@ -4349,7 +4604,8 @@
       "north": 60.313986,
       "west": 20.023996,
       "east": 20.269787
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "777",
@@ -4366,7 +4622,8 @@
       "north": 65.518477,
       "west": 27.995642,
       "east": 30.135837
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "778",
@@ -4383,7 +4640,8 @@
       "north": 62.849946,
       "west": 26.842141,
       "east": 27.529795
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "781",
@@ -4400,7 +4658,8 @@
       "north": 61.714126,
       "west": 25.437427,
       "east": 26.172951
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "783",
@@ -4417,7 +4676,8 @@
       "north": 61.251941,
       "west": 22.141904,
       "east": 22.701544
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "785",
@@ -4434,7 +4694,8 @@
       "north": 64.835287,
       "west": 26.291106,
       "east": 27.396981
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "790",
@@ -4451,7 +4712,8 @@
       "north": 61.702547,
       "west": 22.434162,
       "east": 23.287331
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "791",
@@ -4468,7 +4730,8 @@
       "north": 64.628943,
       "west": 25.379548,
       "east": 26.770871
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "831",
@@ -4485,7 +4748,8 @@
       "north": 61.379687,
       "west": 27.753923,
       "east": 28.409193
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "832",
@@ -4502,7 +4766,8 @@
       "north": 65.846208,
       "west": 27.71254,
       "east": 29.213218
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "833",
@@ -4519,7 +4784,8 @@
       "north": 60.623323,
       "west": 21.435291,
       "east": 21.72268
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "834",
@@ -4536,7 +4802,8 @@
       "north": 60.971536,
       "west": 23.502137,
       "east": 24.063243
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "837",
@@ -4553,7 +4820,8 @@
       "north": 61.836614,
       "west": 23.5423,
       "east": 24.118517
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "844",
@@ -4570,7 +4838,8 @@
       "north": 63.117693,
       "west": 26.543631,
       "east": 27.12556
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "845",
@@ -4587,7 +4856,8 @@
       "north": 66.332236,
       "west": 24.494078,
       "east": 26.067324
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "846",
@@ -4604,7 +4874,8 @@
       "north": 62.640045,
       "west": 21.55413,
       "east": 22.099622
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "848",
@@ -4621,7 +4892,8 @@
       "north": 62.416349,
       "west": 29.949641,
       "east": 30.789182
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "849",
@@ -4638,7 +4910,8 @@
       "north": 63.87695,
       "west": 23.985214,
       "east": 24.618714
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "850",
@@ -4655,7 +4928,8 @@
       "north": 62.235864,
       "west": 25.767989,
       "east": 26.331674
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "851",
@@ -4672,7 +4946,8 @@
       "north": 66.332236,
       "west": 23.891862,
       "east": 24.791825
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "853",
@@ -4689,7 +4964,8 @@
       "north": 60.737294,
       "west": 22.103229,
       "east": 22.445712
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "854",
@@ -4706,7 +4982,8 @@
       "north": 67.009523,
       "west": 23.784384,
       "east": 24.988052
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "857",
@@ -4723,7 +5000,8 @@
       "north": 62.963861,
       "west": 28.166693,
       "east": 28.744412
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "858",
@@ -4740,7 +5018,8 @@
       "north": 60.576863,
       "west": 24.868939,
       "east": 25.180709
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "859",
@@ -4757,7 +5036,8 @@
       "north": 64.904455,
       "west": 25.501053,
       "east": 26.075053
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "886",
@@ -4774,7 +5054,8 @@
       "north": 61.573251,
       "west": 21.803713,
       "east": 22.434162
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "887",
@@ -4791,7 +5072,8 @@
       "north": 61.238254,
       "west": 23.252675,
       "east": 23.856575
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "889",
@@ -4808,7 +5090,8 @@
       "north": 65.106824,
       "west": 26.183312,
       "east": 27.40264
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "890",
@@ -4825,7 +5108,8 @@
       "north": 70.0921,
       "west": 25.694595,
       "east": 28.345268
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "892",
@@ -4842,7 +5126,8 @@
       "north": 62.554739,
       "west": 25.124827,
       "east": 25.695151
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "893",
@@ -4859,7 +5144,8 @@
       "north": 63.623393,
       "west": 22.208356,
       "east": 22.9716
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "895",
@@ -4876,7 +5162,8 @@
       "north": 61.002676,
       "west": 21.203078,
       "east": 21.732009
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "905",
@@ -4893,7 +5180,8 @@
       "north": 63.171047,
       "west": 21.362872,
       "east": 22.242323
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "908",
@@ -4910,7 +5198,8 @@
       "north": 61.331349,
       "west": 23.811448,
       "east": 24.302385
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "915",
@@ -4927,7 +5216,8 @@
       "north": 62.380506,
       "west": 27.740369,
       "east": 28.652808
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "918",
@@ -4944,7 +5234,8 @@
       "north": 60.759291,
       "west": 21.523898,
       "east": 21.798821
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "921",
@@ -4961,7 +5252,8 @@
       "north": 63.03509,
       "west": 26.039838,
       "east": 26.681346
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "922",
@@ -4978,7 +5270,8 @@
       "north": 61.396826,
       "west": 23.220749,
       "east": 23.737133
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "924",
@@ -4995,7 +5288,8 @@
       "north": 63.531571,
       "west": 23.657768,
       "east": 24.164629
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "925",
@@ -5012,7 +5306,8 @@
       "north": 64.036974,
       "west": 26.559395,
       "east": 27.357579
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "927",
@@ -5029,7 +5324,8 @@
       "north": 60.585801,
       "west": 24.133963,
       "east": 24.648836
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "931",
@@ -5046,7 +5342,8 @@
       "north": 63.289831,
       "west": 25.309318,
       "east": 26.334274
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "934",
@@ -5063,7 +5360,8 @@
       "north": 63.277584,
       "west": 23.697946,
       "east": 24.234481
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "935",
@@ -5080,7 +5378,8 @@
       "north": 60.660187,
       "west": 27.356569,
       "east": 27.888742
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "936",
@@ -5097,7 +5396,8 @@
       "north": 62.494336,
       "west": 23.217823,
       "east": 24.211292
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "941",
@@ -5114,7 +5414,8 @@
       "north": 60.366636,
       "west": 20.296771,
       "east": 20.449187
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "946",
@@ -5131,7 +5432,8 @@
       "north": 63.465526,
       "west": 21.762196,
       "east": 22.650474
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "976",
@@ -5148,7 +5450,8 @@
       "north": 66.765713,
       "west": 23.641841,
       "east": 25.050411
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "977",
@@ -5165,7 +5468,8 @@
       "north": 64.186453,
       "west": 24.306638,
       "east": 25.021245
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "980",
@@ -5182,7 +5486,8 @@
       "north": 62.15811,
       "west": 23.208301,
       "east": 23.855518
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "981",
@@ -5199,7 +5504,8 @@
       "north": 60.88911,
       "west": 23.135638,
       "east": 23.408624
-    }
+    },
+    "designation": "kunta"
   },
   {
     "official_code": "989",
@@ -5216,7 +5522,8 @@
       "north": 62.754814,
       "west": 23.83523,
       "east": 24.582169
-    }
+    },
+    "designation": "kaupunki"
   },
   {
     "official_code": "992",
@@ -5233,6 +5540,7 @@
       "north": 62.920743,
       "west": 25.483863,
       "east": 26.233764
-    }
+    },
+    "designation": "kaupunki"
   }
 ]

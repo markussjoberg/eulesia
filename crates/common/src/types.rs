@@ -723,6 +723,7 @@ pub enum ThreadSource {
     User,
     MinutesImport,
     RssImport,
+    Summary,
 }
 
 impl ThreadSource {
@@ -731,6 +732,7 @@ impl ThreadSource {
             Self::User => "user",
             Self::MinutesImport => "minutes_import",
             Self::RssImport => "rss_import",
+            Self::Summary => "summary",
         }
     }
 }
