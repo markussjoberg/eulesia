@@ -806,6 +806,18 @@ class ApiClient {
     await this.request(`/clubs/${clubId}/leave`, { method: "POST" });
   }
 
+  async listClubThreads(
+    clubId: string,
+    params?: { sort?: string; offset?: number; limit?: number },
+  ): Promise<{ data: ClubThread[]; total: number; hasMore: boolean }> {
+    const searchParams = new URLSearchParams();
+    if (params?.sort) searchParams.set("sort", params.sort);
+    if (params?.offset) searchParams.set("offset", String(params.offset));
+    if (params?.limit) searchParams.set("limit", String(params.limit));
+    const qs = searchParams.toString();
+    return this.request(`/clubs/${clubId}/threads${qs ? `?${qs}` : ""}`);
+  }
+
   async createClubThread(
     clubId: string,
     data: CreateClubThreadData,
@@ -1716,7 +1728,6 @@ export type {
   MapPointType,
   InvitationStatus,
   ThreadResponse,
-  ThreadListResponse,
   ThreadWithCommentsResponse,
   CommentResponse,
   AuthorSummary,

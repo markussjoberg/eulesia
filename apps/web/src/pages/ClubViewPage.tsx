@@ -33,6 +33,7 @@ import {
 } from "../components/common";
 import {
   useClub,
+  useClubThreads,
   useClubCategories,
   useJoinClub,
   useLeaveClub,
@@ -56,6 +57,7 @@ export function ClubViewPage() {
   const navigate = useNavigate();
   const { clubId } = useParams<{ clubId: string }>();
   const { data: club, isLoading, error } = useClub(clubId || "");
+  const { data: clubThreadsData } = useClubThreads(clubId || "");
   const joinClubMutation = useJoinClub();
   const leaveClubMutation = useLeaveClub();
   const createThreadMutation = useCreateClubThread(clubId || "");
@@ -284,7 +286,7 @@ export function ClubViewPage() {
     club.memberRole === "owner" || club.memberRole === "moderator";
   const moderators = club.moderators || [];
   const members = club.members || [];
-  const threads = club.threads || [];
+  const threads = (clubThreadsData?.data as ClubThread[]) || [];
   const pinnedThread = threads.find((t: ClubThread) => t.isPinned);
   const regularThreads = threads.filter((t: ClubThread) => !t.isPinned);
 
