@@ -940,9 +940,17 @@ export function useSearchPlaces(query: string, limit = 10) {
 }
 
 // Map hooks
+// Map filter type names → backend MapPointType values
+const FILTER_TO_POINT_TYPE: Record<string, string> = {
+  municipalities: "municipality",
+  agora: "thread",
+  clubs: "club",
+  places: "place",
+};
+
 function filtersToParams(filters: MapFilterState): Partial<MapBounds> {
   return {
-    types: filters.types.join(","),
+    types: filters.types.map((t) => FILTER_TO_POINT_TYPE[t] || t).join(","),
     timePreset: filters.timePreset,
     dateFrom: filters.dateFrom,
     dateTo: filters.dateTo,
