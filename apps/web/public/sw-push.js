@@ -4,9 +4,7 @@
 // Clean up stale runtime caches from previous SW versions
 self.addEventListener("activate", (event) => {
   const STALE_CACHES = ["eulesia-api", "api-cache"];
-  event.waitUntil(
-    Promise.all(STALE_CACHES.map((name) => caches.delete(name))),
-  );
+  event.waitUntil(Promise.all(STALE_CACHES.map((name) => caches.delete(name))));
 });
 
 self.addEventListener("push", (event) => {
