@@ -1,6 +1,14 @@
 // Push notification handler for Eulesia service worker
 // This file is imported by the workbox-generated SW via importScripts
 
+// Clean up stale runtime caches from previous SW versions
+self.addEventListener("activate", (event) => {
+  const STALE_CACHES = ["eulesia-api", "api-cache"];
+  event.waitUntil(
+    Promise.all(STALE_CACHES.map((name) => caches.delete(name))),
+  );
+});
+
 self.addEventListener("push", (event) => {
   if (!event.data) return;
 
