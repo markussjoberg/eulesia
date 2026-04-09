@@ -1,0 +1,107 @@
+name: Deploy Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch or commit to deploy (default: main)"
+        required: false
+        default: "main"
+
+concurrency:
+  group: deploy-test
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, nix, mercury, eulesia]
+    timeout-minutes: 45
+    env:
+      EULESIA_TEST_TARGET_HOST: ${{ vars.EULESIA_TEST_TARGET_HOST }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref }}
+
+      - name: Configure Attic cache
+        env:
+          ATTIC_TOKEN: ${{ secrets.ATTIC_AUTH_TOKEN }}
+          ATTIC_CACHE: ${{ secrets.ATTIC_CACHE_NAME }}
+          ATTIC_PUBKEY: ${{ secrets.ATTIC_PUBLIC_KEY }}
+        run: |
+          if [ -z "$ATTIC_TOKEN" ]; then
+            echo "Attic secrets not configured, skipping cache"
+            exit 0
+          fi
+          if ! command -v attic &> /dev/null; then
+            nix profile install github:zhaofengli/attic
+          fi
+          attic login mercury http://localhost:8088 "$ATTIC_TOKEN"
+          attic use "$ATTIC_CACHE"
+          mkdir -p ~/.config/nix
+          cat >> ~/.config/nix/nix.conf << EOF
+          substituters = https://cache.nixos.org http://localhost:8088/${ATTIC_CACHE}
+          trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ${ATTIC_PUBKEY}
+          EOF
+
+      - name: Validate configuration
+        run: |
+          if [ -z "$EULESIA_TEST_TARGET_HOST" ]; then
+            echo "::error::Missing repository variable EULESIA_TEST_TARGET_HOST"
+            exit 1
+          fi
+          echo "Target: $EULESIA_TEST_TARGET_HOST"
+          echo "Ref: ${{ github.event.inputs.ref }}"
+
+      - name: Setup SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.EULESIA_TEST_SSH_KEY }}
+        run: |
+          install -d -m 700 "$HOME/.ssh"
+          echo "$DEPLOY_SSH_KEY" > "$HOME/.ssh/id_ed25519"
+          chmod 600 "$HOME/.ssh/id_ed25519"
+          ssh-keygen -l -f "$HOME/.ssh/id_ed25519" || { echo "::error::Invalid SSH key"; exit 1; }
+          ssh-keyscan -T 15 -H -t ed25519,rsa "$EULESIA_TEST_TARGET_HOST" >> "$HOME/.ssh/known_hosts" 2>/dev/null
+          chmod 600 "$HOME/.ssh/known_hosts"
+
+          export NIX_SSHOPTS="-i $HOME/.ssh/id_ed25519 -o UserKnownHostsFile=$HOME/.ssh/known_hosts -o StrictHostKeyChecking=yes -o BatchMode=yes"
+          ssh $NIX_SSHOPTS root@"$EULESIA_TEST_TARGET_HOST" "echo 'SSH connection OK'"
+
+      - name: Build test system
+        run: nix build .#nixosConfigurations.eulesia-test.config.system.build.toplevel
+
+      - name: Deploy test system
+        run: |
+          export NIX_SSHOPTS="-i $HOME/.ssh/id_ed25519 -o UserKnownHostsFile=$HOME/.ssh/known_hosts -o StrictHostKeyChecking=yes -o BatchMode=yes"
+          nix run .#rebuild-test
+
+      - name: Health checks
+        run: |
+          echo "Waiting for API to become healthy..."
+          HEALTHY=false
+          for i in $(seq 1 30); do
+            if curl -fsS "https://api.test.eulesia.org/api/v1/health" 2>/dev/null; then
+              HEALTHY=true
+              break
+            fi
+            echo "Attempt $i/30 — not ready, waiting 5s..."
+            sleep 5
+          done
+
+          if [ "$HEALTHY" != "true" ]; then
+            echo "::error::API failed to become healthy after 150s"
+            exit 1
+          fi
+          echo "Test deployment healthy."
+
+      - name: Generate deploy summary
+        if: always()
+        run: |
+          echo "## Test Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Ref:** \`${{ github.event.inputs.ref }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Triggered by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Target:** $EULESIA_TEST_TARGET_HOST" >> $GITHUB_STEP_SUMMARY
+          echo "- **URL:** https://test.eulesia.org" >> $GITHUB_STEP_SUMMARY
