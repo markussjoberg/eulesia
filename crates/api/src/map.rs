@@ -920,7 +920,11 @@ async fn reverse_geocode(
 
     let municipality = crate::locations::nearest_municipality(&state.db, coords)
         .await?
-        .ok_or_else(|| ApiError::NotFound(String::from("no municipality found near coordinates")))?;
+        .ok_or_else(|| {
+            ApiError::NotFound(String::from(
+                "no municipality found near coordinates",
+            ))
+        })?;
 
     Ok(Json(municipality_to_response(municipality)))
 }
