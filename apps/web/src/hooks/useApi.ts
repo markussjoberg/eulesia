@@ -950,9 +950,7 @@ const FILTER_TO_POINT_TYPE: Record<string, string> = {
 
 function filtersToParams(filters: MapFilterState): Partial<MapBounds> {
   return {
-    types: filters.types
-      .map((t) => FILTER_TO_POINT_TYPE[t] || t)
-      .join(","),
+    types: filters.types.map((t) => FILTER_TO_POINT_TYPE[t] || t).join(","),
     timePreset: filters.timePreset,
     dateFrom: filters.dateFrom,
     dateTo: filters.dateTo,
