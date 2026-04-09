@@ -7,7 +7,7 @@
     pnpmDeps = pkgs.fetchPnpmDeps {
       pname = "eulesia";
       src = repoSrc;
-      hash = "sha256-jG+DetPZvkeLZCnBLO3SNeTmWOu2Ual0xgsvukimY9U=";
+      hash = "";
       fetcherVersion = 3;
     };
 
