@@ -286,7 +286,7 @@ export function ClubViewPage() {
     club.memberRole === "owner" || club.memberRole === "moderator";
   const moderators = club.moderators || [];
   const members = club.members || [];
-  const threads = (clubThreadsData?.data as ClubThread[]) || [];
+  const threads = (clubThreadsData?.items as ClubThread[]) || [];
   const pinnedThread = threads.find((t: ClubThread) => t.isPinned);
   const regularThreads = threads.filter((t: ClubThread) => !t.isPinned);
 

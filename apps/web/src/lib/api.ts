@@ -809,7 +809,7 @@ class ApiClient {
   async listClubThreads(
     clubId: string,
     params?: { sort?: string; offset?: number; limit?: number },
-  ): Promise<{ data: ClubThread[]; total: number; hasMore: boolean }> {
+  ): Promise<{ items: ClubThread[]; total: number; hasMore: boolean }> {
     const searchParams = new URLSearchParams();
     if (params?.sort) searchParams.set("sort", params.sort);
     if (params?.offset) searchParams.set("offset", String(params.offset));
