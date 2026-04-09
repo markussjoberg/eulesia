@@ -52,25 +52,15 @@ body {
   @apply py-8 text-center text-gray-500 border-t border-gray-200 dark:border-gray-800;
 }
 
-/* Leaflet map custom styles */
-.leaflet-popup-content-wrapper {
+/* MapLibre GL popup styles */
+.maplibregl-popup-content {
   border-radius: 0.75rem;
-  padding: 0;
+  padding: 0.75rem;
 }
 
-.leaflet-popup-content {
-  margin: 0.75rem;
-}
-
-.custom-marker {
-  background: transparent;
-  border: none;
-}
-
-/* Fix Leaflet container height */
-.leaflet-container {
-  height: 100%;
-  width: 100%;
+.maplibregl-popup-close-button {
+  font-size: 1.25rem;
+  padding: 0.25rem 0.5rem;
 }
 
 /* YouTube embeds - responsive 16:9 */

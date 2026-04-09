@@ -119,7 +119,7 @@ export default defineConfig({
             "i18next-browser-languagedetector",
           ],
           // Map
-          "vendor-map": ["leaflet", "react-leaflet", "react-leaflet-cluster"],
+          "vendor-map": ["maplibre-gl", "pmtiles"],
           // Icons
           "vendor-icons": ["lucide-react"],
           // Sanitization

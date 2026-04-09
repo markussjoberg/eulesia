@@ -1,157 +1,161 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
-import {
-  MapContainer as LeafletMap,
-  TileLayer,
-  Marker,
-  Popup,
-  useMap,
-  useMapEvents,
-} from "react-leaflet";
-import MarkerClusterGroup from "react-leaflet-cluster";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+import maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
+import { createRoot } from "react-dom/client";
+import { MemoryRouter } from "react-router-dom";
 import { type MapPoint, type MapBounds } from "../../lib/api";
 import { useMapPoints } from "../../hooks/useApi";
+import { useTheme } from "../../hooks/useTheme";
 import { MapFilters } from "./MapFilters";
 import { MapPopup } from "./MapPopup";
 import type { MapFilterState } from "./types";
+import { getBasemapStyle, ensurePmtilesProtocol } from "./styles/basemap";
 
-// Custom marker icons — 32px for better touch targets on mobile
-const MARKER_SIZE = 32;
-const createIcon = (color: string) =>
-  L.divIcon({
-    className: "custom-marker",
-    html: `<div style="
-    background-color: ${color};
-    width: ${MARKER_SIZE}px;
-    height: ${MARKER_SIZE}px;
-    border-radius: 50% 50% 50% 0;
-    transform: rotate(-45deg);
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-  "></div>`,
-    iconSize: [MARKER_SIZE, MARKER_SIZE],
-    iconAnchor: [MARKER_SIZE / 2, MARKER_SIZE],
-    popupAnchor: [0, -MARKER_SIZE],
-  });
-
-const icons = {
-  municipality: createIcon("#2563eb"), // blue-600
-  thread: createIcon("#9333ea"), // purple-600
-  club: createIcon("#16a34a"), // green-600
-  place: createIcon("#ea580c"), // orange-600
-};
-
-const typeColors: Record<string, string> = {
+// Point type colors — same palette as before
+const TYPE_COLORS: Record<string, string> = {
   municipality: "#2563eb",
   thread: "#9333ea",
   club: "#16a34a",
   place: "#ea580c",
 };
 
-// Custom cluster icon that shows dominant type color
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function createClusterIcon(cluster: any) {
-  const markers = cluster.getAllChildMarkers() as L.Marker[];
-  const count = markers.length;
-
-  // Count types
-  const typeCounts: Record<string, number> = {};
-  markers.forEach((m: L.Marker) => {
-    const type = (m.options as { pointType?: string }).pointType || "place";
-    typeCounts[type] = (typeCounts[type] || 0) + 1;
-  });
-
-  // Find dominant type
-  const dominantType =
-    Object.entries(typeCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "place";
-  const color = typeColors[dominantType] || "#6b7280";
-
-  // Size based on count
-  const size = count < 10 ? 36 : count < 50 ? 44 : 52;
-  const fontSize = count < 10 ? 13 : count < 100 ? 12 : 11;
-
-  return L.divIcon({
-    html: `<div style="
-      background-color: ${color};
-      width: ${size}px;
-      height: ${size}px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 700;
-      font-size: ${fontSize}px;
-      border: 3px solid white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    ">${count}</div>`,
-    className: "custom-cluster-icon",
-    iconSize: L.point(size, size),
-  });
+function toGeoJSON(points: MapPoint[]): GeoJSON.FeatureCollection {
+  return {
+    type: "FeatureCollection",
+    features: points.map((p) => ({
+      type: "Feature" as const,
+      geometry: {
+        type: "Point" as const,
+        coordinates: [p.coordinates.longitude, p.coordinates.latitude],
+      },
+      properties: {
+        id: p.id,
+        pointType: p.pointType,
+        name: p.name,
+        meta: JSON.stringify(p.meta ?? {}),
+      },
+    })),
+  };
 }
 
-// Component to handle map events with debounce
-function MapEventHandler({
-  onBoundsChange,
-}: {
-  onBoundsChange: (bounds: MapBounds) => void;
-}) {
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const debouncedBoundsChange = useCallback(
-    (map: L.Map) => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(() => {
-        const bounds = map.getBounds();
-        onBoundsChange({
-          north: bounds.getNorth(),
-          south: bounds.getSouth(),
-          east: bounds.getEast(),
-          west: bounds.getWest(),
-        });
-      }, 300);
+function addPointLayers(map: maplibregl.Map) {
+  // GeoJSON source with clustering
+  map.addSource("points", {
+    type: "geojson",
+    data: { type: "FeatureCollection", features: [] },
+    cluster: true,
+    clusterMaxZoom: 15,
+    clusterRadius: 60,
+    clusterProperties: {
+      sum_municipality: [
+        "+",
+        ["case", ["==", ["get", "pointType"], "municipality"], 1, 0],
+      ],
+      sum_thread: [
+        "+",
+        ["case", ["==", ["get", "pointType"], "thread"], 1, 0],
+      ],
+      sum_club: [
+        "+",
+        ["case", ["==", ["get", "pointType"], "club"], 1, 0],
+      ],
+      sum_place: [
+        "+",
+        ["case", ["==", ["get", "pointType"], "place"], 1, 0],
+      ],
     },
-    [onBoundsChange],
-  );
-
-  const map = useMapEvents({
-    moveend: () => debouncedBoundsChange(map),
-    zoomend: () => debouncedBoundsChange(map),
   });
 
-  // Trigger initial bounds on mount
-  useEffect(() => {
-    const bounds = map.getBounds();
-    onBoundsChange({
-      north: bounds.getNorth(),
-      south: bounds.getSouth(),
-      east: bounds.getEast(),
-      west: bounds.getWest(),
-    });
-  }, [map, onBoundsChange]);
+  // Cluster circles — color from dominant type
+  map.addLayer({
+    id: "clusters",
+    type: "circle",
+    source: "points",
+    filter: ["has", "point_count"],
+    paint: {
+      "circle-color": [
+        "case",
+        [
+          "all",
+          [">=", ["get", "sum_municipality"], ["get", "sum_thread"]],
+          [">=", ["get", "sum_municipality"], ["get", "sum_club"]],
+          [">=", ["get", "sum_municipality"], ["get", "sum_place"]],
+        ],
+        TYPE_COLORS.municipality,
+        [
+          "all",
+          [">=", ["get", "sum_thread"], ["get", "sum_club"]],
+          [">=", ["get", "sum_thread"], ["get", "sum_place"]],
+        ],
+        TYPE_COLORS.thread,
+        [">=", ["get", "sum_club"], ["get", "sum_place"]],
+        TYPE_COLORS.club,
+        TYPE_COLORS.place,
+      ],
+      "circle-radius": [
+        "step",
+        ["get", "point_count"],
+        18,
+        10,
+        22,
+        50,
+        26,
+      ],
+      "circle-stroke-width": 3,
+      "circle-stroke-color": "#ffffff",
+      "circle-opacity": 0.9,
+    },
+  });
 
-  // Cleanup timer
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, []);
+  // Cluster count label
+  map.addLayer({
+    id: "cluster-count",
+    type: "symbol",
+    source: "points",
+    filter: ["has", "point_count"],
+    layout: {
+      "text-field": "{point_count_abbreviated}",
+      "text-size": [
+        "step",
+        ["get", "point_count"],
+        13,
+        10,
+        12,
+        100,
+        11,
+      ],
+      "text-allow-overlap": true,
+    },
+    paint: {
+      "text-color": "#ffffff",
+    },
+  });
 
-  return null;
-}
-
-// Component to update map center
-function MapCenterUpdater({ center }: { center: [number, number] | null }) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (center) {
-      map.setView(center, map.getZoom());
-    }
-  }, [center, map]);
-
-  return null;
+  // Unclustered individual points
+  map.addLayer({
+    id: "unclustered-point",
+    type: "circle",
+    source: "points",
+    filter: ["!", ["has", "point_count"]],
+    paint: {
+      "circle-color": [
+        "match",
+        ["get", "pointType"],
+        "municipality",
+        TYPE_COLORS.municipality,
+        "thread",
+        TYPE_COLORS.thread,
+        "club",
+        TYPE_COLORS.club,
+        "place",
+        TYPE_COLORS.place,
+        "#6b7280",
+      ],
+      "circle-radius": 8,
+      "circle-stroke-width": 2,
+      "circle-stroke-color": "#ffffff",
+    },
+  });
 }
 
 interface EulesiaMapProps {
@@ -169,8 +173,17 @@ export function EulesiaMap({
   onFiltersChange,
   onPointClick,
 }: EulesiaMapProps) {
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<maplibregl.Map | null>(null);
+  const popupRef = useRef<maplibregl.Popup | null>(null);
+  const boundsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pointsDataRef = useRef<GeoJSON.FeatureCollection>({
+    type: "FeatureCollection",
+    features: [],
+  });
+
+  const { resolvedTheme } = useTheme();
   const [bounds, setBounds] = useState<MapBounds | null>(null);
-  const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
 
   const { data, isLoading } = useMapPoints(bounds, filters);
   const points = useMemo(() => data?.points || [], [data]);
@@ -179,67 +192,175 @@ export function EulesiaMap({
     setBounds(newBounds);
   }, []);
 
-  // Get user location
+  const emitBounds = useCallback(
+    (map: maplibregl.Map) => {
+      if (boundsTimerRef.current) clearTimeout(boundsTimerRef.current);
+      boundsTimerRef.current = setTimeout(() => {
+        const b = map.getBounds();
+        handleBoundsChange({
+          north: b.getNorth(),
+          south: b.getSouth(),
+          east: b.getEast(),
+          west: b.getWest(),
+        });
+      }, 300);
+    },
+    [handleBoundsChange],
+  );
+
+  // Initialize map
   useEffect(() => {
+    if (!mapContainerRef.current) return;
+
+    ensurePmtilesProtocol();
+
+    const map = new maplibregl.Map({
+      container: mapContainerRef.current,
+      style: getBasemapStyle(resolvedTheme),
+      center: [initialCenter[1], initialCenter[0]], // [lng, lat]
+      zoom: initialZoom,
+      attributionControl: { compact: true },
+    });
+
+    mapRef.current = map;
+
+    map.on("load", () => {
+      addPointLayers(map);
+
+      const source = map.getSource("points") as maplibregl.GeoJSONSource;
+      if (source) source.setData(pointsDataRef.current);
+
+      emitBounds(map);
+    });
+
+    map.on("moveend", () => emitBounds(map));
+
+    // Cluster click — zoom in
+    map.on("click", "clusters", async (e) => {
+      const features = map.queryRenderedFeatures(e.point, {
+        layers: ["clusters"],
+      });
+      if (!features.length) return;
+      const clusterId = features[0].properties.cluster_id;
+      const source = map.getSource("points") as maplibregl.GeoJSONSource;
+      const zoom = await source.getClusterExpansionZoom(clusterId);
+      map.flyTo({
+        center: (features[0].geometry as GeoJSON.Point).coordinates as [
+          number,
+          number,
+        ],
+        zoom,
+      });
+    });
+
+    // Point click — show popup
+    map.on("click", "unclustered-point", (e) => {
+      const feature = e.features?.[0];
+      if (!feature) return;
+      const coords = (
+        feature.geometry as GeoJSON.Point
+      ).coordinates.slice() as [number, number];
+      const props = feature.properties;
+
+      const point: MapPoint = {
+        id: props.id,
+        pointType: props.pointType,
+        name: props.name,
+        coordinates: {
+          latitude: coords[1],
+          longitude: coords[0],
+        },
+        meta: JSON.parse(props.meta || "{}"),
+      };
+
+      onPointClick?.(point);
+
+      popupRef.current?.remove();
+
+      const container = document.createElement("div");
+      const root = createRoot(container);
+      root.render(
+        <MemoryRouter>
+          <MapPopup point={point} />
+        </MemoryRouter>,
+      );
+
+      popupRef.current = new maplibregl.Popup({
+        closeButton: true,
+        maxWidth: "320px",
+      })
+        .setLngLat(coords)
+        .setDOMContent(container)
+        .addTo(map);
+    });
+
+    // Cursor styles
+    for (const layer of ["clusters", "unclustered-point"]) {
+      map.on("mouseenter", layer, () => {
+        map.getCanvas().style.cursor = "pointer";
+      });
+      map.on("mouseleave", layer, () => {
+        map.getCanvas().style.cursor = "";
+      });
+    }
+
+    // Geolocation
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setMapCenter([position.coords.latitude, position.coords.longitude]);
+          map.flyTo({
+            center: [position.coords.longitude, position.coords.latitude],
+          });
         },
         () => {
-          // Geolocation denied or failed, use default center
+          // Geolocation denied — stay at default center
         },
       );
     }
+
+    return () => {
+      if (boundsTimerRef.current) clearTimeout(boundsTimerRef.current);
+      popupRef.current?.remove();
+      map.remove();
+      mapRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Sync theme — skip the initial render (handled by mount effect)
+  const initialThemeRef = useRef<string | null>(resolvedTheme);
+  useEffect(() => {
+    if (initialThemeRef.current) {
+      initialThemeRef.current = null;
+      return;
+    }
+    const map = mapRef.current;
+    if (!map) return;
+
+    map.setStyle(getBasemapStyle(resolvedTheme));
+
+    map.once("style.load", () => {
+      addPointLayers(map);
+      const source = map.getSource("points") as maplibregl.GeoJSONSource;
+      if (source) source.setData(pointsDataRef.current);
+    });
+  }, [resolvedTheme]);
+
+  // Sync points data
+  useEffect(() => {
+    const geojson = toGeoJSON(points);
+    pointsDataRef.current = geojson;
+
+    const map = mapRef.current;
+    if (!map || !map.isStyleLoaded()) return;
+
+    const source = map.getSource("points") as maplibregl.GeoJSONSource;
+    if (source) source.setData(geojson);
+  }, [points]);
 
   return (
     <div className="relative w-full h-full">
-      <LeafletMap
-        center={initialCenter}
-        zoom={initialZoom}
-        className="w-full h-full"
-        style={{ height: "100%", width: "100%" }}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-
-        <MapEventHandler onBoundsChange={handleBoundsChange} />
-        <MapCenterUpdater center={mapCenter} />
-
-        <MarkerClusterGroup
-          chunkedLoading
-          iconCreateFunction={createClusterIcon}
-          maxClusterRadius={60}
-          spiderfyOnMaxZoom
-          showCoverageOnHover={false}
-          disableClusteringAtZoom={16}
-        >
-          {points.map((point) => (
-            <Marker
-              key={`${point.pointType}-${point.id}`}
-              position={[
-                point.coordinates.latitude,
-                point.coordinates.longitude,
-              ]}
-              icon={icons[point.pointType as keyof typeof icons]}
-              // Store point type for cluster icon calculation
-              {...({
-                pointType: point.pointType,
-              } as unknown as L.MarkerOptions)}
-              eventHandlers={{
-                click: () => onPointClick?.(point),
-              }}
-            >
-              <Popup>
-                <MapPopup point={point} />
-              </Popup>
-            </Marker>
-          ))}
-        </MarkerClusterGroup>
-      </LeafletMap>
+      <div ref={mapContainerRef} className="w-full h-full" />
 
       <MapFilters filters={filters} onFiltersChange={onFiltersChange} />
 
