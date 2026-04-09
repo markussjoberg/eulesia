@@ -366,10 +366,23 @@ export function ThreadPage() {
                 </div>
               </div>
 
-              {/* Title */}
-              <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-1.5">
-                {thread.title}
-              </h1>
+              {/* Title — hide when auto-generated from content */}
+              {(() => {
+                const titleClean = thread.title.replace(/\.\.\.$/, "").trim();
+                const contentStart = thread.content
+                  .split("\n")[0]
+                  .replace(/[*#]/g, "")
+                  .trim();
+                const isAutoTitle =
+                  titleClean === contentStart ||
+                  contentStart.startsWith(titleClean) ||
+                  titleClean.startsWith(contentStart);
+                return isAutoTitle ? null : (
+                  <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-1.5">
+                    {thread.title}
+                  </h1>
+                );
+              })()}
 
               {/* Tags */}
               {(thread.tags?.length ?? 0) > 0 && (
