@@ -11,6 +11,7 @@ import {
   Bot,
   Users,
   Send,
+  Info,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Layout } from "../components/layout";
@@ -50,6 +51,8 @@ interface UserProfile {
   institutionType?: string;
   institutionName?: string;
   identityVerified: boolean;
+  identityProvider?: string;
+  municipalityId?: string;
   createdAt: string;
   threads: UserThread[];
   // Institution-specific
@@ -160,12 +163,47 @@ export function UserProfilePage() {
   const isOwnProfile = currentUser?.id === userId;
   const isInstitution = user?.role === "institution";
   const hasTopic = isInstitution && user?.institutionTopic;
+  const isUnclaimed =
+    isInstitution &&
+    (user?.identityProvider === "system" ||
+      user?.identityProvider === "eulesia-bot");
+  const isMunicipality = user?.institutionType === "municipality";
 
   if (isLoading) {
     return (
       <Layout>
         <div className="flex justify-center py-12">
           <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        </div>
+      </Layout>
+    );
+  }
+
+  // Redirect unclaimed municipality institutions to the municipality page
+  if (
+    !isLoading &&
+    user &&
+    isUnclaimed &&
+    isMunicipality &&
+    user.municipalityId
+  ) {
+    return (
+      <Layout>
+        <div className="p-8 text-center space-y-4">
+          <p className="text-gray-500 dark:text-gray-400">
+            {t("profile:userProfile.municipalityRedirect", {
+              name: user.name,
+              defaultValue: `${user.name} ei ole viel\u00e4 aktiivinen Eulesiassa.`,
+            })}
+          </p>
+          <Link
+            to={`/kunnat/${user.municipalityId}`}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            {t("profile:userProfile.goToMunicipality", {
+              defaultValue: "Siirry paikkakunnan sivulle",
+            })}
+          </Link>
         </div>
       </Layout>
     );
@@ -284,8 +322,8 @@ export function UserProfilePage() {
           </div>
         )}
 
-        {/* Send message & visit home buttons */}
-        {!isOwnProfile && userId && (
+        {/* Send message — hidden for unclaimed institutions */}
+        {!isOwnProfile && userId && !isUnclaimed && (
           <div className="mt-4 flex gap-2">
             {isAuthenticated && (
               <button
@@ -299,6 +337,27 @@ export function UserProfilePage() {
                   : t("profile:userProfile.sendMessage")}
               </button>
             )}
+          </div>
+        )}
+
+        {/* Info banner for unclaimed institutions */}
+        {isUnclaimed && !isMunicipality && (
+          <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg flex items-start gap-3">
+            <Info className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-amber-800 dark:text-amber-300">
+              <p className="font-medium">
+                {t("profile:userProfile.unclaimedTitle", {
+                  defaultValue:
+                    "T\u00e4m\u00e4 instituutio ei ole viel\u00e4 aktiivinen Eulesiassa",
+                })}
+              </p>
+              <p className="mt-1 text-amber-700 dark:text-amber-400">
+                {t("profile:userProfile.unclaimedDescription", {
+                  defaultValue:
+                    "Alla oleva sis\u00e4lt\u00f6 on tuotettu Eulesia Summary -automaatiolla julkisista l\u00e4hteist\u00e4.",
+                })}
+              </p>
+            </div>
           </div>
         )}
 
@@ -381,8 +440,8 @@ export function UserProfilePage() {
 
       {/* Content sections */}
       <div className="px-4 py-6 space-y-8">
-        {/* Section 1: Official posts (institution's own threads) */}
-        {isInstitution && (
+        {/* Section 1: Official posts — hidden for unclaimed institutions with no posts */}
+        {isInstitution && (!isUnclaimed || user.threads.length > 0) && (
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
               <Building2 className="w-5 h-5 text-violet-600" />

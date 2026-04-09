@@ -31,10 +31,13 @@ pub struct UserProfileResponse {
     pub institution_type: Option<String>,
     pub institution_name: Option<String>,
     pub identity_verified: bool,
+    pub identity_provider: Option<String>,
     pub municipality_id: Option<Uuid>,
     pub municipality: Option<crate::map::MunicipalityResponse>,
     pub created_at: String,
     pub threads: Vec<serde_json::Value>,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub bot_summaries: Vec<serde_json::Value>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -67,10 +70,12 @@ async fn user_to_profile(
         institution_type: user.institution_type,
         institution_name: user.institution_name,
         identity_verified: user.identity_verified,
+        identity_provider: user.identity_provider,
         municipality_id: user.municipality_id,
         municipality,
         created_at: user.created_at.to_rfc3339(),
         threads: vec![],
+        bot_summaries: vec![],
     })
 }
 
@@ -111,6 +116,8 @@ pub async fn get_user_profile(
         return Err(ApiError::NotFound("user not found".into()));
     }
 
+    let profile_user_role = user.role.clone();
+
     // Include user's recent public threads
     use eulesia_db::entities::threads;
     use sea_orm::{ColumnTrait, EntityTrait, QueryFilter, QueryOrder};
@@ -150,8 +157,44 @@ pub async fn get_user_profile(
         })
         .collect();
 
+    // Fetch bot summaries: threads where source_institution_id = this user
+    // (Eulesia Summary threads linked to this institution)
+    let bot_summary_threads = if profile_user_role == "institution" {
+        threads::Entity::find()
+            .filter(threads::Column::SourceInstitutionId.eq(id))
+            .filter(threads::Column::DeletedAt.is_null())
+            .filter(threads::Column::IsHidden.eq(false))
+            .filter(threads::Column::ClubId.is_null())
+            .order_by_desc(threads::Column::CreatedAt)
+            .all(&*state.db)
+            .await
+            .map_err(|e| ApiError::Database(format!("list bot summaries: {e}")))?
+    } else {
+        vec![]
+    };
+
+    let bot_summary_values: Vec<serde_json::Value> = bot_summary_threads
+        .into_iter()
+        .take(20)
+        .map(|t| {
+            serde_json::json!({
+                "id": t.id,
+                "title": t.title,
+                "content": t.content,
+                "contentHtml": t.content_html,
+                "scope": t.scope,
+                "authorId": t.author_id,
+                "replyCount": t.reply_count,
+                "score": t.score,
+                "createdAt": t.created_at.to_rfc3339(),
+                "updatedAt": t.updated_at.to_rfc3339(),
+            })
+        })
+        .collect();
+
     let mut profile = user_to_profile(&state.db, user).await?;
     profile.threads = thread_values;
+    profile.bot_summaries = bot_summary_values;
     Ok(Json(profile))
 }
 
