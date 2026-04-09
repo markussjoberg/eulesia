@@ -28,8 +28,9 @@ const AdminAuthContext = createContext<AdminAuthContextType | undefined>(
 );
 
 export function AdminAuthProvider({ children }: { children: ReactNode }) {
+  const isAdminPath = window.location.pathname.startsWith("/admin");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(isAdminPath);
   const [admin, setAdmin] = useState<AdminUser | null>(null);
   const [checked, setChecked] = useState(false);
 
@@ -61,6 +62,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     const data = await api.adminLogin(username, password);
     setAdmin(data);
     setIsAuthenticated(true);
+    setChecked(true);
   };
 
   const logout = async () => {
