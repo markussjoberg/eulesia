@@ -9,7 +9,7 @@ import { useTheme } from "../../hooks/useTheme";
 import { MapFilters } from "./MapFilters";
 import { MapPopup } from "./MapPopup";
 import type { MapFilterState } from "./types";
-import { getBasemapStyle, ensurePmtilesProtocol } from "./styles/basemap";
+import { getBasemapStyle } from "./styles/basemap";
 
 // Point type colors — same palette as before
 const TYPE_COLORS: Record<string, string> = {
@@ -186,8 +186,6 @@ export function EulesiaMap({
   // Initialize map
   useEffect(() => {
     if (!mapContainerRef.current) return;
-
-    ensurePmtilesProtocol();
 
     const map = new maplibregl.Map({
       container: mapContainerRef.current,

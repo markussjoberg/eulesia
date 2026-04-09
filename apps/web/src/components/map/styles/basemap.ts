@@ -1,30 +1,13 @@
 import type { StyleSpecification } from "maplibre-gl";
-import { Protocol } from "pmtiles";
-
-// PMTiles source URL — override via VITE_PMTILES_URL env var.
-// Default: Protomaps daily build (self-host for production).
-const PMTILES_URL =
-  import.meta.env.VITE_PMTILES_URL ??
-  "https://build.protomaps.com/20260408.pmtiles";
-
-const SOURCE_NAME = "protomaps";
-
-// Register PMTiles protocol once
-let protocolRegistered = false;
-export function ensurePmtilesProtocol() {
-  if (protocolRegistered) return;
-  const protocol = new Protocol();
-  maplibregl.addProtocol("pmtiles", protocol.tile);
-  protocolRegistered = true;
-}
-
-// Lazy import avoidance — we call addProtocol via the map instance instead
 import maplibregl from "maplibre-gl";
+
+const PROTOMAPS_API_KEY = "48dc026e3bb1931b";
+const SOURCE_NAME = "protomaps";
 
 const sharedSource = {
   [SOURCE_NAME]: {
     type: "vector" as const,
-    url: `pmtiles://${PMTILES_URL}`,
+    url: `https://api.protomaps.com/tiles/v4.json?key=${PROTOMAPS_API_KEY}`,
     attribution:
       '<a href="https://protomaps.com">Protomaps</a> &copy; <a href="https://openstreetmap.org">OpenStreetMap</a>',
   },
