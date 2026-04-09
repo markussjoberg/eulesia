@@ -51,18 +51,9 @@ function addPointLayers(map: maplibregl.Map) {
         "+",
         ["case", ["==", ["get", "pointType"], "municipality"], 1, 0],
       ],
-      sum_thread: [
-        "+",
-        ["case", ["==", ["get", "pointType"], "thread"], 1, 0],
-      ],
-      sum_club: [
-        "+",
-        ["case", ["==", ["get", "pointType"], "club"], 1, 0],
-      ],
-      sum_place: [
-        "+",
-        ["case", ["==", ["get", "pointType"], "place"], 1, 0],
-      ],
+      sum_thread: ["+", ["case", ["==", ["get", "pointType"], "thread"], 1, 0]],
+      sum_club: ["+", ["case", ["==", ["get", "pointType"], "club"], 1, 0]],
+      sum_place: ["+", ["case", ["==", ["get", "pointType"], "place"], 1, 0]],
     },
   });
 
@@ -92,15 +83,7 @@ function addPointLayers(map: maplibregl.Map) {
         TYPE_COLORS.club,
         TYPE_COLORS.place,
       ],
-      "circle-radius": [
-        "step",
-        ["get", "point_count"],
-        18,
-        10,
-        22,
-        50,
-        26,
-      ],
+      "circle-radius": ["step", ["get", "point_count"], 18, 10, 22, 50, 26],
       "circle-stroke-width": 3,
       "circle-stroke-color": "#ffffff",
       "circle-opacity": 0.9,
@@ -115,15 +98,7 @@ function addPointLayers(map: maplibregl.Map) {
     filter: ["has", "point_count"],
     layout: {
       "text-field": "{point_count_abbreviated}",
-      "text-size": [
-        "step",
-        ["get", "point_count"],
-        13,
-        10,
-        12,
-        100,
-        11,
-      ],
+      "text-size": ["step", ["get", "point_count"], 13, 10, 12, 100, 11],
       "text-allow-overlap": true,
     },
     paint: {
