@@ -824,9 +824,13 @@ async fn admin_passkey_register_begin(
         .await
         .map_err(db_err)?;
 
-    let exclude: Vec<Passkey> = existing
+    let exclude: Vec<CredentialID> = existing
         .iter()
-        .filter_map(|pk| serde_json::from_value(pk.credential.clone()).ok())
+        .filter_map(|pk| {
+            serde_json::from_value::<Passkey>(pk.credential.clone())
+                .ok()
+                .map(|p| p.cred_id().clone())
+        })
         .collect();
 
     let (ccr, reg_state) = state
