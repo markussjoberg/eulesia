@@ -750,6 +750,7 @@ impl std::str::FromStr for ThreadSource {
             "user" => Ok(Self::User),
             "minutes_import" => Ok(Self::MinutesImport),
             "rss_import" => Ok(Self::RssImport),
+            "summary" => Ok(Self::Summary),
             other => Err(format!("invalid thread source: {other}")),
         }
     }
@@ -1254,6 +1255,7 @@ mod tests {
         roundtrip(ThreadSource::User, "user");
         roundtrip(ThreadSource::MinutesImport, "minutes_import");
         roundtrip(ThreadSource::RssImport, "rss_import");
+        roundtrip(ThreadSource::Summary, "summary");
     }
 
     #[test]
