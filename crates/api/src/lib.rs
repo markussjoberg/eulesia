@@ -17,6 +17,7 @@ pub mod moderation;
 mod notifications;
 mod response_wrapper;
 mod search;
+pub mod seo;
 mod social;
 mod subscriptions;
 mod uploads;
@@ -44,6 +45,10 @@ pub struct AppState {
     pub search_client: Option<Arc<SearchClient>>,
     pub ws_registry: ConnectionRegistry,
     pub ftn_config: Option<Arc<ftn::FtnConfig>>,
+    /// Pre-read SPA `index.html` template. `None` when the server is not
+    /// configured to serve the frontend (API-only mode). Used by
+    /// `seo::inject_meta` to inject route-specific meta tags before serving.
+    pub index_html: Option<Arc<str>>,
 }
 
 impl Deref for AppState {
@@ -155,6 +160,8 @@ pub fn router(state: AppState) -> Router {
     Router::new()
         .nest("/api/v1", api.clone())
         .nest("/api/v2", api)
+        // SEO: sitemap.xml lives at root level — robots.txt blocks /api/* for crawlers.
+        .merge(seo::routes())
         .route(
             "/ws/v2",
             axum::routing::get(eulesia_ws::handler::ws_upgrade).with_state(ws_state),
