@@ -13,9 +13,14 @@ use serde_json::Value;
 /// Preserves all original headers (Set-Cookie, etc.) and skips non-JSON
 /// responses and health endpoints.
 pub async fn wrap_response(req: Request<Body>, next: Next) -> Response {
-    // Skip wrapping for health endpoints — they have their own contract.
+    // Skip wrapping for health endpoints and the ServeDir `/uploads/*` path.
+    // The check is `starts_with("/uploads/")`, NOT `contains`, so we only
+    // skip the top-level static file route — the API upload endpoints live
+    // at `/api/v1/uploads/*` and MUST be wrapped in the `{success, data}`
+    // envelope that the frontend expects.
     let path = req.uri().path();
-    let skip = path.ends_with("/health") || path.ends_with("/ready") || path.contains("/uploads/");
+    let skip =
+        path.ends_with("/health") || path.ends_with("/ready") || path.starts_with("/uploads/");
 
     let response = next.run(req).await;
 
@@ -278,6 +283,50 @@ mod tests {
         let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
         assert_eq!(json["status"], "ready");
         assert!(!json.as_object().unwrap().contains_key("success"));
+    }
+
+    /// The API upload endpoint at `/api/v1/uploads/image` IS wrapped — the
+    /// skip list only covers the top-level ServeDir path `/uploads/*`, not
+    /// the API route that happens to include the word "uploads" inside it.
+    ///
+    /// Regression test for the bug where `path.contains("/uploads/")` also
+    /// skipped `/api/v1/uploads/image`, causing the frontend to see a raw
+    /// `{url, thumbnailUrl, ...}` body that failed the `success` check.
+    #[tokio::test]
+    async fn wraps_api_upload_endpoint() {
+        let app = Router::new()
+            .route(
+                "/api/v1/uploads/image",
+                get(|| async {
+                    axum::Json(serde_json::json!({
+                        "url": "http://example/uploads/images/foo.webp",
+                        "thumbnailUrl": "http://example/uploads/thumbnails/foo.webp",
+                        "width": 800,
+                        "height": 600,
+                    }))
+                }),
+            )
+            .layer(middleware::from_fn(wrap_response));
+
+        let resp = app
+            .oneshot(
+                Request::get("/api/v1/uploads/image")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        let body = resp.into_body().collect().await.unwrap().to_bytes();
+        let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
+
+        // Must be wrapped — the frontend checks `data.success`.
+        assert_eq!(json["success"], true);
+        assert_eq!(
+            json["data"]["url"],
+            "http://example/uploads/images/foo.webp"
+        );
+        assert_eq!(json["data"]["width"], 800);
     }
 
     /// /uploads/ paths are NOT wrapped (skip list).

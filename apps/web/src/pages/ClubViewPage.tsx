@@ -86,6 +86,17 @@ export function ClubViewPage() {
   const { data: searchedUsers } = useSearchUsers(inviteSearch, 5);
   const [newThreadTitle, setNewThreadTitle] = useState("");
   const [newThreadContent, setNewThreadContent] = useState("");
+  const [newThreadImage, setNewThreadImage] = useState<{
+    url: string;
+    thumbnailUrl: string;
+    width: number;
+    height: number;
+  } | null>(null);
+  const [isUploadingThreadImage, setIsUploadingThreadImage] = useState(false);
+  const [newThreadImageError, setNewThreadImageError] = useState<string | null>(
+    null,
+  );
+  const newThreadImageRef = useRef<HTMLInputElement>(null);
 
   // Settings modal state
   const [showSettings, setShowSettings] = useState(false);
@@ -206,15 +217,76 @@ export function ClubViewPage() {
     }
   };
 
+  const handleNewThreadImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+    if (!allowedTypes.includes(file.type)) {
+      setNewThreadImageError(
+        t("threadForm.imageError", {
+          ns: "agora",
+          defaultValue: "Vain JPEG, PNG, WebP ja GIF sallittu (max 5MB)",
+        }),
+      );
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setNewThreadImageError(
+        t("threadForm.imageError", {
+          ns: "agora",
+          defaultValue: "Vain JPEG, PNG, WebP ja GIF sallittu (max 5MB)",
+        }),
+      );
+      return;
+    }
+
+    setIsUploadingThreadImage(true);
+    setNewThreadImageError(null);
+    try {
+      const result = await api.uploadImage(file);
+      setNewThreadImage({
+        url: result.url,
+        thumbnailUrl: result.thumbnailUrl,
+        width: result.width,
+        height: result.height,
+      });
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Image upload failed";
+      setNewThreadImageError(message);
+      console.error("Image upload failed:", err);
+    } finally {
+      setIsUploadingThreadImage(false);
+      if (newThreadImageRef.current) newThreadImageRef.current.value = "";
+    }
+  };
+
+  const handleRemoveNewThreadImage = () => {
+    setNewThreadImage(null);
+    setNewThreadImageError(null);
+  };
+
   const handleCreateThread = async () => {
     if (!newThreadTitle.trim() || !newThreadContent.trim()) return;
     try {
+      // Embed uploaded image as markdown at the end of the content, matching
+      // the pattern used by the Agora InlineThreadForm.
+      let finalContent = newThreadContent.trim();
+      if (newThreadImage) {
+        finalContent += `\n\n![Kuva](${newThreadImage.url})`;
+      }
+
       await createThreadMutation.mutateAsync({
         title: newThreadTitle.trim(),
-        content: newThreadContent.trim(),
+        content: finalContent,
       });
       setNewThreadTitle("");
       setNewThreadContent("");
+      setNewThreadImage(null);
+      setNewThreadImageError(null);
       setShowNewThreadForm(false);
     } catch (err) {
       console.error("Failed to create thread:", err);
@@ -1239,6 +1311,68 @@ export function ClubViewPage() {
                     rows={4}
                     className="w-full px-3 py-2 border border-gray-200 dark:border-gray-800 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none dark:bg-gray-800 dark:text-gray-100"
                   />
+
+                  {/* Image upload / preview */}
+                  {newThreadImage ? (
+                    <div className="relative mb-3">
+                      <img
+                        src={newThreadImage.thumbnailUrl}
+                        alt=""
+                        className="w-full max-h-48 object-cover rounded-lg border border-gray-200 dark:border-gray-800"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleRemoveNewThreadImage}
+                        className="absolute top-2 right-2 p-1 bg-black/60 text-white rounded-full hover:bg-black/80 transition-colors"
+                        aria-label={t("threadForm.removeImage", {
+                          ns: "agora",
+                          defaultValue: "Poista kuva",
+                        })}
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="mb-3">
+                      <button
+                        type="button"
+                        onClick={() => newThreadImageRef.current?.click()}
+                        disabled={isUploadingThreadImage}
+                        className="inline-flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 transition-colors"
+                      >
+                        {isUploadingThreadImage ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            {t("threadForm.uploadingImage", {
+                              ns: "agora",
+                              defaultValue: "Ladataan kuvaa…",
+                            })}
+                          </>
+                        ) : (
+                          <>
+                            <ImageIcon className="w-4 h-4" />
+                            {t("threadForm.addImage", {
+                              ns: "agora",
+                              defaultValue: "Lisää kuva",
+                            })}
+                          </>
+                        )}
+                      </button>
+                      <input
+                        ref={newThreadImageRef}
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/gif"
+                        onChange={handleNewThreadImageUpload}
+                        className="hidden"
+                      />
+                    </div>
+                  )}
+                  {newThreadImageError && (
+                    <p className="text-xs text-red-600 dark:text-red-400 mb-3">
+                      {newThreadImageError}
+                    </p>
+                  )}
+
                   <div className="flex justify-end gap-2">
                     <button
                       onClick={() => setShowNewThreadForm(false)}
