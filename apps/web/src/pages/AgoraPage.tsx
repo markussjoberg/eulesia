@@ -18,11 +18,7 @@ import {
 } from "../components/agora";
 import { ContentEndMarker, ThreadListSkeleton } from "../components/common";
 import { HelpCircle, MessageSquarePlus } from "lucide-react";
-import {
-  useThreads,
-  useVoteThread,
-  useSubscriptions,
-} from "../hooks/useApi";
+import { useThreads, useVoteThread, useSubscriptions } from "../hooks/useApi";
 import { useAuth } from "../hooks/useAuth";
 import type {
   Thread as ApiThread,
