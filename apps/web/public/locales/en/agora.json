@@ -53,13 +53,28 @@
   "addComment": "Comment",
   "writeReply": "Write a reply...",
   "onboarding": {
-    "welcome": "Welcome to Agora!",
-    "emptyFeed": "Your feed is empty. Start by following places and topics that interest you.",
-    "municipalities": "Municipalities",
+    "stepMunicipality": "Your home municipality",
+    "stepTags": "Topics you care about",
+    "stepFriends": "Find people",
+    "municipalityHint": "Pick your home municipality — you'll get a local feed.",
+    "tagsHint": "Follow topics you care about.",
+    "friendsHint": "Search for people by name.",
+    "municipalitySearchPlaceholder": "Search for a municipality or city...",
+    "locationNotInDb": "This place isn't in the content yet — you can still pick it.",
+    "friendSearchPlaceholder": "Type a name...",
+    "noFriendsFound": "No results for",
+    "friendSearchMin": "Type at least 2 characters",
     "topics": "Topics",
     "allTopics": "All topics",
-    "institutionHint": "You can also follow institutions and organizations from their profile pages — follow official posts or topics separately.",
     "ready": "Done"
+  },
+  "infoCard": {
+    "author": "Eulesia Info",
+    "badge": "Info",
+    "emptyFollowingTitle": "Your Following feed is still empty",
+    "emptyFollowingBody": "Follow places, topics, or people — your feed will fill up with their posts.",
+    "openWizard": "Open the guide",
+    "browseExplore": "Browse Explore instead"
   },
   "filters": {
     "scope": {

@@ -53,13 +53,28 @@
   "addComment": "Kommentoi",
   "writeReply": "Kirjoita vastaus...",
   "onboarding": {
-    "welcome": "Tervetuloa Agoraan!",
-    "emptyFeed": "Feedisi on tyhjä. Aloita seuraamalla paikkakuntia ja aiheita, jotka kiinnostavat sinua.",
-    "municipalities": "Paikkakunnat",
+    "stepMunicipality": "Kotikuntasi",
+    "stepTags": "Kiinnostavat aiheet",
+    "stepFriends": "Etsi ihmisiä",
+    "municipalityHint": "Valitse kotikuntasi — saat paikallisen syötteen.",
+    "tagsHint": "Seuraa aiheita jotka kiinnostavat sinua.",
+    "friendsHint": "Etsi ihmisiä nimellä.",
+    "municipalitySearchPlaceholder": "Hae kuntaa tai kaupunkia...",
+    "locationNotInDb": "Tätä paikkakuntaa ei vielä löydy sisällöstä — voit silti valita sen.",
+    "friendSearchPlaceholder": "Kirjoita nimi...",
+    "noFriendsFound": "Ei tuloksia nimellä",
+    "friendSearchMin": "Kirjoita vähintään 2 merkkiä",
     "topics": "Aiheet",
     "allTopics": "Kaikki aiheet",
-    "institutionHint": "Voit myös seurata instituutioita ja organisaatioita heidän profiilisivuiltaan — seuraa virallisia julkaisuja tai topicia erikseen.",
     "ready": "Valmis"
+  },
+  "infoCard": {
+    "author": "Eulesia Info",
+    "badge": "Info",
+    "emptyFollowingTitle": "Seuratut-feed on vielä tyhjä",
+    "emptyFollowingBody": "Seuraa paikkakuntia, aiheita tai ihmisiä — syötteesi täyttyy niiden postauksilla.",
+    "openWizard": "Avaa opas",
+    "browseExplore": "Selaa Tutustu-välilehteä"
   },
   "filters": {
     "scope": {
