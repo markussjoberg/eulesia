@@ -405,44 +405,47 @@ export function AgoraPage() {
 
         {/* Empty state with philosopher quotes. Skipped when the Eulesia
             Info card is already showing on the Seuratut tab. */}
-        {!isLoading && !error && threads.length === 0 && !showEulesiaInfoCard && (
-          <div className="text-center py-16 px-6">
-            <div className="max-w-md mx-auto">
-              <p className="text-lg italic text-gray-600 dark:text-gray-300 mb-1">
-                {t(`emptyQuote_${Math.floor(Date.now() / 86400000) % 7}`, {
-                  defaultValue: t("noThreads"),
-                })}
-              </p>
-              <p className="text-xs text-gray-400 dark:text-gray-500 mb-6">
-                —{" "}
-                {t(
-                  `emptyQuoteAttribution_${Math.floor(Date.now() / 86400000) % 7}`,
-                  {
-                    defaultValue: "",
-                  },
-                )}
-              </p>
-              {currentUser ? (
-                <button
-                  onClick={() => {
-                    const form = document.querySelector(
-                      '[data-guide="agora-newthread"]',
-                    );
-                    if (form) {
-                      form.scrollIntoView({ behavior: "smooth" });
-                      const input = form.querySelector("input, textarea");
-                      if (input) (input as HTMLElement).focus();
-                    }
-                  }}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  <MessageSquarePlus className="w-4 h-4" />
-                  {t("emptyQuoteCta")}
-                </button>
-              ) : null}
+        {!isLoading &&
+          !error &&
+          threads.length === 0 &&
+          !showEulesiaInfoCard && (
+            <div className="text-center py-16 px-6">
+              <div className="max-w-md mx-auto">
+                <p className="text-lg italic text-gray-600 dark:text-gray-300 mb-1">
+                  {t(`emptyQuote_${Math.floor(Date.now() / 86400000) % 7}`, {
+                    defaultValue: t("noThreads"),
+                  })}
+                </p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mb-6">
+                  —{" "}
+                  {t(
+                    `emptyQuoteAttribution_${Math.floor(Date.now() / 86400000) % 7}`,
+                    {
+                      defaultValue: "",
+                    },
+                  )}
+                </p>
+                {currentUser ? (
+                  <button
+                    onClick={() => {
+                      const form = document.querySelector(
+                        '[data-guide="agora-newthread"]',
+                      );
+                      if (form) {
+                        form.scrollIntoView({ behavior: "smooth" });
+                        const input = form.querySelector("input, textarea");
+                        if (input) (input as HTMLElement).focus();
+                      }
+                    }}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <MessageSquarePlus className="w-4 h-4" />
+                    {t("emptyQuoteCta")}
+                  </button>
+                ) : null}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Infinite scroll trigger / End marker */}
         {threads.length > 0 &&
