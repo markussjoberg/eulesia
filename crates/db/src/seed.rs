@@ -589,7 +589,7 @@ pub async fn backfill_thread_locations(
     //   5. `threads.scope = 'european'` → EUROPEAN_UNION_LOCATION_ID
     //   6. None → skip (personal scope)
     let backfill_sql = r"
-        WITH primary_resolved AS (
+        WITH RECURSIVE primary_resolved AS (
             SELECT
                 t.id AS thread_id,
                 COALESCE(
