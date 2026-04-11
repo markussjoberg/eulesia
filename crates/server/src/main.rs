@@ -93,12 +93,31 @@ async fn main() -> anyhow::Result<()> {
         info!("FTN (Idura) authentication enabled");
     }
 
+    // Pre-read index.html so the SEO middleware can inject meta tags without a
+    // disk read per request. `None` in API-only mode (no EULESIA_FRONTEND_DIR).
+    let index_html: Option<Arc<str>> = if let Some(ref dir) = config.frontend_dir {
+        let path = std::path::PathBuf::from(dir).join("index.html");
+        match tokio::fs::read_to_string(&path).await {
+            Ok(content) => {
+                info!(path = %path.display(), "loaded index.html for SEO injection");
+                Some(Arc::from(content))
+            }
+            Err(e) => {
+                warn!(path = %path.display(), error = %e, "failed to read index.html — SEO injection disabled");
+                None
+            }
+        }
+    } else {
+        None
+    };
+
     let state = AppState {
         db: Arc::clone(&db),
         config: Arc::new(app_config),
         search_client: search_client.clone(),
         ws_registry,
         ftn_config,
+        index_html,
     };
 
     let allowed_origins: Vec<HeaderValue> = config
@@ -117,22 +136,27 @@ async fn main() -> anyhow::Result<()> {
         .allow_credentials(true);
 
     let upload_dir = std::env::var("UPLOAD_DIR").unwrap_or_else(|_| "./uploads".into());
+
+    // Clone state before it is moved into the router — the SPA fallback
+    // needs it to call `seo::inject_meta`.
+    let seo_state = state.clone();
     let mut app = eulesia_api::router(state).nest_service("/uploads", ServeDir::new(upload_dir));
 
     // Optionally serve the built frontend — eliminates the need for a
     // separate webserver (nginx). Hashed assets get immutable caching;
-    // index.html is never cached so deploys take effect immediately.
+    // index.html is served via `seo::inject_meta` which injects route-specific
+    // meta tags so social-media crawlers see correct titles/descriptions.
     if let Some(ref frontend_dir) = config.frontend_dir {
         info!(dir = %frontend_dir, "serving frontend");
         let frontend_dir = frontend_dir.clone();
-        let index_path = std::path::PathBuf::from(&frontend_dir).join("index.html");
 
         // Serve static files WITHOUT SPA fallback — missing assets return 404,
         // not index.html. This prevents stale hashed asset URLs from being
         // cached as HTML with immutable headers.
-        let static_files = ServeDir::new(&frontend_dir).fallback(axum::routing::get(
+        let static_files = ServeDir::new(&frontend_dir).fallback(axum::routing::get({
+            let state = seo_state.clone();
             move |req: axum::extract::Request| {
-                let index = index_path.clone();
+                let state = state.clone();
                 async move {
                     let path = req.uri().path();
                     // /api/* and /assets/* miss → 404 (not SPA fallback)
@@ -143,14 +167,13 @@ async fn main() -> anyhow::Result<()> {
                     {
                         return axum::http::StatusCode::NOT_FOUND.into_response();
                     }
-                    // Everything else → SPA index.html (navigation routes)
-                    match tokio::fs::read(&index).await {
-                        Ok(body) => axum::response::Html(body).into_response(),
-                        Err(_) => axum::http::StatusCode::INTERNAL_SERVER_ERROR.into_response(),
-                    }
+                    // Everything else → SEO-injected index.html
+                    eulesia_api::seo::inject_meta(path, &state)
+                        .await
+                        .into_response()
                 }
-            },
-        ));
+            }
+        }));
 
         app = app
             .fallback_service(static_files)

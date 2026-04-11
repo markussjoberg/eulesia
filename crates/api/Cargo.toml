@@ -25,9 +25,16 @@ reqwest = { workspace = true }
 sha2 = { workspace = true }
 rand = { workspace = true }
 hex = "0.4"
+thiserror = { workspace = true }
 image = "0.25"
 webp = { workspace = true }
 urlencoding = "2"
+# SEO: server-side meta injection and sitemap generation.
+# Runtime OG image rendering (resvg/usvg/tiny-skia/fontdb) is available when
+# needed — add them back and implement seo::render_og_image.
+quick-xml = "0.39"
+lru = "0.16"
+once_cell = "1"
 sea-orm = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
