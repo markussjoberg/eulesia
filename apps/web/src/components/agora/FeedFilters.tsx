@@ -1,9 +1,5 @@
 import {
   Users,
-  User,
-  MapPin,
-  Building2,
-  Globe,
   ChevronDown,
   Clock,
   TrendingUp,
@@ -28,12 +24,8 @@ const feedScopeOptions: {
   tKey: string;
   icon: React.ElementType;
 }[] = [
-  { value: "following", tKey: "scope.all", icon: Users },
   { value: "all", tKey: "scope.explore", icon: Compass },
-  { value: "personal", tKey: "scope.personal", icon: User },
-  { value: "local", tKey: "scope.local", icon: MapPin },
-  { value: "national", tKey: "scope.national", icon: Building2 },
-  { value: "european", tKey: "scope.european", icon: Globe },
+  { value: "following", tKey: "scope.following", icon: Users },
 ];
 
 const sortByOptions: {

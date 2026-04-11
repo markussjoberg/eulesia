@@ -17,21 +17,11 @@ import {
   InlineThreadForm,
 } from "../components/agora";
 import { ContentEndMarker, ThreadListSkeleton } from "../components/common";
-import {
-  MapPin,
-  Building2,
-  Globe,
-  Users,
-  HelpCircle,
-  MessageSquarePlus,
-  UserPlus,
-} from "lucide-react";
+import { HelpCircle, MessageSquarePlus } from "lucide-react";
 import {
   useThreads,
   useVoteThread,
   useSubscriptions,
-  useMunicipalities,
-  useSubscribe,
 } from "../hooks/useApi";
 import { useAuth } from "../hooks/useAuth";
 import type {
@@ -40,81 +30,10 @@ import type {
   SortBy,
   TopPeriod,
   ExploreThread,
-  Municipality,
 } from "../lib/api";
 import { getAvatarInitials } from "../utils/avatar";
 
 const DAILY_SUBTITLE_INDEX = Math.floor(Date.now() / 86400000) % 5;
-
-/** Inline municipality picker shown on Local tab when user has no municipality subscription. */
-function LocalMunicipalityPrompt() {
-  const { t } = useTranslation(["agora", "common"]);
-  const { data: municipalities } = useMunicipalities();
-  const subscribeMutation = useSubscribe();
-  const [search, setSearch] = useState("");
-  const [picked, setPicked] = useState(false);
-
-  const filtered = (municipalities ?? []).filter((m: Municipality) =>
-    m.name.toLowerCase().includes(search.toLowerCase()),
-  );
-  const shown = search ? filtered.slice(0, 8) : filtered.slice(0, 12);
-
-  const pick = async (m: Municipality) => {
-    setPicked(true);
-    try {
-      await subscribeMutation.mutateAsync({
-        entityType: "municipality",
-        entityId: m.id,
-      });
-      // Reload to apply the new subscription filter
-      window.location.reload();
-    } catch {
-      setPicked(false);
-    }
-  };
-
-  return (
-    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-4">
-      <div className="flex items-start gap-3 mb-3">
-        <MapPin className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-        <div>
-          <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">
-            {t("agora:localPrompt.title", {
-              defaultValue: "Valitse paikkakuntasi",
-            })}
-          </h3>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-            {t("agora:localPrompt.description", {
-              defaultValue:
-                "Näet paikalliset keskustelut kun valitset kotipaikkakuntasi.",
-            })}
-          </p>
-        </div>
-      </div>
-      <input
-        type="text"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder={t("agora:localPrompt.searchPlaceholder", {
-          defaultValue: "Hae paikkakuntaa...",
-        })}
-        className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      <div className="flex flex-wrap gap-1.5">
-        {shown.map((m: Municipality) => (
-          <button
-            key={m.id}
-            onClick={() => pick(m)}
-            disabled={picked}
-            className="px-2.5 py-1 rounded-full text-xs font-medium bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-blue-600 hover:text-white transition-colors disabled:opacity-50"
-          >
-            {m.name}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // Transform API thread to component format
 function transformThread(thread: ApiThread | ExploreThread) {
@@ -276,14 +195,6 @@ export function AgoraPage() {
     return () => observer.disconnect();
   }, [loadNextPage]);
 
-  // Is this a personalized scope with no subscriptions?
-  // Show as compact banner above content (content is now always shown as fallback)
-  const isPersonalizedScope = ["local", "national", "european"].includes(
-    feedScope,
-  );
-  // Personal scope doesn't need subscription hints
-  const showScopeHint = isPersonalizedScope && !isLoading && !hasSubscriptions;
-
   const handleVote = (threadId: string, value: number) => {
     if (!currentUser) return;
     voteThreadMutation.mutate({ threadId, value });
@@ -393,20 +304,7 @@ export function AgoraPage() {
         {/* Inline thread creation */}
         {currentUser && (
           <div data-guide="agora-newthread">
-            <InlineThreadForm
-              defaultScope={
-                ["local", "national", "european", "personal"].includes(
-                  feedScope,
-                )
-                  ? (feedScope as
-                      | "local"
-                      | "national"
-                      | "european"
-                      | "personal")
-                  : undefined
-              }
-              onSuccess={handleThreadCreated}
-            />
+            <InlineThreadForm onSuccess={handleThreadCreated} />
           </div>
         )}
 
@@ -442,35 +340,6 @@ export function AgoraPage() {
                 setShowOnboarding(false);
               }}
             />
-          </div>
-        )}
-
-        {/* Scope-specific banner when no subscriptions */}
-        {!isLoading && !error && showScopeHint && feedScope === "local" && (
-          <LocalMunicipalityPrompt />
-        )}
-        {!isLoading && !error && showScopeHint && feedScope !== "local" && (
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 flex items-center gap-3">
-            <div className="flex-shrink-0">
-              {feedScope === "national" && (
-                <Building2 className="w-5 h-5 text-blue-600" />
-              )}
-              {feedScope === "european" && (
-                <Globe className="w-5 h-5 text-blue-600" />
-              )}
-            </div>
-            <p className="text-sm text-blue-800 dark:text-blue-300 flex-1">
-              {t("emptyScope.hint")}
-            </p>
-            <button
-              onClick={() => {
-                setFeedScope("following");
-              }}
-              className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Users className="w-3.5 h-3.5" />
-              {t("emptyScope.startFollowing")}
-            </button>
           </div>
         )}
 
@@ -512,32 +381,22 @@ export function AgoraPage() {
                 )}
               </p>
               {currentUser ? (
-                feedScope === "personal" ? (
-                  <button
-                    onClick={() => navigate("/explore")}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    <UserPlus className="w-4 h-4" />
-                    {t("emptyQuoteCtaPersonal")}
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      const form = document.querySelector(
-                        '[data-guide="agora-newthread"]',
-                      );
-                      if (form) {
-                        form.scrollIntoView({ behavior: "smooth" });
-                        const input = form.querySelector("input, textarea");
-                        if (input) (input as HTMLElement).focus();
-                      }
-                    }}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    <MessageSquarePlus className="w-4 h-4" />
-                    {t("emptyQuoteCta")}
-                  </button>
-                )
+                <button
+                  onClick={() => {
+                    const form = document.querySelector(
+                      '[data-guide="agora-newthread"]',
+                    );
+                    if (form) {
+                      form.scrollIntoView({ behavior: "smooth" });
+                      const input = form.querySelector("input, textarea");
+                      if (input) (input as HTMLElement).focus();
+                    }
+                  }}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <MessageSquarePlus className="w-4 h-4" />
+                  {t("emptyQuoteCta")}
+                </button>
               ) : null}
             </div>
           </div>

@@ -94,6 +94,7 @@ pub async fn get_tag_threads(
         None,
         offset,
         limit,
+        false,
     )
     .await
     .map_err(db_err)?;

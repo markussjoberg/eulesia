@@ -90,7 +90,7 @@ mod tests {
             .into_connection();
 
         let (items, total) =
-            ThreadRepo::list(&db, None, None, None, None, &[], "recent", None, 0, 20)
+            ThreadRepo::list(&db, None, None, None, None, &[], "recent", None, 0, 20, false)
                 .await
                 .unwrap();
 
@@ -107,7 +107,7 @@ mod tests {
             .into_connection();
 
         let (items, total) =
-            ThreadRepo::list(&db, None, None, None, None, &[], "recent", None, 0, 20)
+            ThreadRepo::list(&db, None, None, None, None, &[], "recent", None, 0, 20, false)
                 .await
                 .unwrap();
 
@@ -124,7 +124,7 @@ mod tests {
             .append_query_results([Vec::<threads::Model>::new()])
             .into_connection();
 
-        let (items, total) = ThreadRepo::list(&db, None, None, None, None, &[], "new", None, 0, 20)
+        let (items, total) = ThreadRepo::list(&db, None, None, None, None, &[], "new", None, 0, 20, false)
             .await
             .unwrap();
         assert!(items.is_empty());
@@ -138,7 +138,7 @@ mod tests {
             .append_query_results([Vec::<threads::Model>::new()])
             .into_connection();
 
-        let (items, total) = ThreadRepo::list(&db, None, None, None, None, &[], "top", None, 0, 20)
+        let (items, total) = ThreadRepo::list(&db, None, None, None, None, &[], "top", None, 0, 20, false)
             .await
             .unwrap();
         assert!(items.is_empty());
@@ -153,7 +153,7 @@ mod tests {
             .into_connection();
 
         let (items, total) =
-            ThreadRepo::list(&db, None, None, None, None, &[], "active", None, 0, 20)
+            ThreadRepo::list(&db, None, None, None, None, &[], "active", None, 0, 20, false)
                 .await
                 .unwrap();
         assert!(items.is_empty());
@@ -168,7 +168,7 @@ mod tests {
             .into_connection();
 
         let (items, total) =
-            ThreadRepo::list(&db, None, None, None, None, &[], "top", Some("day"), 0, 20)
+            ThreadRepo::list(&db, None, None, None, None, &[], "top", Some("day"), 0, 20, false)
                 .await
                 .unwrap();
         assert!(items.is_empty());
@@ -182,9 +182,21 @@ mod tests {
             .append_query_results([Vec::<threads::Model>::new()])
             .into_connection();
 
-        let (_, _) = ThreadRepo::list(&db, None, None, None, None, &[], "top", Some("week"), 0, 20)
-            .await
-            .unwrap();
+        let (_, _) = ThreadRepo::list(
+            &db,
+            None,
+            None,
+            None,
+            None,
+            &[],
+            "top",
+            Some("week"),
+            0,
+            20,
+            false,
+        )
+        .await
+        .unwrap();
     }
 
     #[tokio::test]
@@ -205,6 +217,7 @@ mod tests {
             Some("month"),
             0,
             20,
+            false,
         )
         .await
         .unwrap();
@@ -217,9 +230,21 @@ mod tests {
             .append_query_results([Vec::<threads::Model>::new()])
             .into_connection();
 
-        let (_, _) = ThreadRepo::list(&db, None, None, None, None, &[], "top", Some("year"), 0, 20)
-            .await
-            .unwrap();
+        let (_, _) = ThreadRepo::list(
+            &db,
+            None,
+            None,
+            None,
+            None,
+            &[],
+            "top",
+            Some("year"),
+            0,
+            20,
+            false,
+        )
+        .await
+        .unwrap();
     }
 
     #[tokio::test]
@@ -230,9 +255,21 @@ mod tests {
             .into_connection();
 
         // "all" means no cutoff filter — same query as top without period
-        let (_, _) = ThreadRepo::list(&db, None, None, None, None, &[], "top", Some("all"), 0, 20)
-            .await
-            .unwrap();
+        let (_, _) = ThreadRepo::list(
+            &db,
+            None,
+            None,
+            None,
+            None,
+            &[],
+            "top",
+            Some("all"),
+            0,
+            20,
+            false,
+        )
+        .await
+        .unwrap();
     }
 
     #[tokio::test]
@@ -254,6 +291,7 @@ mod tests {
             Some("day"),
             0,
             20,
+            false,
         )
         .await
         .unwrap();
@@ -265,7 +303,19 @@ mod tests {
         let db = MockDatabase::new(DatabaseBackend::Postgres).into_connection();
 
         let (items, total) =
-            ThreadRepo::list(&db, None, None, None, Some(&[]), &[], "recent", None, 0, 20)
+            ThreadRepo::list(
+                &db,
+                None,
+                None,
+                None,
+                Some(&[]),
+                &[],
+                "recent",
+                None,
+                0,
+                20,
+                false,
+            )
                 .await
                 .unwrap();
         assert!(items.is_empty());
