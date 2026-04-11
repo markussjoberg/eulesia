@@ -62,7 +62,13 @@ async fn main() -> anyhow::Result<()> {
         cookie_domain: config.cookie_domain.clone(),
         cookie_secure: config.cookie_secure,
         session_max_age_days: config.session_max_age_days,
-        frontend_origin: config.frontend_origin.clone(),
+        frontend_origin: config
+            .frontend_origin
+            .split(',')
+            .next()
+            .unwrap_or(&config.frontend_origin)
+            .trim()
+            .to_string(),
     };
 
     // Optionally create Meilisearch search client and configure indexes
@@ -95,13 +101,17 @@ async fn main() -> anyhow::Result<()> {
         ftn_config,
     };
 
+    let allowed_origins: Vec<HeaderValue> = config
+        .frontend_origin
+        .split(',')
+        .map(|s| {
+            s.trim()
+                .parse::<HeaderValue>()
+                .expect("invalid origin in EULESIA_FRONTEND_ORIGIN")
+        })
+        .collect();
     let cors = CorsLayer::new()
-        .allow_origin(
-            config
-                .frontend_origin
-                .parse::<axum::http::HeaderValue>()
-                .expect("invalid EULESIA_FRONTEND_ORIGIN"),
-        )
+        .allow_origin(allowed_origins)
         .allow_methods(AllowMethods::mirror_request())
         .allow_headers(AllowHeaders::mirror_request())
         .allow_credentials(true);
