@@ -23,11 +23,11 @@
 
 use std::sync::Arc;
 
-use axum::Router;
 use axum::extract::State;
-use axum::http::{HeaderValue, header};
+use axum::http::{header, HeaderValue};
 use axum::response::{Html, IntoResponse, Response};
 use axum::routing::get;
+use axum::Router;
 use sea_orm::EntityTrait;
 use tracing::warn;
 use uuid::Uuid;
@@ -99,12 +99,7 @@ async fn sitemap(State(state): State<AppState>) -> Response {
     }
 
     for m in &munis {
-        push_url(
-            &mut xml,
-            &format!("{base}/kunnat/{}", m.id),
-            "daily",
-            "0.7",
-        );
+        push_url(&mut xml, &format!("{base}/kunnat/{}", m.id), "daily", "0.7");
     }
 
     xml.push_str("</urlset>\n");
@@ -232,7 +227,12 @@ fn apply_meta(template: &str, meta: &PageMeta) -> String {
         escape_html(&meta.description),
     );
 
-    let result = replace_between(template, "<!--SEO_HEAD_START-->", "<!--SEO_HEAD_END-->", &head);
+    let result = replace_between(
+        template,
+        "<!--SEO_HEAD_START-->",
+        "<!--SEO_HEAD_END-->",
+        &head,
+    );
     replace_between(
         &result,
         "<!--SEO_NOSCRIPT_START-->",
@@ -328,7 +328,10 @@ mod tests {
         assert!(html.contains("<title>Rautalampi | Eulesia</title>"));
         assert!(html.contains("og:title\" content=\"Rautalampi | Eulesia\""));
         assert!(html.contains("twitter:title\" content=\"Rautalampi | Eulesia\""));
-        assert!(!html.contains("<title>Eulesia</title>"), "default title must be replaced");
+        assert!(
+            !html.contains("<title>Eulesia</title>"),
+            "default title must be replaced"
+        );
     }
 
     #[test]
