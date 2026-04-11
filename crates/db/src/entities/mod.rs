@@ -28,6 +28,7 @@ pub mod mutes;
 pub mod bookmarks;
 pub mod comment_votes;
 pub mod comments;
+pub mod thread_locations;
 pub mod thread_tags;
 pub mod thread_views;
 pub mod thread_votes;
