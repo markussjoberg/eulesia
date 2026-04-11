@@ -23,11 +23,11 @@
 
 use std::sync::Arc;
 
+use axum::Router;
 use axum::extract::State;
-use axum::http::{header, HeaderValue};
+use axum::http::{HeaderValue, header};
 use axum::response::{Html, IntoResponse, Response};
 use axum::routing::get;
-use axum::Router;
 use sea_orm::EntityTrait;
 use tracing::warn;
 use uuid::Uuid;
