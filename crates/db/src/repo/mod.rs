@@ -21,6 +21,7 @@ pub mod sanctions;
 pub mod sessions;
 pub mod subscriptions;
 pub mod tags;
+pub mod thread_locations;
 pub mod thread_views;
 pub mod threads;
 pub mod users;

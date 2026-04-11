@@ -24,6 +24,9 @@ pub struct Model {
     pub population: Option<i64>,
     pub status: LocationStatus,
     pub content_count: i32,
+    /// Back-reference to `municipalities.official_code` for rows that mirror
+    /// a Finnish municipality. Null for OSM-imported rows.
+    pub municipality_code: Option<String>,
     pub created_at: DateTimeWithTimeZone,
 }
 
