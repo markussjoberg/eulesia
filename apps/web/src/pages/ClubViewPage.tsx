@@ -99,6 +99,7 @@ export function ClubViewPage() {
   const [editRules, setEditRules] = useState<string[]>([]);
   const [editRuleInput, setEditRuleInput] = useState("");
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
   const settingsImageRef = useRef<HTMLInputElement>(null);
 
   const openSettings = () => {
@@ -133,13 +134,24 @@ export function ClubViewPage() {
     const file = e.target.files?.[0];
     if (!file) return;
     const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-    if (!allowedTypes.includes(file.type) || file.size > 5 * 1024 * 1024)
+    if (!allowedTypes.includes(file.type) || file.size > 5 * 1024 * 1024) {
+      setImageError(
+        t("threadForm.imageError", {
+          ns: "agora",
+          defaultValue: "Vain JPEG, PNG, WebP ja GIF sallittu (max 5MB)",
+        }),
+      );
       return;
+    }
     setIsUploadingImage(true);
+    setImageError(null);
     try {
       const result = await api.uploadImage(file);
       setEditCoverImage(result.url);
     } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Image upload failed";
+      setImageError(message);
       console.error("Image upload failed:", err);
     } finally {
       setIsUploadingImage(false);
@@ -547,6 +559,11 @@ export function ClubViewPage() {
                   onChange={handleSettingsImageUpload}
                   className="hidden"
                 />
+                {imageError && (
+                  <p className="text-xs text-red-600 dark:text-red-400 mt-2">
+                    {imageError}
+                  </p>
+                )}
               </div>
 
               {/* Location */}

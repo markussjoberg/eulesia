@@ -266,7 +266,11 @@ export function ProfilePage() {
       // Refresh user to get new avatar URL
       await refreshUser();
     } catch (err) {
-      setAvatarError(t("avatar.uploadFailed"));
+      // Show the real backend error (e.g. HTTP 413, HTTP 500 with detail)
+      // instead of a generic message so upload failures are diagnosable.
+      const message =
+        err instanceof Error ? err.message : t("avatar.uploadFailed");
+      setAvatarError(message);
       console.error("Avatar upload failed:", err);
     } finally {
       setIsUploadingAvatar(false);

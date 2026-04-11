@@ -56,6 +56,7 @@ export function ClubsPage() {
     null,
   );
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
   const [newClubLocation, setNewClubLocation] = useState<LocationResult | null>(
     null,
   );
@@ -106,14 +107,36 @@ export function ClubsPage() {
     if (!file) return;
 
     const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-    if (!allowedTypes.includes(file.type)) return;
-    if (file.size > 5 * 1024 * 1024) return;
+    if (!allowedTypes.includes(file.type)) {
+      setImageError(
+        t("threadForm.imageError", {
+          ns: "agora",
+          defaultValue: "Vain JPEG, PNG, WebP ja GIF sallittu (max 5MB)",
+        }),
+      );
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setImageError(
+        t("threadForm.imageError", {
+          ns: "agora",
+          defaultValue: "Vain JPEG, PNG, WebP ja GIF sallittu (max 5MB)",
+        }),
+      );
+      return;
+    }
 
     setIsUploadingImage(true);
+    setImageError(null);
     try {
       const result = await api.uploadImage(file);
       setNewClubCoverImage(result.url);
     } catch (err) {
+      // Surface the real backend error so the user (and us) can see what
+      // actually went wrong — not just a silent failure.
+      const message =
+        err instanceof Error ? err.message : "Image upload failed";
+      setImageError(message);
       console.error("Image upload failed:", err);
     } finally {
       setIsUploadingImage(false);
@@ -348,6 +371,11 @@ export function ClubsPage() {
                   onChange={handleImageUpload}
                   className="hidden"
                 />
+                {imageError && (
+                  <p className="text-xs text-red-600 dark:text-red-400 mt-2">
+                    {imageError}
+                  </p>
+                )}
               </div>
 
               {/* Location */}
