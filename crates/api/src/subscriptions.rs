@@ -188,6 +188,7 @@ async fn subscription_feed(
         None,
         0,
         limit,
+        false,
     )
     .await
     .map_err(db_err)?;

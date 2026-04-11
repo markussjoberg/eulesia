@@ -3,6 +3,7 @@ use sea_orm::*;
 use uuid::Uuid;
 
 use crate::entities::threads;
+use crate::seed::EULESIA_SUMMARY_USER_ID;
 
 pub struct ThreadRepo;
 
@@ -37,6 +38,7 @@ impl ThreadRepo {
         top_period: Option<&str>,
         offset: u64,
         limit: u64,
+        hide_empty_summaries: bool,
     ) -> Result<(Vec<threads::Model>, u64), DbErr> {
         let mut query = threads::Entity::find()
             .filter(threads::Column::DeletedAt.is_null())
@@ -67,6 +69,18 @@ impl ThreadRepo {
         }
         if !excluded_author_ids.is_empty() {
             query = query.filter(threads::Column::AuthorId.is_not_in(excluded_author_ids.to_vec()));
+        }
+
+        // Hide Eulesia Summary threads with no human engagement from the
+        // explore feed. Summaries are still reachable via direct institution
+        // links, follow feeds, and search — this just keeps the explore feed
+        // human-centered until a summary has attracted discussion.
+        if hide_empty_summaries {
+            query = query.filter(
+                Condition::any()
+                    .add(threads::Column::AuthorId.ne(EULESIA_SUMMARY_USER_ID))
+                    .add(threads::Column::ReplyCount.gt(0)),
+            );
         }
 
         // For "top" sort with a time period, filter by created_at cutoff
