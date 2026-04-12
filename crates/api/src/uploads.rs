@@ -9,7 +9,7 @@ use image::{DynamicImage, ImageReader};
 use sea_orm::{ActiveModelTrait, ActiveValue::Set};
 use serde::Serialize;
 use tokio::fs;
-use tracing::warn;
+use tracing::{error, warn};
 use uuid::Uuid;
 
 use crate::AppState;
@@ -226,10 +226,22 @@ async fn upload_image(
     State(_state): State<AppState>,
     multipart: Multipart,
 ) -> Result<Json<ImageResponse>, ApiError> {
-    let (_content_type, data) = extract_file(multipart).await?;
+    let user_id = auth.user_id.0;
+    let (content_type, data) = extract_file(multipart).await.inspect_err(|e| {
+        error!(user_id = %user_id, error = %e, "upload_image: extract_file failed");
+    })?;
+    let data_len = data.len();
 
     // Decode on blocking thread
-    let img = decode_image(data).await?;
+    let img = decode_image(data).await.inspect_err(|e| {
+        error!(
+            user_id = %user_id,
+            content_type = %content_type,
+            bytes = data_len,
+            error = %e,
+            "upload_image: decode_image failed"
+        );
+    })?;
 
     // Resize + encode main image and thumbnail on blocking thread
     let (main_buf, thumb_buf, width, height) = tokio::task::spawn_blocking(move || {
@@ -246,27 +258,57 @@ async fn upload_image(
         Ok::<_, ApiError>((main_buf, thumb_buf, w, h))
     })
     .await
-    .map_err(|_| ApiError::Internal("image processing task failed".into()))??;
+    .map_err(|e| {
+        error!(user_id = %user_id, error = %e, "upload_image: blocking encode task panicked");
+        ApiError::Internal("image processing task failed".into())
+    })?
+    .inspect_err(|e| {
+        error!(user_id = %user_id, error = %e, "upload_image: encode failed");
+    })?;
 
     let images_dir = upload_dir().join("images");
     let thumbs_dir = upload_dir().join("thumbnails");
-    fs::create_dir_all(&images_dir)
-        .await
-        .map_err(|e| ApiError::Internal(format!("create upload dir: {e}")))?;
-    fs::create_dir_all(&thumbs_dir)
-        .await
-        .map_err(|e| ApiError::Internal(format!("create upload dir: {e}")))?;
+    fs::create_dir_all(&images_dir).await.map_err(|e| {
+        error!(
+            user_id = %user_id,
+            dir = %images_dir.display(),
+            error = %e,
+            "upload_image: create images dir failed"
+        );
+        ApiError::Internal(format!("create upload dir: {e}"))
+    })?;
+    fs::create_dir_all(&thumbs_dir).await.map_err(|e| {
+        error!(
+            user_id = %user_id,
+            dir = %thumbs_dir.display(),
+            error = %e,
+            "upload_image: create thumbnails dir failed"
+        );
+        ApiError::Internal(format!("create upload dir: {e}"))
+    })?;
 
-    let name = file_name(auth.user_id.0);
+    let name = file_name(user_id);
     let image_path = images_dir.join(&name);
     let thumb_path = thumbs_dir.join(&name);
 
-    fs::write(&image_path, &main_buf)
-        .await
-        .map_err(|e| ApiError::Internal(format!("write image: {e}")))?;
-    fs::write(&thumb_path, &thumb_buf)
-        .await
-        .map_err(|e| ApiError::Internal(format!("write thumbnail: {e}")))?;
+    fs::write(&image_path, &main_buf).await.map_err(|e| {
+        error!(
+            user_id = %user_id,
+            path = %image_path.display(),
+            error = %e,
+            "upload_image: write main image failed"
+        );
+        ApiError::Internal(format!("write image: {e}"))
+    })?;
+    fs::write(&thumb_path, &thumb_buf).await.map_err(|e| {
+        error!(
+            user_id = %user_id,
+            path = %thumb_path.display(),
+            error = %e,
+            "upload_image: write thumbnail failed"
+        );
+        ApiError::Internal(format!("write thumbnail: {e}"))
+    })?;
 
     let api_url = std::env::var("API_URL").unwrap_or_else(|_| "http://localhost:3001".into());
 

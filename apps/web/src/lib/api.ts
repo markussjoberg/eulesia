@@ -1230,27 +1230,89 @@ class ApiClient {
   }
 
   // Uploads
-  async uploadAvatar(file: File): Promise<UploadAvatarResponse> {
+  //
+  // Both avatar and image upload use a shared multipart helper that surfaces
+  // the actual backend failure reason instead of a generic "Upload failed"
+  // message. Components that call these methods can rely on `error.message`
+  // being a human-readable description of what went wrong.
+  private async postMultipart<T>(
+    path: `/api/v1/uploads/${string}`,
+    file: File,
+  ): Promise<T> {
     const formData = new FormData();
     formData.append("file", file);
 
-    const url = `${this.baseUrl}/api/v1/uploads/avatar`;
-    const response = await fetch(url, {
-      method: "POST",
-      body: formData,
-      credentials: "include",
-    });
-
-    const ct = response.headers.get("content-type") ?? "";
-    if (!ct.includes("application/json")) {
-      throw new Error((await response.text()) || "Upload failed");
+    const url = `${this.baseUrl}${path}`;
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+    } catch (networkError) {
+      // Thrown on DNS / CORS / offline. `fetch` does not throw on HTTP
+      // errors — those are surfaced below via `response.ok`.
+      const message =
+        networkError instanceof Error
+          ? networkError.message
+          : "Network request failed";
+      throw new Error(`Network error: ${message}`);
     }
-    const data = await response.json();
-    if (!response.ok || !data.success) {
-      throw new Error(data.error || "Upload failed");
+
+    const contentType = response.headers.get("content-type") ?? "";
+    const isJson = contentType.includes("application/json");
+
+    if (!response.ok) {
+      // HTTP error (4xx/5xx). Try to extract a useful message from whatever
+      // body the server sent — JSON error envelope, plain text, or empty.
+      let detail = "";
+      try {
+        if (isJson) {
+          const body = (await response.json()) as {
+            error?: string;
+            message?: string;
+          };
+          detail = body.error ?? body.message ?? "";
+        } else {
+          detail = (await response.text()).trim();
+        }
+      } catch {
+        // Ignore body parse errors — the status code alone is still useful.
+      }
+      const suffix = detail ? ` — ${detail}` : "";
+      throw new Error(
+        `HTTP ${response.status} ${response.statusText}${suffix}`,
+      );
     }
 
+    if (!isJson) {
+      // 2xx but not JSON — shouldn't happen with our wrapper, but surface it
+      // clearly if it does.
+      const body = (await response.text()).trim();
+      throw new Error(
+        `Unexpected response (content-type: ${contentType || "empty"})${
+          body ? ` — ${body}` : ""
+        }`,
+      );
+    }
+
+    const data = (await response.json()) as {
+      success: boolean;
+      data?: T;
+      error?: string;
+    };
+    if (!data.success || data.data === undefined) {
+      throw new Error(data.error ?? "Upload failed");
+    }
     return data.data;
+  }
+
+  async uploadAvatar(file: File): Promise<UploadAvatarResponse> {
+    return this.postMultipart<UploadAvatarResponse>(
+      "/api/v1/uploads/avatar",
+      file,
+    );
   }
 
   async deleteAvatar(): Promise<void> {
@@ -1258,26 +1320,10 @@ class ApiClient {
   }
 
   async uploadImage(file: File): Promise<UploadImageResponse> {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const url = `${this.baseUrl}/api/v1/uploads/image`;
-    const response = await fetch(url, {
-      method: "POST",
-      body: formData,
-      credentials: "include",
-    });
-
-    const ct = response.headers.get("content-type") ?? "";
-    if (!ct.includes("application/json")) {
-      throw new Error((await response.text()) || "Upload failed");
-    }
-    const data = await response.json();
-    if (!response.ok || !data.success) {
-      throw new Error(data.error || "Upload failed");
-    }
-
-    return data.data;
+    return this.postMultipart<UploadImageResponse>(
+      "/api/v1/uploads/image",
+      file,
+    );
   }
 
   // ─── Admin API ────────────────────────────────────────────

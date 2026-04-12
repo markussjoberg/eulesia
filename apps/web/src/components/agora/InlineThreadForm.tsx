@@ -145,14 +145,13 @@ export function InlineThreadForm({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
+    // Client-side validation — these errors keep the generic "only JPEG/PNG…"
+    // copy because we know exactly what the user did wrong.
     const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
     if (!allowedTypes.includes(file.type)) {
       setError(t("threadForm.imageError"));
       return;
     }
-
-    // Validate file size (5MB max)
     if (file.size > 5 * 1024 * 1024) {
       setError(t("threadForm.imageError"));
       return;
@@ -170,7 +169,12 @@ export function InlineThreadForm({
         height: result.height,
       });
     } catch (err) {
-      setError(t("threadForm.imageError"));
+      // Upload-time errors are NOT validation failures. Surface the real
+      // message so users (and support) can see e.g. "HTTP 413 Payload Too
+      // Large" or "HTTP 500 — write image: permission denied".
+      const message =
+        err instanceof Error ? err.message : t("threadForm.imageError");
+      setError(message);
       console.error("Image upload failed:", err);
     } finally {
       setIsUploadingImage(false);
