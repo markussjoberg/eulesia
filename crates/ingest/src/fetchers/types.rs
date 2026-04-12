@@ -18,6 +18,10 @@ pub enum FetcherType {
     Dynasty,
     /// Triplan Tweb, e.g. `uurainen.tweb.fi`.
     Tweb,
+    /// Generic HTML page with direct PDF download links (Drupal, static, etc).
+    GenericPdf,
+    /// WordPress REST API — fetches PDFs via /wp-json/wp/v2/media endpoint.
+    WordPress,
     /// Database-configured scraper driven by the adaptive discovery system.
     Adaptive,
 }
@@ -29,6 +33,8 @@ impl FetcherType {
             Self::CloudNc => "cloudnc",
             Self::Dynasty => "dynasty",
             Self::Tweb => "tweb",
+            Self::GenericPdf => "generic_pdf",
+            Self::WordPress => "wordpress",
             Self::Adaptive => "adaptive",
         }
     }
