@@ -15,8 +15,8 @@ use tracing::{info, warn};
 use crate::ai::MistralClient;
 use crate::error::IngestError;
 use crate::fetchers::{
-    CloudNcFetcher, DynastyFetcher, FetcherType, MFilesFetcher, Meeting, MinuteFetcher,
-    MinuteSource, TwebFetcher,
+    CloudNcFetcher, DynastyFetcher, FetcherType, GenericPdfFetcher, MFilesFetcher, Meeting,
+    MinuteFetcher, MinuteSource, TwebFetcher, WordPressFetcher,
 };
 use crate::sources::all_sources;
 
@@ -101,6 +101,8 @@ pub async fn run_import(
     let dynasty = DynastyFetcher::new()?;
     let cloudnc = CloudNcFetcher::new()?;
     let tweb = TwebFetcher::new()?;
+    let generic_pdf = GenericPdfFetcher::new()?;
+    let wordpress = WordPressFetcher::new()?;
 
     let pick_fetcher = |ty: FetcherType| -> Option<&dyn MinuteFetcher> {
         match ty {
@@ -108,6 +110,8 @@ pub async fn run_import(
             FetcherType::Dynasty => Some(&dynasty as &dyn MinuteFetcher),
             FetcherType::CloudNc => Some(&cloudnc as &dyn MinuteFetcher),
             FetcherType::Tweb => Some(&tweb as &dyn MinuteFetcher),
+            FetcherType::GenericPdf => Some(&generic_pdf as &dyn MinuteFetcher),
+            FetcherType::WordPress => Some(&wordpress as &dyn MinuteFetcher),
             FetcherType::Adaptive => None,
         }
     };

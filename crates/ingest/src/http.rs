@@ -68,6 +68,27 @@ impl RateLimitedClient {
             })
     }
 
+    /// POST an `application/x-www-form-urlencoded` body, honouring the rate
+    /// limit. Used by fetchers that need to submit a search form rather than
+    /// follow static HTML links (Tweb's `pk_kokl_tweb.htm` is the canonical
+    /// example).
+    pub async fn post_form(
+        &self,
+        url: &str,
+        form: &[(&str, &str)],
+    ) -> Result<reqwest::Response, IngestError> {
+        self.wait_for_slot().await;
+        self.inner
+            .post(url)
+            .form(form)
+            .send()
+            .await
+            .map_err(|source| IngestError::Http {
+                context: "rate-limited POST form",
+                source,
+            })
+    }
+
     async fn wait_for_slot(&self) {
         let mut guard = self.last_call.lock().await;
         if let Some(last) = *guard {

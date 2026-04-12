@@ -9,13 +9,17 @@
 
 pub mod cloudnc;
 pub mod dynasty;
+pub mod generic_pdf;
 pub mod html;
 pub mod mfiles;
 pub mod tweb;
 pub mod types;
+pub mod wordpress;
 
 pub use cloudnc::CloudNcFetcher;
 pub use dynasty::DynastyFetcher;
+pub use generic_pdf::GenericPdfFetcher;
 pub use mfiles::MFilesFetcher;
 pub use tweb::TwebFetcher;
 pub use types::{FetcherType, Meeting, MinuteFetcher, MinuteSource};
+pub use wordpress::WordPressFetcher;
