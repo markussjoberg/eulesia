@@ -15,6 +15,7 @@ eulesia-api = { path = "../api" }
 eulesia-auth = { path = "../auth" }
 eulesia-common = { path = "../common" }
 eulesia-db = { path = "../db" }
+eulesia-ingest = { path = "../ingest" }
 eulesia-jobs = { path = "../jobs" }
 eulesia-notify = { path = "../notify" }
 eulesia-search = { path = "../search" }

@@ -1,12 +1,17 @@
 use std::sync::Arc;
 use std::time::Duration;
 
-use sea_orm::DatabaseConnection;
+use sea_orm::{ActiveModelTrait, ActiveValue::Set, DatabaseConnection};
 use tokio_util::sync::CancellationToken;
 use tracing::{error, info, warn};
+use uuid::Uuid;
 
+use eulesia_db::entities::threads;
 use eulesia_db::repo::outbox::OutboxRepo;
 use eulesia_db::repo::sessions::SessionRepo;
+use eulesia_db::repo::tags::TagRepo;
+use eulesia_ingest::ai::MistralClient;
+use eulesia_ingest::ai::classify_thread::{ContentUnderstanding, classify_thread};
 use eulesia_notify::dispatch::NotificationDispatcher;
 use eulesia_notify::types::NotificationEvent;
 use eulesia_search::sync::SearchSync;
@@ -19,6 +24,9 @@ pub struct WorkerContext {
     pub db: Arc<DatabaseConnection>,
     pub dispatcher: Option<Arc<NotificationDispatcher>>,
     pub search_sync: Option<Arc<SearchSync>>,
+    /// When set, new user-authored threads are classified by Mistral and
+    /// auto-tagged. `None` if `MISTRAL_API_KEY` is not configured.
+    pub mistral: Option<Arc<MistralClient>>,
 }
 
 pub async fn run(ctx: Arc<WorkerContext>, cancel: CancellationToken) {
@@ -97,6 +105,14 @@ async fn process_event(
                 sync.process_event(event.event_type.as_str(), &event.payload)
                     .await?;
             }
+
+            // AI classification for newly created user threads.
+            if event.event_type == "thread_created" {
+                if let Some(ref mistral) = ctx.mistral {
+                    maybe_classify_thread(&ctx.db, mistral, &event.payload).await;
+                }
+            }
+
             Ok(())
         }
         "magic_link" => {
@@ -141,6 +157,132 @@ async fn process_event(
     }
 }
 
+// ---------------------------------------------------------------------------
+// AI content classification
+// ---------------------------------------------------------------------------
+
+/// Best-effort AI classification of a new thread. Errors are logged and
+/// swallowed — they never fail the outbox event or prevent search indexing.
+async fn maybe_classify_thread(
+    db: &DatabaseConnection,
+    mistral: &MistralClient,
+    payload: &serde_json::Value,
+) {
+    // Skip AI-generated threads (minutes import etc.) — they already have tags.
+    let source = payload
+        .get("source")
+        .and_then(|v| v.as_str())
+        .unwrap_or("user");
+    if source != "user" {
+        return;
+    }
+
+    let Some(thread_id_str) = payload.get("id").and_then(|v| v.as_str()) else {
+        return;
+    };
+    let Ok(thread_id) = thread_id_str.parse::<Uuid>() else {
+        return;
+    };
+
+    let title = payload.get("title").and_then(|v| v.as_str()).unwrap_or("");
+    let content = payload
+        .get("content")
+        .and_then(|v| v.as_str())
+        .unwrap_or("");
+
+    if content.is_empty() && title.is_empty() {
+        return;
+    }
+
+    let analysis = match classify_thread(mistral, title, content).await {
+        Ok(a) => a,
+        Err(e) => {
+            warn!(thread_id = %thread_id, error = %e, "AI classification failed");
+            return;
+        }
+    };
+
+    info!(
+        thread_id = %thread_id,
+        tags = ?analysis.tags,
+        language = %analysis.language,
+        quality = ?analysis.quality_score,
+        sentiment = ?analysis.sentiment,
+        "classified thread"
+    );
+
+    // 1. Add AI-generated tags (ignore duplicates with user tags).
+    let tags: Vec<String> = analysis
+        .tags
+        .iter()
+        .map(|t| t.trim().to_lowercase())
+        .filter(|t| !t.is_empty() && t.len() <= 100)
+        .take(5)
+        .collect();
+    if let Err(e) = TagRepo::add_tags_ignore_duplicates(db, thread_id, &tags).await {
+        warn!(thread_id = %thread_id, error = %e, "failed to add AI tags");
+    }
+
+    // 2. Store full analysis + update language.
+    let analysis_json = serde_json::to_value(&analysis).ok();
+    let flagged = should_flag(&analysis);
+
+    let now = chrono::Utc::now().fixed_offset();
+    let mut update = threads::ActiveModel {
+        id: Set(thread_id),
+        ..Default::default()
+    };
+
+    if let Some(json) = analysis_json {
+        update.ai_analysis = Set(Some(json));
+    }
+
+    // Set language if the thread doesn't have one yet.
+    if !analysis.language.is_empty() {
+        // Only update if currently NULL — use a raw update to avoid
+        // overwriting an explicit user choice.
+        let _ = sea_orm::Statement::from_sql_and_values(
+            sea_orm::DatabaseBackend::Postgres,
+            "UPDATE threads SET language = $1 WHERE id = $2 AND language IS NULL",
+            [analysis.language.clone().into(), thread_id.into()],
+        );
+        // For ai_analysis we always set it:
+    }
+
+    if flagged {
+        let reason = build_flag_reason(&analysis);
+        update.flagged_at = Set(Some(now));
+        update.flagged_reason = Set(Some(reason.clone()));
+        warn!(thread_id = %thread_id, reason = %reason, "thread auto-flagged");
+    }
+
+    if let Err(e) = update.update(db).await {
+        warn!(thread_id = %thread_id, error = %e, "failed to save AI analysis");
+    }
+}
+
+fn should_flag(analysis: &ContentUnderstanding) -> bool {
+    if let Some(score) = analysis.quality_score {
+        if score < 0.3 {
+            return true;
+        }
+    }
+    matches!(analysis.sentiment.as_deref(), Some("hateful"))
+}
+
+fn build_flag_reason(analysis: &ContentUnderstanding) -> String {
+    let mut reasons = Vec::new();
+    if let Some(score) = analysis.quality_score {
+        if score < 0.3 {
+            reasons.push(format!("low quality score: {score:.2}"));
+        }
+    }
+    if matches!(analysis.sentiment.as_deref(), Some("hateful")) {
+        reasons.push("hateful sentiment".to_string());
+    }
+    reasons.join("; ")
+}
+
 fn backoff_seconds(attempt: i16) -> i64 {
     // Exponential backoff: 30s, 60s, 120s, 240s, 480s
     i64::from(30 * (1 << attempt.clamp(0, 4)))
@@ -182,7 +324,51 @@ mod tests {
 
     #[test]
     fn backoff_negative_attempt_clamped() {
-        // Negative attempts are clamped to 0 → 30s base backoff.
         assert_eq!(backoff_seconds(-1), 30);
+    }
+
+    #[test]
+    fn should_flag_low_quality() {
+        let analysis = ContentUnderstanding {
+            tags: vec![],
+            language: "fi".into(),
+            location_hints: vec![],
+            scope_hint: None,
+            content_type: None,
+            quality_score: Some(0.1),
+            sentiment: Some("neutral".into()),
+            entities: vec![],
+        };
+        assert!(should_flag(&analysis));
+    }
+
+    #[test]
+    fn should_flag_hateful() {
+        let analysis = ContentUnderstanding {
+            tags: vec![],
+            language: "fi".into(),
+            location_hints: vec![],
+            scope_hint: None,
+            content_type: None,
+            quality_score: Some(0.5),
+            sentiment: Some("hateful".into()),
+            entities: vec![],
+        };
+        assert!(should_flag(&analysis));
+    }
+
+    #[test]
+    fn should_not_flag_good_content() {
+        let analysis = ContentUnderstanding {
+            tags: vec!["kaavoitus".into()],
+            language: "fi".into(),
+            location_hints: vec![],
+            scope_hint: None,
+            content_type: None,
+            quality_score: Some(0.8),
+            sentiment: Some("constructive".into()),
+            entities: vec![],
+        };
+        assert!(!should_flag(&analysis));
     }
 }

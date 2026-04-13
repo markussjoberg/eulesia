@@ -24,6 +24,7 @@ mod m20260408_000021_thread_scope_personal;
 mod m20260409_000022_municipality_designation;
 mod m20260411_000023_locations_municipality_code;
 mod m20260411_000024_thread_locations;
+mod m20260414_000025_ai_analysis;
 
 pub struct Migrator;
 
@@ -55,6 +56,7 @@ impl MigratorTrait for Migrator {
             Box::new(m20260409_000022_municipality_designation::Migration),
             Box::new(m20260411_000023_locations_municipality_code::Migration),
             Box::new(m20260411_000024_thread_locations::Migration),
+            Box::new(m20260414_000025_ai_analysis::Migration),
         ]
     }
 }

@@ -670,7 +670,7 @@ pub async fn create_thread(
         }
     }
 
-    // Best-effort search index event
+    // Best-effort search index + AI classification event
     if let Err(e) = emit_event(
         &*state.db,
         "thread_created",
@@ -680,6 +680,8 @@ pub async fn create_thread(
             "content": thread.content,
             "author_id": thread.author_id.to_string(),
             "scope": thread.scope,
+            "source": thread.source,
+            "municipality_id": thread.municipality_id.map(|u| u.to_string()),
             "created_at": thread.created_at.timestamp(),
         }),
     )

@@ -35,6 +35,41 @@ impl TagRepo {
         Ok(())
     }
 
+    /// Like [`Self::add_tags`] but silently ignores duplicates that already
+    /// exist. Used by the AI classification pipeline which runs after the
+    /// user's own tags have already been saved.
+    pub async fn add_tags_ignore_duplicates(
+        db: &DatabaseConnection,
+        thread_id: Uuid,
+        tags: &[String],
+    ) -> Result<(), DbErr> {
+        let unique_tags: std::collections::BTreeSet<&str> =
+            tags.iter().map(String::as_str).collect();
+        if unique_tags.is_empty() {
+            return Ok(());
+        }
+        for tag in unique_tags {
+            let model = thread_tags::ActiveModel {
+                thread_id: Set(thread_id),
+                tag: Set(tag.to_string()),
+            };
+            // ON CONFLICT (thread_id, tag) DO NOTHING
+            thread_tags::Entity::insert(model)
+                .on_conflict(
+                    sea_orm::sea_query::OnConflict::columns([
+                        thread_tags::Column::ThreadId,
+                        thread_tags::Column::Tag,
+                    ])
+                    .do_nothing()
+                    .to_owned(),
+                )
+                .do_nothing()
+                .exec(db)
+                .await?;
+        }
+        Ok(())
+    }
+
     pub async fn remove_tags(
         db: &DatabaseConnection,
         thread_id: Uuid,

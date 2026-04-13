@@ -1444,6 +1444,7 @@ dependencies = [
  "eulesia-auth",
  "eulesia-common",
  "eulesia-db",
+ "eulesia-ingest",
  "eulesia-jobs",
  "eulesia-notify",
  "eulesia-search",

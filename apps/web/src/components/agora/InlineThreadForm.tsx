@@ -29,20 +29,6 @@ interface InlineThreadFormProps {
   onSuccess: (threadId: string) => void;
 }
 
-// Common tags for quick selection
-const suggestedTags = [
-  "liikenne",
-  "koulutus",
-  "terveys",
-  "ympäristö",
-  "asuminen",
-  "kulttuuri",
-  "talous",
-  "turvallisuus",
-  "sosiaalipalvelut",
-  "infrastruktuuri",
-];
-
 interface UploadedImage {
   url: string;
   thumbnailUrl: string;
@@ -123,10 +109,8 @@ export function InlineThreadForm({
     }
   }, [scope]);
 
-  const handleTagToggle = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
-    );
+  const handleRemoveTag = (tag: string) => {
+    setSelectedTags((prev) => prev.filter((t) => t !== tag));
   };
 
   const handleAddCustomTag = () => {
@@ -420,22 +404,23 @@ export function InlineThreadForm({
             )}
           </div>
 
-          {/* Tags */}
+          {/* Aihetunnisteet — user can add own; AI adds more after publish */}
           <div className="space-y-2">
             <div className="flex flex-wrap gap-1.5">
-              {suggestedTags.slice(0, 6).map((tag) => (
-                <button
+              {selectedTags.map((tag) => (
+                <span
                   key={tag}
-                  onClick={() => handleTagToggle(tag)}
-                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${
-                    selectedTags.includes(tag)
-                      ? "bg-teal-600 text-white"
-                      : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
-                  }`}
+                  className="inline-flex items-center gap-1 px-2 py-0.5 bg-teal-600 text-white rounded-full text-xs"
                 >
                   <Hash className="w-3 h-3" />
                   {tag}
-                </button>
+                  <button
+                    onClick={() => handleRemoveTag(tag)}
+                    className="hover:bg-teal-700 rounded-full"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
               ))}
               {/* Custom tag input inline */}
               <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-50 dark:bg-gray-800/50 rounded-full">
@@ -453,29 +438,6 @@ export function InlineThreadForm({
                 />
               </div>
             </div>
-            {/* Selected custom tags */}
-            {selectedTags.filter((t) => !suggestedTags.includes(t)).length >
-              0 && (
-              <div className="flex flex-wrap gap-1.5">
-                {selectedTags
-                  .filter((t) => !suggestedTags.includes(t))
-                  .map((tag) => (
-                    <span
-                      key={tag}
-                      className="inline-flex items-center gap-1 px-2 py-0.5 bg-teal-600 text-white rounded-full text-xs"
-                    >
-                      <Hash className="w-3 h-3" />
-                      {tag}
-                      <button
-                        onClick={() => handleTagToggle(tag)}
-                        className="hover:bg-teal-700 rounded-full"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  ))}
-              </div>
-            )}
           </div>
 
           {/* Error message */}
