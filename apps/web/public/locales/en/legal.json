@@ -33,7 +33,7 @@
       },
       "moderation": {
         "title": "6. Moderation",
-        "content": "Eulesia moderates content in accordance with the EU Digital Services Act (DSA). Moderation decisions can be appealed. Users who repeatedly violate the rules may receive warnings, account restrictions, or account termination."
+        "content": "Eulesia moderates content in accordance with the EU Digital Services Act (DSA). Published content is automatically analysed using AI to assess content quality and detect potential rule violations. Automatic analysis never leads to content removal — all moderation actions are made by humans. Moderation decisions can be appealed. Users who repeatedly violate the rules may receive warnings, account restrictions, or account termination."
       },
       "privacy": {
         "title": "7. Privacy",
@@ -88,6 +88,7 @@
         "items": [
           "Creating and managing user accounts",
           "Providing Service features (discussion, voting, messaging)",
+          "Automatic classification of published content and topic tag generation (see section 5)",
           "Ensuring Service security and rule compliance",
           "Developing the Service and fixing bugs",
           "Fulfilling legal obligations"
@@ -95,18 +96,22 @@
       },
       "legal_basis": {
         "title": "4. Legal Basis",
-        "content": "Personal data processing is based on:\n- Consent (account creation and use)\n- Performance of a contract (providing the service)\n- Legal obligation (DSA regulation compliance)\n- Legitimate interest (security, preventing abuse)"
+        "content": "Personal data processing is based on:\n- Consent (account creation and use)\n- Performance of a contract (providing the service)\n- Legal obligation (DSA regulation compliance)\n- Legitimate interest (security, preventing abuse, content classification and discoverability)"
+      },
+      "ai_classification": {
+        "title": "5. Automatic Content Classification",
+        "content": "Published content (discussion threads) is automatically analysed using an AI service to improve content discoverability and support content moderation.\n\nThe analysis produces:\n- Topic tags (e.g. education, transport, environment)\n- Content language detection\n- Content type (question, opinion, news)\n\nThe analysis uses the Mistral AI (Mistral AI, Paris, France) API. Mistral AI processes data within the EU in compliance with European data protection legislation. Only the post's title and body text are sent for analysis — no personal data, username, or other identifying information.\n\nThe analysis does not extract person names from the content. Automatic classification never leads to automatic content removal — all moderation actions are made by humans."
       },
       "sharing": {
-        "title": "5. Data Sharing",
-        "content": "We do not sell or share your personal data with third parties for commercial purposes. Data may be shared:\n- With authorities to comply with legal obligations\n- With our technical service provider: Digimuoto Oy (Business ID 3474894-9), which maintains the server infrastructure and the FTN authentication service (Idura)\n\nAll service providers comply with GDPR."
+        "title": "6. Data Sharing",
+        "content": "We do not sell or share your personal data with third parties for commercial purposes. Data may be shared:\n- With authorities to comply with legal obligations\n- With our technical service provider: Digimuoto Oy (Business ID 3474894-9), which maintains the server infrastructure and the FTN authentication service (Idura)\n- Mistral AI (Paris, France): automatic classification of published content (see section 5)\n\nAll service providers comply with GDPR and process data within the EU."
       },
       "retention": {
-        "title": "6. Data Retention",
+        "title": "7. Data Retention",
         "content": "Personal data is retained as long as the account is active. After account deletion:\n- Personal data (name, email, profile picture) is deleted within 30 days\n- Published content is anonymized (author information removed)\n- Private messages are permanently deleted\n- Moderation logs are retained for 1 year for legal reasons"
       },
       "rights": {
-        "title": "7. Data Subject Rights",
+        "title": "8. Data Subject Rights",
         "content": "You have the following rights under GDPR:",
         "items": [
           "Right to access your data (data export from profile settings)",
@@ -118,19 +123,19 @@
         ]
       },
       "security": {
-        "title": "8. Data Security",
+        "title": "9. Data Security",
         "content": "We use appropriate technical and organizational measures to protect your personal data:\n- Encrypted connections (HTTPS/TLS)\n- Password protection (bcrypt hashing)\n- Access control and role-based permissions\n- Regular security reviews"
       },
       "cookies": {
-        "title": "9. Cookies",
+        "title": "10. Cookies",
         "content": "We only use cookies that are essential for the Service's operation:\n- Session cookie (maintaining login state)\n- Language setting (user's chosen language)\n\nWe do not use tracking, analytics, or advertising cookies."
       },
       "changes": {
-        "title": "10. Changes to Policy",
+        "title": "11. Changes to Policy",
         "content": "We may update this policy as needed. Significant changes will be communicated to users through the Service."
       },
       "contact": {
-        "title": "11. Contact",
+        "title": "12. Contact",
         "content": "For privacy-related questions, contact: info@eulesia.eu\n\nYou may also lodge a complaint with the Data Protection Authority:\nOffice of the Data Protection Ombudsman\nhttps://tietosuoja.fi"
       }
     }
