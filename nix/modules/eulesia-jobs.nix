@@ -44,6 +44,12 @@ in {
       description = "Database URL for scheduled jobs.";
     };
 
+    mistralApiKeyFile = mkOption {
+      type = types.nullOr types.path;
+      default = null;
+      description = "File containing the Mistral API key for the minutes importer.";
+    };
+
     extraEnvironment = mkOption {
       type = types.attrsOf types.str;
       default = {};
@@ -77,12 +83,25 @@ in {
         Type = "simple";
         User = cfg.user;
         Group = cfg.group;
-        ExecStart = "${cfg.package}/bin/eulesia-jobs";
         Restart = "always";
         RestartSec = 5;
         StateDirectory = "eulesia";
         WorkingDirectory = "/var/lib/eulesia";
       };
+
+      # Load secrets from files into environment variables at startup,
+      # then exec the jobs binary.
+      script = let
+        readSecret = file: var: ''
+          if [ -f "${file}" ]; then
+            export ${var}="$(cat "${file}")"
+          fi
+        '';
+      in
+        (optionalString (cfg.mistralApiKeyFile != null) (readSecret cfg.mistralApiKeyFile "MISTRAL_API_KEY"))
+        + ''
+          exec ${cfg.package}/bin/eulesia-jobs
+        '';
     };
   };
 }

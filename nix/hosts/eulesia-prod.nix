@@ -286,9 +286,11 @@
       enable = true;
       package = eulesiaPackages.jobs;
       database.url = "postgresql:///eulesia_v2";
+      mistralApiKeyFile = config.sops.secrets."mistral-api-key".path;
       extraEnvironment = {
         EULESIA_JOBS_LIPAS_ENABLED = "true";
         EULESIA_JOBS_OSM_ENABLED = "true";
+        EULESIA_JOBS_MINUTES_ENABLED = "true";
       };
     };
   };
