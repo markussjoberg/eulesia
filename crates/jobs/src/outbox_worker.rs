@@ -259,6 +259,23 @@ async fn maybe_classify_thread(
     if let Err(e) = update.update(db).await {
         warn!(thread_id = %thread_id, error = %e, "failed to save AI analysis");
     }
+
+    // 3. Re-index in Meilisearch with AI tags included.
+    // Fetch ALL tags (user + AI) from DB to ensure consistency.
+    let all_tags = eulesia_db::repo::tags::TagRepo::tags_for_thread(db, thread_id)
+        .await
+        .unwrap_or_default();
+    let _ = eulesia_db::repo::outbox_helpers::emit_event(
+        db,
+        "thread_updated",
+        serde_json::json!({
+            "id": thread_id.to_string(),
+            "title": title,
+            "content": content,
+            "tags": all_tags,
+        }),
+    )
+    .await;
 }
 
 fn should_flag(analysis: &ContentUnderstanding) -> bool {
