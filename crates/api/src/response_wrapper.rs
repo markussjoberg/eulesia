@@ -13,14 +13,16 @@ use serde_json::Value;
 /// Preserves all original headers (Set-Cookie, etc.) and skips non-JSON
 /// responses and health endpoints.
 pub async fn wrap_response(req: Request<Body>, next: Next) -> Response {
-    // Skip wrapping for health endpoints and the ServeDir `/uploads/*` path.
-    // The check is `starts_with("/uploads/")`, NOT `contains`, so we only
-    // skip the top-level static file route — the API upload endpoints live
-    // at `/api/v1/uploads/*` and MUST be wrapped in the `{success, data}`
-    // envelope that the frontend expects.
+    // Skip wrapping for health/readiness probes only.
+    //
+    // The previous `/uploads/` skip was intended to pass through ServeDir
+    // static file responses, but it also matched the API upload endpoints
+    // (`/uploads/image`) after axum nest-strips the `/api/v1` prefix in
+    // middleware context. ServeDir responses are already handled by the
+    // `!is_json && has_body` pass-through below, so no explicit skip is
+    // needed for them.
     let path = req.uri().path();
-    let skip =
-        path.ends_with("/health") || path.ends_with("/ready") || path.starts_with("/uploads/");
+    let skip = path.ends_with("/health") || path.ends_with("/ready");
 
     let response = next.run(req).await;
 
@@ -285,18 +287,20 @@ mod tests {
         assert!(!json.as_object().unwrap().contains_key("success"));
     }
 
-    /// The API upload endpoint at `/api/v1/uploads/image` IS wrapped — the
-    /// skip list only covers the top-level ServeDir path `/uploads/*`, not
-    /// the API route that happens to include the word "uploads" inside it.
+    /// The API upload endpoint at `/uploads/image` IS wrapped even when
+    /// accessed via a nested router (axum strips the `/api/v1` prefix before
+    /// the middleware sees it, so the path inside the wrapper is
+    /// `/uploads/image`, not `/api/v1/uploads/image`).
     ///
-    /// Regression test for the bug where `path.contains("/uploads/")` also
-    /// skipped `/api/v1/uploads/image`, causing the frontend to see a raw
-    /// `{url, thumbnailUrl, ...}` body that failed the `success` check.
+    /// Regression test: ensures uploads are always wrapped regardless of
+    /// what path the middleware observes.
     #[tokio::test]
-    async fn wraps_api_upload_endpoint() {
-        let app = Router::new()
+    async fn wraps_upload_endpoint_when_nested() {
+        // Simulate the real app structure: handler on /uploads/image inside
+        // a sub-router that gets nested under /api/v1.
+        let inner = Router::new()
             .route(
-                "/api/v1/uploads/image",
+                "/uploads/image",
                 get(|| async {
                     axum::Json(serde_json::json!({
                         "url": "http://example/uploads/images/foo.webp",
@@ -307,6 +311,8 @@ mod tests {
                 }),
             )
             .layer(middleware::from_fn(wrap_response));
+
+        let app = Router::new().nest("/api/v1", inner);
 
         let resp = app
             .oneshot(
@@ -329,9 +335,13 @@ mod tests {
         assert_eq!(json["data"]["width"], 800);
     }
 
-    /// /uploads/ paths are NOT wrapped (skip list).
+    /// Binary responses (image/jpeg with content-length) pass through
+    /// unwrapped via the `!is_json && has_body` check — no explicit skip
+    /// for `/uploads/` is needed.
     #[tokio::test]
-    async fn skips_uploads_path() {
+    async fn passes_through_binary_with_content_length() {
+        let png_bytes: &[u8] = &[0xFF, 0xD8, 0xFF];
+
         let app = Router::new()
             .route(
                 "/uploads/{filename}",
@@ -340,7 +350,7 @@ mod tests {
                         .status(StatusCode::OK)
                         .header("content-type", "image/jpeg")
                         .header("content-length", "3")
-                        .body(Body::from(vec![0xFF, 0xD8, 0xFF]))
+                        .body(Body::from(png_bytes.to_vec()))
                         .unwrap()
                 }),
             )
@@ -359,7 +369,7 @@ mod tests {
         assert_eq!(resp.headers().get("content-type").unwrap(), "image/jpeg",);
 
         let body = resp.into_body().collect().await.unwrap().to_bytes();
-        // Raw bytes, not wrapped.
+        // Raw bytes, not JSON-wrapped.
         assert_eq!(&body[..], &[0xFF, 0xD8, 0xFF]);
     }
 
