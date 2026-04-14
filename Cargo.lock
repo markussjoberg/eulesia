@@ -1254,7 +1254,7 @@ dependencies = [
 
 [[package]]
 name = "eulesia-api"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "argon2",
  "axum",
@@ -1435,7 +1435,7 @@ dependencies = [
 
 [[package]]
 name = "eulesia-server"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "axum",
