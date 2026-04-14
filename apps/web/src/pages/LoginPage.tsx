@@ -434,7 +434,7 @@ export function LoginPage() {
                     {authConfig?.registrationMode === "ftn-open" && (
                       <div className="text-right">
                         <a
-                          href={buildApiUrl("/api/v1/auth/ftn/authorize")}
+                          href={buildApiUrl("/api/v1/auth/ftn/start")}
                           className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
                         >
                           {t("forgotPassword")}
