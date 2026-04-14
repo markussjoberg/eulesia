@@ -429,6 +429,18 @@ export function LoginPage() {
                         autoComplete="current-password"
                       />
                     </div>
+
+                    {/* Forgot password link */}
+                    {authConfig?.registrationMode === "ftn-open" && (
+                      <div className="text-right">
+                        <a
+                          href={buildApiUrl("/api/v1/auth/ftn/authorize")}
+                          className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                        >
+                          {t("forgotPassword")}
+                        </a>
+                      </div>
+                    )}
                   </div>
 
                   {error && (
