@@ -188,9 +188,9 @@ function SearchResultsList({ results, onResultClick }: SearchResultsListProps) {
               <Link
                 key={loc.id || `osm-${loc.osmId}`}
                 to={
-                  loc.osmId
-                    ? `/paikka/${loc.osmType}/${loc.osmId}`
-                    : `/kartta?loc=${loc.id}`
+                  loc.id
+                    ? `/kartta?loc=${loc.id}`
+                    : `/kartta?osm=${loc.osmType}/${loc.osmId}`
                 }
                 onClick={onResultClick}
                 className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
