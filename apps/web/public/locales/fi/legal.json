@@ -33,7 +33,7 @@
       },
       "moderation": {
         "title": "6. Moderointi",
-        "content": "Eulesia moderoi sisältöä EU:n digitaalisten palveluiden asetuksen (DSA) mukaisesti. Moderointipäätöksistä voi valittaa. Käyttäjille, jotka toistuvasti rikkovat sääntöjä, voidaan antaa varoituksia, rajoittaa tilin käyttöä tai poistaa tili."
+        "content": "Eulesia moderoi sisältöä EU:n digitaalisten palveluiden asetuksen (DSA) mukaisesti. Julkaistu sisältö analysoidaan automaattisesti tekoälyn avulla sisällön laadun arvioimiseksi ja mahdollisten sääntörikkomusten havaitsemiseksi. Automaattinen analyysi ei koskaan johda sisällön poistamiseen — kaikki moderointipäätökset ovat ihmisen tekemiä. Moderointipäätöksistä voi valittaa. Käyttäjille, jotka toistuvasti rikkovat sääntöjä, voidaan antaa varoituksia, rajoittaa tilin käyttöä tai poistaa tili."
       },
       "privacy": {
         "title": "7. Tietosuoja",
@@ -88,6 +88,7 @@
         "items": [
           "Käyttäjätilin luominen ja hallinta",
           "Palvelun toimintojen tarjoaminen (keskustelu, äänestys, viestit)",
+          "Julkaistun sisällön automaattinen luokittelu ja aihetunnisteiden tuottaminen (ks. kohta 5)",
           "Palvelun turvallisuuden ja sääntöjen noudattamisen varmistaminen",
           "Palvelun kehittäminen ja virheiden korjaaminen",
           "Lakisääteisten velvoitteiden täyttäminen"
@@ -95,18 +96,22 @@
       },
       "legal_basis": {
         "title": "4. Oikeusperuste",
-        "content": "Henkilötietojen käsittely perustuu:\n- Suostumukseen (tilin luominen ja käyttö)\n- Sopimuksen täytäntöönpanoon (palvelun tarjoaminen)\n- Lakisääteiseen velvoitteeseen (DSA-asetuksen noudattaminen)\n- Oikeutettuun etuun (tietoturva, väärinkäytösten estäminen)"
+        "content": "Henkilötietojen käsittely perustuu:\n- Suostumukseen (tilin luominen ja käyttö)\n- Sopimuksen täytäntöönpanoon (palvelun tarjoaminen)\n- Lakisääteiseen velvoitteeseen (DSA-asetuksen noudattaminen)\n- Oikeutettuun etuun (tietoturva, väärinkäytösten estäminen, sisällön luokittelu ja löydettävyys)"
+      },
+      "ai_classification": {
+        "title": "5. Automaattinen sisällön luokittelu",
+        "content": "Julkaistut sisällöt (keskustelunavaukset) analysoidaan automaattisesti tekoälypalvelun avulla niiden löydettävyyden parantamiseksi ja sisällön moderoinnin tukemiseksi.\n\nAnalyysi tuottaa:\n- Aihetunnisteet (esim. koulutus, liikenne, ympäristö)\n- Sisällön kielen tunnistus\n- Sisältötyyppi (kysymys, mielipide, uutinen)\n\nAnalyysiin käytetään Mistral AI:n (Mistral AI, Pariisi, Ranska) rajapintaa. Mistral AI käsittelee dataa EU:n alueella Euroopan tietosuojalainsäädännön mukaisesti. Ainoastaan julkaisun otsikko ja sisältöteksti lähetetään analysoitavaksi — ei henkilötietoja, käyttäjätunnusta tai muita tunnistetietoja.\n\nAnalyysi ei tunnista henkilöiden nimiä sisällöstä. Automaattinen luokittelu ei johda sisällön automaattiseen poistamiseen — mahdolliset moderointitoimenpiteet ovat aina ihmisen tekemiä."
       },
       "sharing": {
-        "title": "5. Tietojen luovutus",
-        "content": "Emme myy tai luovuta henkilötietojasi kolmansille osapuolille kaupallisiin tarkoituksiin. Tietoja voidaan luovuttaa:\n- Viranomaisille lakisääteisten velvoitteiden noudattamiseksi\n- Tekniselle ylläpitäjälle: Digimuoto Oy (Y-tunnus 3474894-9), joka ylläpitää palvelimen infrastruktuuria sekä FTN-tunnistautumispalvelua (Idura)\n\nKaikki palveluntarjoajat ovat sitoutuneet noudattamaan GDPR:ää."
+        "title": "6. Tietojen luovutus",
+        "content": "Emme myy tai luovuta henkilötietojasi kolmansille osapuolille kaupallisiin tarkoituksiin. Tietoja voidaan luovuttaa:\n- Viranomaisille lakisääteisten velvoitteiden noudattamiseksi\n- Tekniselle ylläpitäjälle: Digimuoto Oy (Y-tunnus 3474894-9), joka ylläpitää palvelimen infrastruktuuria sekä FTN-tunnistautumispalvelua (Idura)\n- Mistral AI (Pariisi, Ranska): julkaistun sisällön automaattinen luokittelu (ks. kohta 5)\n\nKaikki palveluntarjoajat ovat sitoutuneet noudattamaan GDPR:ää ja käsittelevät dataa EU:n alueella."
       },
       "retention": {
-        "title": "6. Tietojen säilytys",
+        "title": "7. Tietojen säilytys",
         "content": "Henkilötietoja säilytetään niin kauan kuin tili on aktiivinen. Tilin poiston jälkeen:\n- Henkilötiedot (nimi, sähköposti, profiilikuva) poistetaan 30 päivän kuluessa\n- Julkaistu sisältö anonymisoidaan (tekijätiedot poistetaan)\n- Yksityisviestit poistetaan pysyvästi\n- Moderointilokeja säilytetään 1 vuosi lakisääteisistä syistä"
       },
       "rights": {
-        "title": "7. Rekisteröidyn oikeudet",
+        "title": "8. Rekisteröidyn oikeudet",
         "content": "Sinulla on GDPR:n mukaiset oikeudet:",
         "items": [
           "Oikeus saada pääsy tietoihisi (data export profiilin asetuksista)",
@@ -118,19 +123,19 @@
         ]
       },
       "security": {
-        "title": "8. Tietoturva",
+        "title": "9. Tietoturva",
         "content": "Käytämme asianmukaisia teknisiä ja organisatorisia toimenpiteitä henkilötietojesi suojaamiseksi:\n- Salatut yhteydet (HTTPS/TLS)\n- Salasanojen suojaus (bcrypt-hash)\n- Pääsynhallinta ja roolipohjainen käyttöoikeus\n- Säännölliset tietoturvatarkistukset"
       },
       "cookies": {
-        "title": "9. Evästeet",
+        "title": "10. Evästeet",
         "content": "Käytämme ainoastaan Palvelun toiminnan kannalta välttämättömiä evästeitä:\n- Istuntoeväste (kirjautumistilan ylläpito)\n- Kieliasetus (käyttäjän valitsema kieli)\n\nEmme käytä seuranta-, analytiikka- tai mainosevästeitä."
       },
       "changes": {
-        "title": "10. Selosteen muutokset",
+        "title": "11. Selosteen muutokset",
         "content": "Voimme päivittää tätä selostetta tarvittaessa. Merkittävistä muutoksista ilmoitetaan käyttäjille Palvelun kautta."
       },
       "contact": {
-        "title": "11. Yhteystiedot",
+        "title": "12. Yhteystiedot",
         "content": "Tietosuojaan liittyvissä kysymyksissä ota yhteyttä: info@eulesia.eu\n\nVoit myös tehdä valituksen tietosuojavaltuutetun toimistoon:\nTietosuojavaltuutetun toimisto\nhttps://tietosuoja.fi"
       }
     }

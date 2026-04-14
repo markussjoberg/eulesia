@@ -104,6 +104,10 @@ struct NominatimResult {
     boundingbox: Option<Vec<String>>,
     #[serde(rename = "type")]
     place_type: Option<String>,
+    /// Nominatim's high-level hierarchy classification — more reliable than
+    /// `type` for mapping to our `LocationType` enum (e.g. "suburb",
+    /// "city", "municipality", "neighbourhood").
+    addresstype: Option<String>,
     address: Option<NominatimAddress>,
 }
 
@@ -231,11 +235,34 @@ fn nominatim_parent(address: Option<&NominatimAddress>) -> Option<LocationParent
 }
 
 fn nominatim_type(result: &NominatimResult) -> LocationType {
-    result
-        .place_type
-        .as_deref()
-        .and_then(|s| s.parse().ok())
-        .unwrap_or(LocationType::Other)
+    // Nominatim's "type" field uses OSM vocabulary (administrative, suburb,
+    // village, station, …) which doesn't map 1:1 to our LocationType enum.
+    // "addresstype" is a better signal for the hierarchy level.
+    let addresstype = result.addresstype.as_deref().unwrap_or("");
+    let place_type = result.place_type.as_deref().unwrap_or("");
+
+    match addresstype {
+        "country" => LocationType::Country,
+        "state" | "county" => LocationType::Region,
+        "city" | "town" | "municipality" => LocationType::Municipality,
+        "suburb" | "city_district" | "borough" | "quarter" => LocationType::District,
+        "neighbourhood" | "residential" => LocationType::Neighborhood,
+        "village" | "hamlet" => LocationType::Locality,
+        _ => {
+            // Fall back to the "type" field.
+            match place_type {
+                "administrative" => LocationType::District,
+                "suburb" | "city_district" => LocationType::District,
+                "village" | "hamlet" => LocationType::Locality,
+                "neighbourhood" | "residential" => LocationType::Neighborhood,
+                _ => result
+                    .place_type
+                    .as_deref()
+                    .and_then(|s| s.parse().ok())
+                    .unwrap_or(LocationType::Other),
+            }
+        }
+    }
 }
 
 async fn parent_response(
@@ -655,6 +682,15 @@ async fn search_locations(
         .iter()
         .map(|location| (location.osm_type.clone(), location.osm_id))
         .collect();
+    // Track name+parent to deduplicate Nominatim results (e.g. "Käpylä" can
+    // appear as both a boundary relation and a place node for the same suburb).
+    let mut seen_name_parent: std::collections::HashSet<(String, String)> = local_results
+        .iter()
+        .map(|l| {
+            let parent_name = l.parent.as_ref().map_or("", |p| p.name.as_str());
+            (l.name.to_lowercase(), parent_name.to_lowercase())
+        })
+        .collect();
 
     let mut combined = local_results.clone();
     let nominatim_results = fetch_nominatim(query, &country, limit).await;
@@ -663,8 +699,22 @@ async fn search_locations(
             continue;
         }
 
+        // Skip exact OSM ID duplicates (same object from local DB).
         let identity = (result.osm_type.clone(), result.osm_id);
         if local_osm_ids.contains(&identity) {
+            continue;
+        }
+
+        // Skip name+parent duplicates (same suburb/district appearing as
+        // multiple OSM objects, e.g. boundary relation + place node).
+        let parent_name = result.parent.as_ref().map_or("", |p| p.name.as_str());
+        let dedup_key = (result.name.to_lowercase(), parent_name.to_lowercase());
+        if !seen_name_parent.insert(dedup_key) {
+            continue;
+        }
+
+        // Skip railway stations, bus stops, etc. unless specifically asked.
+        if result.r#type == LocationType::Other {
             continue;
         }
 

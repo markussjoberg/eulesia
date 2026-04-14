@@ -12,12 +12,14 @@
 //! Each stage calls [`mistral::MistralClient::call_json`] with a
 //! stage-specific system prompt and user template.
 
+pub mod classify_thread;
 pub mod editorial_gate;
 pub mod mistral;
 pub mod prompts_fi;
 pub mod verify_article;
 pub mod write_article;
 
+pub use classify_thread::{ContentUnderstanding, classify_thread};
 pub use editorial_gate::{EditorialItem, editorial_gate};
 pub use mistral::MistralClient;
 pub use verify_article::{Severity, Verification, verify_article};

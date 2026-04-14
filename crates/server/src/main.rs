@@ -192,10 +192,32 @@ async fn main() -> anyhow::Result<()> {
     let search_sync = search_client
         .as_ref()
         .map(|c| Arc::new(eulesia_search::sync::SearchSync::new(c.inner().clone())));
+    // Build Mistral client for AI content classification (optional).
+    let mistral = std::env::var("MISTRAL_API_KEY")
+        .ok()
+        .filter(|k| !k.trim().is_empty())
+        .and_then(|key| {
+            let model = std::env::var("MISTRAL_MODEL").ok();
+            let rate_limit_ms = std::env::var("MISTRAL_RATE_LIMIT_MS")
+                .ok()
+                .and_then(|v| v.parse().ok());
+            match eulesia_ingest::ai::MistralClient::new(key, model, rate_limit_ms) {
+                Ok(c) => {
+                    info!("mistral client configured for AI content classification");
+                    Some(Arc::new(c))
+                }
+                Err(e) => {
+                    warn!(error = %e, "failed to create mistral client, AI classification disabled");
+                    None
+                }
+            }
+        });
+
     let worker_ctx = Arc::new(eulesia_jobs::outbox_worker::WorkerContext {
         db: Arc::clone(&db),
         dispatcher: Some(dispatcher),
         search_sync,
+        mistral,
     });
 
     // Spawn outbox worker

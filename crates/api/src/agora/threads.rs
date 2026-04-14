@@ -670,7 +670,9 @@ pub async fn create_thread(
         }
     }
 
-    // Best-effort search index event
+    // Best-effort search index + AI classification event.
+    // Include tags so Meilisearch indexes them immediately.
+    let user_tags = req.tags.clone().unwrap_or_default();
     if let Err(e) = emit_event(
         &*state.db,
         "thread_created",
@@ -680,6 +682,9 @@ pub async fn create_thread(
             "content": thread.content,
             "author_id": thread.author_id.to_string(),
             "scope": thread.scope,
+            "source": thread.source,
+            "tags": user_tags,
+            "municipality_id": thread.municipality_id.map(|u| u.to_string()),
             "created_at": thread.created_at.timestamp(),
         }),
     )
