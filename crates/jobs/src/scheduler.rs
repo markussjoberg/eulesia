@@ -322,23 +322,23 @@ where
 
 /// Ensure the connection string has a host. Unix-socket URLs like
 /// `postgresql:///dbname` are valid libpq notation but tokio_postgres
-/// rejects them with "both host and hostaddr are missing". Adding
-/// `?host=/var/run/postgresql` or `host=localhost` fixes it.
+/// rejects them with "both host and hostaddr are missing".
+///
+/// Fix: append `?host=/run/postgresql` so tokio_postgres connects via
+/// the same Unix socket that sqlx uses. Using `localhost` would switch
+/// to TCP which requires password auth — not what we want on NixOS
+/// where peer auth is the norm.
 fn ensure_host_in_url(url: &str) -> String {
-    // If the URL already has a host component (anything between :// and the
-    // next / or ?), leave it alone.
     if let Some(after_scheme) = url.strip_prefix("postgresql://") {
         if after_scheme.starts_with('/') {
-            // No host: postgresql:///dbname → postgresql://localhost/dbname
-            // Use localhost so tokio_postgres connects via TCP to the local
-            // PostgreSQL. Alternatively we could use ?host=/var/run/postgresql
-            // for Unix sockets, but TCP to localhost is universally safe.
-            return format!("postgresql://localhost{after_scheme}");
+            let separator = if url.contains('?') { "&" } else { "?" };
+            return format!("{url}{separator}host=/run/postgresql");
         }
     }
     if let Some(after_scheme) = url.strip_prefix("postgres://") {
         if after_scheme.starts_with('/') {
-            return format!("postgres://localhost{after_scheme}");
+            let separator = if url.contains('?') { "&" } else { "?" };
+            return format!("{url}{separator}host=/run/postgresql");
         }
     }
     url.to_string()
@@ -360,14 +360,14 @@ mod tests {
     use super::{advisory_lock_key, ensure_host_in_url};
 
     #[test]
-    fn ensure_host_adds_localhost_for_unix_socket_url() {
+    fn ensure_host_adds_socket_path_for_unix_socket_url() {
         assert_eq!(
             ensure_host_in_url("postgresql:///eulesia_v2"),
-            "postgresql://localhost/eulesia_v2"
+            "postgresql:///eulesia_v2?host=/run/postgresql"
         );
         assert_eq!(
             ensure_host_in_url("postgres:///mydb"),
-            "postgres://localhost/mydb"
+            "postgres:///mydb?host=/run/postgresql"
         );
     }
 
