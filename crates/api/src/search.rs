@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 use tracing::warn;
 
 use eulesia_common::error::ApiError;
-use eulesia_db::entities::municipalities;
+use eulesia_db::entities::{locations, municipalities, places};
 
 use crate::AppState;
 
@@ -117,6 +117,71 @@ async fn search_handler(
                     "name": m.name,
                     "nameFi": m.name_fi,
                     "region": m.region,
+                })
+            })
+            .collect();
+    }
+
+    // Location search via DB (districts, neighborhoods, villages, etc.)
+    if search_type.is_none() || search_type == Some("locations") {
+        let ilike_pattern = format!("%{}%", params.q);
+        let location_models = locations::Entity::find()
+            .filter(
+                Condition::any()
+                    .add(Expr::col(locations::Column::Name).ilike(&ilike_pattern))
+                    .add(Expr::col(locations::Column::NameFi).ilike(&ilike_pattern))
+                    .add(Expr::col(locations::Column::NameSv).ilike(&ilike_pattern))
+                    .add(Expr::col(locations::Column::NameEn).ilike(&ilike_pattern)),
+            )
+            .order_by_desc(locations::Column::ContentCount)
+            .order_by_desc(locations::Column::Population)
+            .limit(limit as u64)
+            .all(&*state.db)
+            .await
+            .unwrap_or_default();
+
+        result.locations = location_models
+            .into_iter()
+            .map(|l| {
+                serde_json::json!({
+                    "id": l.id,
+                    "name": l.name,
+                    "nameFi": l.name_fi,
+                    "type": l.r#type.map(|t| t.to_string()),
+                    "adminLevel": l.admin_level,
+                    "osmId": l.osm_id,
+                    "osmType": l.osm_type,
+                    "contentCount": l.content_count,
+                    "parentName": null::<String>, // TODO: join parent
+                })
+            })
+            .collect();
+    }
+
+    // Place search via DB (parks, libraries, schools, etc.)
+    if search_type.is_none() || search_type == Some("places") {
+        let ilike_pattern = format!("%{}%", params.q);
+        let place_models = places::Entity::find()
+            .filter(
+                Condition::any()
+                    .add(Expr::col(places::Column::Name).ilike(&ilike_pattern))
+                    .add(Expr::col(places::Column::NameFi).ilike(&ilike_pattern)),
+            )
+            .order_by_asc(places::Column::Name)
+            .limit(limit as u64)
+            .all(&*state.db)
+            .await
+            .unwrap_or_default();
+
+        result.places = place_models
+            .into_iter()
+            .map(|p| {
+                serde_json::json!({
+                    "id": p.id,
+                    "name": p.name,
+                    "nameFi": p.name_fi,
+                    "category": p.category,
+                    "municipalityName": null::<String>, // TODO: join municipality
                 })
             })
             .collect();
