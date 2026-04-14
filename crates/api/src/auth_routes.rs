@@ -490,6 +490,95 @@ async fn change_password(
 }
 
 // ---------------------------------------------------------------------------
+// Password reset via FTN
+// ---------------------------------------------------------------------------
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct ResetPasswordFtnRequest {
+    token: String,
+    new_password: String,
+}
+
+/// POST /auth/reset-password-ftn
+///
+/// After FTN verification finds an existing account, the frontend gets a
+/// short-lived token (same as pending registration). This endpoint consumes
+/// the token and sets a new password on the existing account identified by
+/// the FTN `sub` claim.
+async fn reset_password_ftn(
+    State(state): State<AppState>,
+    Json(req): Json<ResetPasswordFtnRequest>,
+) -> Result<Json<serde_json::Value>, ApiError> {
+    use eulesia_db::entities::{ftn_pending_registrations, users};
+    use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
+
+    // Validate password strength.
+    eulesia_auth::password::validate_password_strength(&req.new_password)
+        .map_err(ApiError::from)?;
+
+    // Find and consume the pending registration token.
+    let token_hash = {
+        use sha2::{Digest, Sha256};
+        let mut hasher = Sha256::new();
+        hasher.update(req.token.as_bytes());
+        format!("{:x}", hasher.finalize())
+    };
+
+    let pending = ftn_pending_registrations::Entity::find()
+        .filter(ftn_pending_registrations::Column::TokenHash.eq(&token_hash))
+        .one(&*state.db)
+        .await
+        .map_err(|e| ApiError::Database(e.to_string()))?
+        .ok_or_else(|| ApiError::BadRequest("invalid or expired token".into()))?;
+
+    // Check expiry.
+    let now = chrono::Utc::now().fixed_offset();
+    if pending.expires_at < now {
+        return Err(ApiError::BadRequest("token expired".into()));
+    }
+
+    // Find the user by FTN subject.
+    let user = users::Entity::find()
+        .filter(users::Column::RpSubject.eq(&pending.sub))
+        .one(&*state.db)
+        .await
+        .map_err(|e| ApiError::Database(e.to_string()))?
+        .ok_or_else(|| ApiError::BadRequest("account not found".into()))?;
+
+    // Hash the new password.
+    let salt =
+        argon2::password_hash::SaltString::generate(&mut argon2::password_hash::rand_core::OsRng);
+    let new_hash = argon2::PasswordHasher::hash_password(
+        &argon2::Argon2::default(),
+        req.new_password.as_bytes(),
+        &salt,
+    )
+    .map_err(|e| ApiError::Internal(format!("hash password: {e}")))?
+    .to_string();
+
+    // Update the user's password.
+    let mut active: users::ActiveModel = user.into();
+    active.password_hash = Set(Some(new_hash));
+    active.updated_at = Set(now);
+    active
+        .update(&*state.db)
+        .await
+        .map_err(|e| ApiError::Database(e.to_string()))?;
+
+    // Delete the consumed token.
+    ftn_pending_registrations::Entity::delete_many()
+        .filter(ftn_pending_registrations::Column::Id.eq(pending.id))
+        .exec(&*state.db)
+        .await
+        .map_err(|e| ApiError::Database(e.to_string()))?;
+
+    tracing::info!(sub = %pending.sub, "password reset via FTN completed");
+
+    Ok(Json(serde_json::json!({ "reset": true })))
+}
+
+// ---------------------------------------------------------------------------
 // Routes
 // ---------------------------------------------------------------------------
 
@@ -501,6 +590,7 @@ pub fn routes() -> Router<AppState> {
         .route("/auth/me", get(me))
         .route("/auth/magic-link", post(request_magic_link))
         .route("/auth/verify/{token}", get(verify_magic_link))
+        .route("/auth/reset-password-ftn", post(reset_password_ftn))
         .route("/auth/config", get(auth_config))
         .route("/users/me/change-password", post(change_password))
         .route("/users/me/password", post(change_password))

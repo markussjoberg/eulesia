@@ -152,7 +152,7 @@ async fn search_handler(
                     "osmId": l.osm_id,
                     "osmType": l.osm_type,
                     "contentCount": l.content_count,
-                    "parentName": null::<String>, // TODO: join parent
+                    "parentName": serde_json::Value::Null, // TODO: join parent
                 })
             })
             .collect();
@@ -181,7 +181,7 @@ async fn search_handler(
                     "name": p.name,
                     "nameFi": p.name_fi,
                     "category": p.category,
-                    "municipalityName": null::<String>, // TODO: join municipality
+                    "municipalityName": serde_json::Value::Null, // TODO: join municipality
                 })
             })
             .collect();

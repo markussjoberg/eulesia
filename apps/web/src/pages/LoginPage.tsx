@@ -21,13 +21,16 @@ import { buildApiUrl } from "../lib/runtimeConfig";
 // Toggle to re-enable login/register UI when ready
 const REGISTRATION_OPEN = true;
 
-type LoginStep = "initial" | "login" | "register";
+type LoginStep = "initial" | "login" | "register" | "reset-password";
 
 interface FtnReturnParams {
   error: string | null;
   firstName: string | null;
   lastName: string | null;
   token: string | null;
+  resetToken: string | null;
+  resetName: string | null;
+  resetUsername: string | null;
 }
 
 function readFtnReturnParams(search: string): FtnReturnParams {
@@ -38,6 +41,9 @@ function readFtnReturnParams(search: string): FtnReturnParams {
     firstName: params.get("firstName"),
     lastName: params.get("lastName"),
     token: params.get("ftn"),
+    resetToken: params.get("ftn_reset"),
+    resetName: params.get("name"),
+    resetUsername: params.get("username"),
   };
 }
 
@@ -50,11 +56,14 @@ export function LoginPage() {
     !!initialFtnReturn.token &&
     !!initialFtnReturn.firstName &&
     !!initialFtnReturn.lastName;
+  const hasResetReturn = !!initialFtnReturn.resetToken;
 
   const [step, setStep] = useState<LoginStep>(() =>
-    location.pathname === "/register" || hasInitialFtnReturn
-      ? "register"
-      : "initial",
+    hasResetReturn
+      ? "reset-password"
+      : location.pathname === "/register" || hasInitialFtnReturn
+        ? "register"
+        : "initial",
   );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -67,6 +76,14 @@ export function LoginPage() {
   // Register form
   const [regUsername, setRegUsername] = useState("");
   const [regPassword, setRegPassword] = useState("");
+
+  // Password reset via FTN
+  const [resetToken] = useState(initialFtnReturn.resetToken || "");
+  const [resetName] = useState(initialFtnReturn.resetName || "");
+  const [resetUsername] = useState(initialFtnReturn.resetUsername || "");
+  const [resetPassword, setResetPassword] = useState("");
+  const [resetPasswordConfirm, setResetPasswordConfirm] = useState("");
+  const [resetSuccess, setResetSuccess] = useState(false);
   const [regFirstName, setRegFirstName] = useState(
     initialFtnReturn.firstName ?? "",
   );
@@ -129,6 +146,14 @@ export function LoginPage() {
       setStep("register");
     }
 
+    // FTN password reset — user already has an account, came back from FTN.
+    const resetToken = params.get("ftn_reset");
+    if (resetToken) {
+      setStep("reset-password");
+      window.history.replaceState({}, "", location.pathname);
+      return;
+    }
+
     if (ftnError) {
       if (ftnError === "duplicate_identity") {
         setError(t("ftn.alreadyRegistered"));
@@ -161,6 +186,50 @@ export function LoginPage() {
       // Navigation handled by App.tsx
     } catch (err) {
       setError(err instanceof Error ? err.message : t("loginFailed"));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    if (resetPassword !== resetPasswordConfirm) {
+      setError(t("passwordsDontMatch"));
+      setIsLoading(false);
+      return;
+    }
+
+    if (resetPassword.length < 8) {
+      setError(t("passwordTooShort"));
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL || ""}/api/v1/auth/reset-password-ftn`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            token: resetToken,
+            newPassword: resetPassword,
+          }),
+        },
+      );
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data?.error || t("resetFailed"));
+      }
+
+      setResetSuccess(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("resetFailed"));
     } finally {
       setIsLoading(false);
     }
@@ -630,6 +699,129 @@ export function LoginPage() {
                       setStep("initial");
                       setError(null);
                       setFtnToken(null);
+                    }}
+                    className="w-full mt-3 text-gray-500 dark:text-gray-400 text-sm hover:text-gray-700 dark:hover:text-gray-300 flex items-center justify-center gap-1"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    {t("common:actions.back")}
+                  </button>
+                </form>
+              )}
+            </div>
+          )}
+
+          {/* Password reset via FTN */}
+          {step === "reset-password" && (
+            <div className="mt-6">
+              {resetSuccess ? (
+                <div className="bg-green-900/50 rounded-xl p-6 border border-green-700 text-center">
+                  <h2 className="text-xl font-bold text-white mb-2">
+                    {t("resetPassword.success")}
+                  </h2>
+                  <p className="text-green-200 text-sm mb-4">
+                    {t("resetPassword.successDescription")}
+                  </p>
+                  <button
+                    onClick={() => {
+                      setStep("login");
+                      setResetSuccess(false);
+                    }}
+                    className="bg-white text-blue-900 font-semibold px-6 py-2 rounded-lg hover:bg-blue-50 transition-colors"
+                  >
+                    {t("resetPassword.goToLogin")}
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleResetPassword} className="space-y-4">
+                  <div className="bg-blue-800/50 rounded-xl p-4 border border-blue-700 mb-4">
+                    <h2 className="text-lg font-bold text-white mb-1">
+                      {t("resetPassword.title")}
+                    </h2>
+                    <p className="text-blue-200 text-sm">
+                      {t("resetPassword.description")}
+                    </p>
+                  </div>
+
+                  {/* Show existing account info */}
+                  {(resetName || resetUsername) && (
+                    <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
+                      {resetName && (
+                        <p className="text-gray-200 text-sm">
+                          <span className="text-gray-400">
+                            {t("resetPassword.name")}:
+                          </span>{" "}
+                          {resetName}
+                        </p>
+                      )}
+                      {resetUsername && (
+                        <p className="text-gray-200 text-sm">
+                          <span className="text-gray-400">
+                            {t("resetPassword.username")}:
+                          </span>{" "}
+                          @{resetUsername}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {error && (
+                    <div className="bg-red-900/50 text-red-200 text-sm p-3 rounded-lg border border-red-700">
+                      {error}
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block text-blue-200 text-sm font-medium mb-1">
+                      {t("resetPassword.newPassword")}
+                    </label>
+                    <input
+                      type="password"
+                      value={resetPassword}
+                      onChange={(e) => setResetPassword(e.target.value)}
+                      required
+                      minLength={8}
+                      className="w-full px-4 py-3 bg-blue-900/50 border border-blue-700 rounded-lg text-white placeholder-blue-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder={t("resetPassword.newPasswordPlaceholder")}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-blue-200 text-sm font-medium mb-1">
+                      {t("resetPassword.confirmPassword")}
+                    </label>
+                    <input
+                      type="password"
+                      value={resetPasswordConfirm}
+                      onChange={(e) => setResetPasswordConfirm(e.target.value)}
+                      required
+                      minLength={8}
+                      className="w-full px-4 py-3 bg-blue-900/50 border border-blue-700 rounded-lg text-white placeholder-blue-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder={t(
+                        "resetPassword.confirmPasswordPlaceholder",
+                      )}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {isLoading ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <>
+                        {t("resetPassword.submit")}
+                        <ArrowRight className="w-5 h-5" />
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStep("initial");
+                      setError(null);
                     }}
                     className="w-full mt-3 text-gray-500 dark:text-gray-400 text-sm hover:text-gray-700 dark:hover:text-gray-300 flex items-center justify-center gap-1"
                   >
