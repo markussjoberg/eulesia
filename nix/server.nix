@@ -6,7 +6,7 @@
 }: let
   commonArgs = {
     inherit src;
-    version = "0.1.0";
+    version = "0.2.0";
     strictDeps = true;
     # josekit depends on openssl-sys for JWE/JWT crypto
     nativeBuildInputs = [pkgs.pkg-config];
@@ -49,6 +49,6 @@ in {
   fmt = craneLib.cargoFmt {
     inherit src;
     pname = "eulesia-server";
-    version = "0.1.0";
+    version = "0.2.0";
   };
 }
