@@ -10,6 +10,7 @@ import {
   LogIn,
   ArrowRight,
   ArrowLeft,
+  Loader2,
 } from "lucide-react";
 import { useTranslation, Trans } from "react-i18next";
 import { useLocation } from "react-router-dom";
@@ -140,6 +141,7 @@ export function LoginPage() {
       firstName,
       lastName,
       token,
+      resetToken: ftnResetToken,
     } = readFtnReturnParams(location.search);
 
     if (location.pathname === "/register") {
@@ -147,8 +149,7 @@ export function LoginPage() {
     }
 
     // FTN password reset — user already has an account, came back from FTN.
-    const resetToken = params.get("ftn_reset");
-    if (resetToken) {
+    if (ftnResetToken) {
       setStep("reset-password");
       window.history.replaceState({}, "", location.pathname);
       return;
