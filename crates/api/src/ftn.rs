@@ -554,10 +554,38 @@ async fn ftn_callback(
         .await
         .map_err(|e| ApiError::Database(e.to_string()))?;
 
-    if existing.is_some() {
+    if let Some(existing_user) = existing {
+        // Account already exists — redirect to password reset flow instead
+        // of showing an error. Create a short-lived token (same as pending
+        // registration) so the frontend can present a "set new password"
+        // form after FTN verification.
+        let raw_token = generate_random_token(32);
+        let token_hash = sha256_hex(&raw_token);
+        let now = Utc::now().fixed_offset();
+
+        ftn_pending_registrations::ActiveModel {
+            id: Set(Uuid::now_v7()),
+            token_hash: Set(token_hash),
+            given_name: Set(claims.given_name.clone()),
+            family_name: Set(claims.family_name.clone()),
+            sub: Set(claims.sub),
+            country: Set(claims.country.or_else(|| Some("FI".into()))),
+            invite_code: Set(None),
+            expires_at: Set(now + chrono::Duration::minutes(15)),
+            created_at: Set(now),
+        }
+        .insert(&*state.db)
+        .await
+        .map_err(|e| ApiError::Database(format!("store password reset token: {e}")))?;
+
+        let name = existing_user.name;
+        let username = existing_user.username;
         return Ok(Redirect::temporary(&format!(
-            "{}/register?ftn_error=duplicate_identity",
-            ftn_config.frontend_url
+            "{}/register?ftn_reset={}&name={}&username={}",
+            ftn_config.frontend_url,
+            urlencoding::encode(&raw_token),
+            urlencoding::encode(&name),
+            urlencoding::encode(&username),
         ))
         .into_response());
     }
