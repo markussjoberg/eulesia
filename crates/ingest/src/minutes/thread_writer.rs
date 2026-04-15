@@ -6,9 +6,12 @@ use tracing::info;
 use uuid::Uuid;
 
 use eulesia_common::types::{ThreadSource, new_id};
-use eulesia_db::entities::threads;
-use eulesia_db::repo::{outbox_helpers, tags::TagRepo, threads::ThreadRepo};
+use eulesia_db::entities::{locations, municipalities, threads};
+use eulesia_db::repo::{
+    outbox_helpers, tags::TagRepo, thread_locations::ThreadLocationRepo, threads::ThreadRepo,
+};
 use eulesia_db::seed::EULESIA_SUMMARY_USER_ID;
+use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 
 use crate::ai::ArticleDraft;
 use crate::ai::prompts_fi::{DEFAULT_TAG, FOOTER_TEMPLATE, KEY_POINTS_HEADER};
@@ -97,6 +100,14 @@ pub async fn create_thread_from_article(
             source,
         })?;
 
+    // Attach thread to the location hierarchy so it appears on municipality
+    // feed pages (thread_locations table, required since PR #105).
+    if let Some(municipality_id) = ctx.municipality_id {
+        if let Ok(Some(location_id)) = resolve_municipality_location(db, municipality_id).await {
+            let _ = ThreadLocationRepo::attach_primary(db, thread.id, location_id).await;
+        }
+    }
+
     outbox_helpers::emit_event(
         db,
         "thread_created",
@@ -143,6 +154,36 @@ fn build_content(article: &ArticleDraft, source_url: &str) -> String {
         "{summary}{key_points_block}\n\n<div class=\"summary-footer\">\n\n{footer}\n\n</div>",
         summary = article.summary,
     )
+}
+
+/// Look up the `locations` row that corresponds to a municipality via
+/// `municipalities.official_code` → `locations.municipality_code`.
+async fn resolve_municipality_location(
+    db: &DatabaseConnection,
+    municipality_id: Uuid,
+) -> Result<Option<Uuid>, IngestError> {
+    let Some(muni) = municipalities::Entity::find_by_id(municipality_id)
+        .one(db)
+        .await
+        .map_err(|source| IngestError::Database {
+            context: "find municipality for location",
+            source,
+        })?
+    else {
+        return Ok(None);
+    };
+    let Some(code) = muni.official_code else {
+        return Ok(None);
+    };
+    let location = locations::Entity::find()
+        .filter(locations::Column::MunicipalityCode.eq(&code))
+        .one(db)
+        .await
+        .map_err(|source| IngestError::Database {
+            context: "find location by municipality_code",
+            source,
+        })?;
+    Ok(location.map(|l| l.id))
 }
 
 fn normalize_tag(tag: &str) -> String {
