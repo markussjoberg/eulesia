@@ -387,7 +387,10 @@ pub async fn list_threads(
     // Hide Eulesia Summary posts with zero replies from the "explore" (all)
     // feed only. They're still visible in the following feed, on institution
     // pages, and once a human has engaged with them.
-    let hide_empty_summaries = !is_following && scope_filter.is_none() && tag_ids.is_none();
+    let hide_empty_summaries = !is_following
+        && scope_filter.is_none()
+        && tag_ids.is_none()
+        && params.municipality_id.is_none();
 
     let (threads, total) = ThreadRepo::list(
         &state.db,
