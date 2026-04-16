@@ -17,7 +17,7 @@ import {
   InlineThreadForm,
 } from "../components/agora";
 import { ContentEndMarker, ThreadListSkeleton } from "../components/common";
-import { Compass, MessageSquarePlus, Sparkles } from "lucide-react";
+import { Compass, MessageSquarePlus } from "lucide-react";
 import { useThreads, useVoteThread, useSubscriptions } from "../hooks/useApi";
 import { useAuth } from "../hooks/useAuth";
 import type {

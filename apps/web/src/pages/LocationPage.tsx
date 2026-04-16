@@ -4,7 +4,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, MapPin } from "lucide-react";
 import { Layout } from "../components/layout";
 import { SEOHead } from "../components/SEOHead";
-import { ThreadCard, InlineThreadForm } from "../components/agora";
+import { ThreadCard } from "../components/agora";
 import { ContentEndMarker } from "../components/common";
 import { useThreads, useLocation as useLocationById } from "../hooks/useApi";
 import { useAuth } from "../hooks/useAuth";
@@ -38,7 +38,7 @@ export function LocationPage() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 
-  const { data: locationData } = useLocationById(locationId);
+  const { data: locationData } = useLocationById(locationId ?? "");
   const { data: threadsData, isLoading, error } = useThreads({ locationId });
 
   const threads = useMemo(() => {
