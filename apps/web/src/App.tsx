@@ -64,6 +64,11 @@ const MunicipalityPage = lazy(() =>
     default: m.MunicipalityPage,
   })),
 );
+const LocationPage = lazy(() =>
+  import("./pages/LocationPage").then((m) => ({
+    default: m.LocationPage,
+  })),
+);
 const UserProfilePage = lazy(() =>
   import("./pages/UserProfilePage").then((m) => ({
     default: m.UserProfilePage,
@@ -287,6 +292,14 @@ function AppRoutes() {
           element={
             <PageErrorBoundary>
               <MunicipalityPage />
+            </PageErrorBoundary>
+          }
+        />
+        <Route
+          path="/paikka/:locationId"
+          element={
+            <PageErrorBoundary>
+              <LocationPage />
             </PageErrorBoundary>
           }
         />

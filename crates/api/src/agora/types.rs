@@ -35,6 +35,10 @@ pub struct ThreadListParams {
     #[serde(alias = "feedScope")]
     pub scope: Option<String>,
     pub municipality_id: Option<Uuid>,
+    /// Filter by location hierarchy — returns all threads at or below this
+    /// location in the `thread_locations` tree. Used by location feed pages
+    /// (districts, neighborhoods, etc.).
+    pub location_id: Option<Uuid>,
     #[serde(alias = "tags")]
     pub tag: Option<String>,
     #[serde(alias = "sortBy")]

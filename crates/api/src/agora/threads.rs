@@ -384,13 +384,44 @@ pub async fn list_threads(
         (None, None) => None,
     };
 
+    // If location_id is set, resolve thread IDs from the hierarchical
+    // thread_locations join table. This powers location feed pages for
+    // districts, neighborhoods, etc. — like municipality pages but for
+    // any level in the location hierarchy.
+    let location_thread_ids = if let Some(location_id) = params.location_id {
+        use eulesia_db::repo::thread_locations::ThreadLocationRepo;
+        let ids = ThreadLocationRepo::threads_in_location_tree(&state.db, location_id, 100_000, 0)
+            .await
+            .map_err(db_err)?;
+        Some(ids)
+    } else {
+        None
+    };
+
+    // Merge all thread ID filters (subscriptions + tags + location)
+    let combined_thread_ids = match (combined_thread_ids, location_thread_ids) {
+        (Some(existing), Some(loc_ids)) => {
+            let loc_set: HashSet<Uuid> = loc_ids.into_iter().collect();
+            Some(
+                existing
+                    .into_iter()
+                    .filter(|id| loc_set.contains(id))
+                    .collect(),
+            )
+        }
+        (Some(ids), None) => Some(ids),
+        (None, Some(ids)) => Some(ids),
+        (None, None) => None,
+    };
+
     // Hide Eulesia Summary posts with zero replies from the "explore" (all)
     // feed only. They're still visible in the following feed, on institution
-    // pages, and once a human has engaged with them.
+    // pages, location pages, and once a human has engaged with them.
     let hide_empty_summaries = !is_following
         && scope_filter.is_none()
         && tag_ids.is_none()
-        && params.municipality_id.is_none();
+        && params.municipality_id.is_none()
+        && params.location_id.is_none();
 
     let (threads, total) = ThreadRepo::list(
         &state.db,

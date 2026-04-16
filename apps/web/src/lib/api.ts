@@ -642,6 +642,7 @@ class ApiClient {
     if (params?.scope) searchParams.set("scope", params.scope);
     if (params?.municipalityId)
       searchParams.set("municipalityId", params.municipalityId);
+    if (params?.locationId) searchParams.set("location_id", params.locationId);
     if (params?.tags?.length) searchParams.set("tags", params.tags.join(","));
     if (params?.feedScope) searchParams.set("feedScope", params.feedScope);
     if (params?.sortBy) searchParams.set("sortBy", params.sortBy);

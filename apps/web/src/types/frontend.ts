@@ -261,6 +261,8 @@ export type TopPeriod = "day" | "week" | "month" | "year";
 export interface ThreadFilters {
   scope?: "local" | "national" | "european" | "personal";
   municipalityId?: string;
+  /** Filter by location hierarchy — returns threads at or below this location. */
+  locationId?: string;
   tags?: string[];
   feedScope?: FeedScope;
   sortBy?: SortBy;

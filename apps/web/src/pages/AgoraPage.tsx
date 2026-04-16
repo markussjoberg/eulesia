@@ -75,7 +75,6 @@ export function AgoraPage() {
   const [topPeriod, setTopPeriod] = useState<TopPeriod>("week");
   const [selectedTags] = useState<string[]>([]);
   const [selectedMunicipality] = useState<string | undefined>();
-  const [showWizard, setShowWizard] = useState(false);
 
   const { data: subscriptionsData } = useSubscriptions();
 
@@ -244,9 +243,7 @@ export function AgoraPage() {
     navigate(`/agora/thread/${threadId}`);
   };
 
-  const handleWizardComplete = () => {
-    setShowWizard(false);
-  };
+  const handleWizardComplete = () => {};
 
   // Show the Eulesia Info empty-state card when the user has opened the
   // Seuratut (following) tab but is not following anything yet, and no
@@ -333,55 +330,9 @@ export function AgoraPage() {
             first item above the threads list so that returning users who add
             one subscription still see a reminder to add more, without hiding
             their existing feed. */}
+        {/* Show onboarding wizard inline when Seuratut is empty */}
         {showEulesiaInfoCard && (
-          <div className="rounded-2xl border border-blue-200 dark:border-blue-800 bg-gradient-to-br from-blue-50 to-teal-50 dark:from-blue-900/20 dark:to-teal-900/20 p-6">
-            <div className="flex items-start gap-3 mb-4">
-              <div className="flex-shrink-0 w-11 h-11 rounded-full bg-blue-600 flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="font-semibold text-gray-900 dark:text-gray-100">
-                    {t("infoCard.author", { defaultValue: "Eulesia Info" })}
-                  </span>
-                  <span className="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-blue-600 text-white">
-                    {t("infoCard.badge", { defaultValue: "Info" })}
-                  </span>
-                </div>
-                <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-1">
-                  {t("infoCard.emptyFollowingTitle", {
-                    defaultValue: "Seuratut-feed on vielä tyhjä",
-                  })}
-                </h2>
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  {t("infoCard.emptyFollowingBody", {
-                    defaultValue:
-                      "Seuraa paikkakuntia, aiheita tai ihmisiä — syötteesi täyttyy niiden postauksilla.",
-                  })}
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-2 sm:pl-14">
-              <button
-                onClick={() => setShowWizard(true)}
-                className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                <Sparkles className="w-4 h-4" />
-                {t("infoCard.openWizard", {
-                  defaultValue: "Avaa opas",
-                })}
-              </button>
-              <button
-                onClick={() => setFeedScope("all")}
-                className="inline-flex items-center gap-1.5 px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-              >
-                <Compass className="w-4 h-4" />
-                {t("infoCard.browseExplore", {
-                  defaultValue: "Selaa Tutustu-välilehteä",
-                })}
-              </button>
-            </div>
-          </div>
+          <OnboardingWizard onComplete={handleWizardComplete} />
         )}
 
         {/* Thread list */}
@@ -462,10 +413,6 @@ export function AgoraPage() {
             !isLoading && <ContentEndMarker />
           ))}
       </div>
-
-      {/* Onboarding wizard modal — mounted outside the feed column so the
-          fullscreen overlay covers the whole viewport. */}
-      {showWizard && <OnboardingWizard onComplete={handleWizardComplete} />}
     </Layout>
   );
 }
