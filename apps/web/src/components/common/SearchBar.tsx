@@ -189,7 +189,7 @@ function SearchResultsList({ results, onResultClick }: SearchResultsListProps) {
                 key={loc.id || `osm-${loc.osmId}`}
                 to={
                   loc.id
-                    ? `/kartta?loc=${loc.id}`
+                    ? `/paikka/${loc.id}`
                     : `/kartta?osm=${loc.osmType}/${loc.osmId}`
                 }
                 onClick={onResultClick}
