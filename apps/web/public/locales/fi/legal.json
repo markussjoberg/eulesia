@@ -13,7 +13,7 @@
       },
       "account": {
         "title": "3. Käyttäjätili",
-        "content": "Tilin luominen edellyttää käyttäjätunnuksen ja salasanan luomista. FTN-tunnistautumisella (pankkitunnukset / Suomi.fi) rekisteröityviltä ei vaadita sähköpostiosoitetta. Olet vastuussa tilisi turvallisuudesta ja kaikesta tilisi kautta tapahtuvasta toiminnasta. Ilmoita meille välittömästi, jos epäilet tilisi luvattomasta käytöstä."
+        "content": "Rekisteröinti Palveluun edellyttää vahvaa tunnistautumista FTN-palvelulla (suomalaiset pankkitunnukset tai mobiilivarmenne). Koska suomalaiset pankit myöntävät itsenäiset verkkopankkitunnukset pääsääntöisesti 15 vuotta täyttäneille, Palvelun käyttö edellyttää käytännössä vähintään 15 vuoden ikää. Olet vastuussa tilisi turvallisuudesta ja kaikesta tilisi kautta tapahtuvasta toiminnasta. Ilmoita meille välittömästi, jos epäilet tilisi luvattomasta käytöstä."
       },
       "conduct": {
         "title": "4. Käyttäytymissäännöt",
@@ -73,13 +73,14 @@
         "title": "2. Kerättävät tiedot",
         "content": "Keräämme seuraavia henkilötietoja:",
         "items": [
-          "Nimi ja sähköpostiosoite (tilin luomiseen; sähköposti ei ole pakollinen FTN-tunnistautumisella rekisteröityessä)",
+          "Käyttäjätunnus ja vapaaehtoinen sähköpostiosoite (ilmoituksia ja tiliin liittyvää viestintää varten)",
           "Vahvistettu virallinen nimi (FTN-tunnistautumisesta, Finnish Trust Network / Suomi.fi)",
+          "FTN-tunnistuspalvelun anonyymi käyttäjätunniste (Iduran 'sub'), jolla tunnistamme saman käyttäjän eri kirjautumiskertojen välillä",
+          "Emme saa emmekä tallenna henkilötunnusta — FTN-palvelu välittää meille vain edellä mainitut tiedot",
           "Profiilikuva (vapaaehtoinen)",
           "Julkaisemasi sisältö (keskustelut, kommentit, viestit)",
           "Äänestys- ja seurantatiedot",
-          "Kirjautumistiedot ja istunnon hallinta (session cookies)",
-          "IP-osoite ja selaintiedot (tietoturva)"
+          "Kirjautumistiedot ja istunnon hallinta (session cookies)"
         ]
       },
       "purpose": {

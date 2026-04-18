@@ -57,7 +57,7 @@ function PrivacyContent() {
             {t("privacy.title")}
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            {t("privacy.lastUpdated", { date: "14.4.2026" })}
+            {t("privacy.lastUpdated", { date: "18.4.2026" })}
           </p>
         </div>
 

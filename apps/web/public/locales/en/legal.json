@@ -13,7 +13,7 @@
       },
       "account": {
         "title": "3. User Account",
-        "content": "Creating an account requires choosing a username and password. An email address is not required when registering via FTN authentication (Finnish bank credentials / Suomi.fi). You are responsible for the security of your account and all activity that occurs through it. Please notify us immediately if you suspect unauthorized use of your account."
+        "content": "Registration requires strong authentication via the Finnish Trust Network (FTN) using Finnish bank credentials or a mobile certificate. Because Finnish banks generally issue independent online banking credentials only to individuals aged 15 or older, use of the Service effectively requires a minimum age of 15. You are responsible for the security of your account and all activity that occurs through it. Please notify us immediately if you suspect unauthorized use of your account."
       },
       "conduct": {
         "title": "4. Code of Conduct",
@@ -73,13 +73,14 @@
         "title": "2. Data Collected",
         "content": "We collect the following personal data:",
         "items": [
-          "Name and email address (for account creation; email is not required when registering with FTN authentication)",
+          "Username and optional email address (for notifications and account-related communication)",
           "Verified legal name (from FTN authentication, Finnish Trust Network / Suomi.fi)",
+          "An opaque FTN identifier (Idura 'sub') used to recognise the same user across login sessions",
+          "We do not receive or store your Finnish personal identity code (henkilötunnus) — the FTN service only provides us with the information listed above",
           "Profile picture (optional)",
           "Content you publish (discussions, comments, messages)",
           "Voting and subscription data",
-          "Login and session management data (session cookies)",
-          "IP address and browser information (security)"
+          "Login and session management data (session cookies)"
         ]
       },
       "purpose": {
