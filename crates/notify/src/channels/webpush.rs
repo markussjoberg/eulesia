@@ -74,20 +74,25 @@ impl WebPushClient {
     }
 
     pub async fn send(&self, endpoint: &str, _p256dh: &str, _auth: &str, _payload: &str) {
+        // Extract the origin from the endpoint URL. Used as the VAPID audience
+        // and as a non-sensitive identifier for logs (full endpoint URLs
+        // contain per-subscription auth material).
+        let endpoint_origin = match url::Url::parse(endpoint) {
+            Ok(u) => format!("{}://{}", u.scheme(), u.host_str().unwrap_or("")),
+            Err(_) => {
+                warn!("invalid push endpoint URL");
+                return;
+            }
+        };
+
         let config = if let Some(c) = &self.config {
             c
         } else {
-            info!(endpoint, "WebPush not configured, skipping");
+            info!(endpoint_origin, "WebPush not configured, skipping");
             return;
         };
 
-        // Extract the origin from the endpoint URL for the VAPID audience.
-        let audience = if let Ok(u) = url::Url::parse(endpoint) {
-            format!("{}://{}", u.scheme(), u.host_str().unwrap_or(""))
-        } else {
-            warn!(endpoint, "invalid push endpoint URL");
-            return;
-        };
+        let audience = endpoint_origin.clone();
 
         let jwt = match self.create_vapid_jwt(config, &audience) {
             Ok(t) => t,
@@ -114,16 +119,16 @@ impl WebPushClient {
             Ok(resp) => {
                 let status = resp.status();
                 if status.is_success() || status.as_u16() == 201 {
-                    info!(endpoint, "WebPush notification sent");
+                    info!(endpoint_origin, "WebPush notification sent");
                 } else if status.as_u16() == 410 {
                     // 410 Gone — subscription expired, should be cleaned up
-                    info!(endpoint, "WebPush subscription expired (410)");
+                    info!(endpoint_origin, "WebPush subscription expired (410)");
                 } else {
                     let body = resp.text().await.unwrap_or_default();
-                    warn!(status = %status, body = %body, endpoint, "WebPush send failed");
+                    warn!(status = %status, body = %body, endpoint_origin, "WebPush send failed");
                 }
             }
-            Err(e) => warn!(error = %e, endpoint, "WebPush HTTP request failed"),
+            Err(e) => warn!(error = %e, endpoint_origin, "WebPush HTTP request failed"),
         }
     }
 }

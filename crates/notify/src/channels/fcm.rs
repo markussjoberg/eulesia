@@ -77,10 +77,11 @@ impl FcmClient {
     }
 
     pub async fn send(&self, device_token: &str, title: &str, body: &str) {
+        let token_fp = &device_token[..8.min(device_token.len())];
         let config = if let Some(c) = &self.config {
             c
         } else {
-            info!(token = device_token, title, "FCM not configured, skipping");
+            info!(token_fp, title, "FCM not configured, skipping");
             return;
         };
 
@@ -156,7 +157,7 @@ impl FcmClient {
         {
             Ok(resp) => {
                 if resp.status().is_success() {
-                    info!(token = device_token, title, "FCM notification sent");
+                    info!(token_fp, title, "FCM notification sent");
                 } else {
                     let status = resp.status();
                     let body = resp.text().await.unwrap_or_default();

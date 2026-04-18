@@ -557,6 +557,8 @@ async fn reset_password_ftn(
     .map_err(|e| ApiError::Internal(format!("hash password: {e}")))?
     .to_string();
 
+    let user_id = user.id;
+
     // Update the user's password.
     let mut active: users::ActiveModel = user.into();
     active.password_hash = Set(Some(new_hash));
@@ -573,7 +575,7 @@ async fn reset_password_ftn(
         .await
         .map_err(|e| ApiError::Database(e.to_string()))?;
 
-    tracing::info!(sub = %pending.sub, "password reset via FTN completed");
+    tracing::info!(user_id = %user_id, "password reset via FTN completed");
 
     Ok(Json(serde_json::json!({ "reset": true })))
 }
